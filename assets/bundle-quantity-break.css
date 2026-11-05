@@ -1,0 +1,663 @@
+/* ===================================================================
+   Bundle Quantity Break / Mix & Match
+   Scoped under .bundle-qty-break so it never leaks into Prestige's
+   own styles. Uses Prestige's CSS variables where they commonly
+   exist (--color-foreground, --color-background, etc.) and falls
+   back to sane hardcoded values if a variable is missing — adjust
+   the fallbacks to match your theme's actual variable names.
+=================================================================== */
+
+.bundle-qty-break {
+  display: block;
+  margin-top: 1rem;
+  max-width: 100%;
+  font-family: inherit;
+  color: var(--color-foreground, #1a1a1a);
+}
+
+/* Standard reset so padding/border are included in each element's
+   declared width rather than added on top of it — general hygiene,
+   not specific to the horizontal-overflow bug. That bug's actual fix
+   is the min-width: 0 rules added throughout the tier/slot flex
+   chains below; flex items default to min-width: auto, which lets
+   long text (a product name, a save-badge) refuse to shrink and
+   push its container — and from there the whole page — wider than
+   the viewport. */
+.bundle-qty-break,
+.bundle-qty-break * {
+  box-sizing: border-box;
+}
+
+/* ---------- header ---------- */
+
+.bundle-qty-break__header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.bundle-qty-break__heading-line {
+  flex: 1;
+  height: 1px;
+  background: var(--color-border, #d8d8d8);
+}
+
+.bundle-qty-break__heading {
+  flex-shrink: 0;
+  font-size: 1.15rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin: 0;
+  text-align: center;
+}
+
+.bundle-qty-break__subheading {
+  margin: 0 0 0.75rem;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  color: var(--color-foreground-muted, #717171);
+  text-align: center;
+}
+
+/* ---------- tier list ---------- */
+
+.bundle-qty-break__tiers {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bundle-qty-break__tier {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  border: 1px solid var(--color-border, #d8d8d8);
+  border-radius: 0.5rem;
+  padding: 0.7rem 1rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  /* overflow: visible is needed so the corner badge (positioned
+     slightly outside this box) isn't clipped, but that combined with
+     a long product name or save-badge text further down the flex
+     chain is exactly what was pushing the whole page wider than the
+     viewport on mobile (see min-width: 0 fixes below the chain) */
+  overflow: visible;
+  max-width: 100%;
+}
+
+.bundle-qty-break__tier.is-selected {
+  border-color: var(--color-foreground, #1a1a1a);
+  box-shadow: 0 0 0 1px var(--color-foreground, #1a1a1a);
+}
+
+.bundle-qty-break__tier-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bundle-qty-break__tier-radio-dot {
+  flex-shrink: 0;
+  width: 1.1rem;
+  height: 1.1rem;
+  margin-top: 0.15rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border-strong, #999);
+  position: relative;
+  transition: border-color 0.15s ease;
+}
+
+.bundle-qty-break__tier.is-selected .bundle-qty-break__tier-radio-dot {
+  border-color: var(--color-foreground, #1a1a1a);
+}
+
+.bundle-qty-break__tier.is-selected .bundle-qty-break__tier-radio-dot::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: var(--color-foreground, #1a1a1a);
+}
+
+.bundle-qty-break__tier-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.bundle-qty-break__tier-row,
+.bundle-qty-break__tier-body {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.bundle-qty-break__tier-body {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.2rem;
+}
+
+.bundle-qty-break__tier-title {
+  font-weight: 600;
+  font-size: 0.98rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  min-width: 0;
+}
+
+.bundle-qty-break__tier-sub {
+  font-size: 0.85rem;
+  color: var(--color-foreground-muted, #717171);
+}
+
+.bundle-qty-break__tier-price {
+  flex-shrink: 0;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.bundle-qty-break__price-now {
+  font-weight: 600;
+  font-size: 1rem;
+}
+
+.bundle-qty-break__price-compare {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--color-foreground-muted, #999);
+  text-decoration: line-through;
+}
+
+.bundle-qty-break__save-badge {
+  background: var(--color-sale, #e0392f);
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 0.25rem;
+  letter-spacing: 0.02em;
+}
+
+/* corner ribbon badges, e.g. "Most Popular" / "Crazy Offer" */
+
+.bundle-qty-break__corner-badge {
+  position: absolute;
+  top: -0.65rem;
+  right: 1rem;
+  background: #111;
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+.bundle-qty-break__corner-badge.is-good { background: #1a1a1a; }
+.bundle-qty-break__corner-badge.is-popular { background: #111; }
+.bundle-qty-break__corner-badge.is-crazy { background: #c0392b; }
+
+/* ---------- slots (chosen extra products inline under a tier) ---------- */
+
+.bundle-qty-break__slots {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--color-border, #ececec);
+}
+
+.bundle-qty-break__slot {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.bundle-qty-break__slot-thumb {
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 0.35rem;
+  overflow: hidden;
+  background: var(--color-background-secondary, #f3f3f3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bundle-qty-break__slot-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bundle-qty-break__slot-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.bundle-qty-break__slot-locked {
+  font-size: 0.78rem;
+  color: var(--color-foreground-muted, #999);
+}
+
+.bundle-qty-break__slot-choose,
+.bundle-qty-break__product-choose {
+  flex-shrink: 0;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: 0.35rem;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.bundle-qty-break__slot-choose:hover,
+.bundle-qty-break__product-choose:hover {
+  background: #333;
+}
+
+.bundle-qty-break__slot.is-filled .bundle-qty-break__slot-thumb {
+  background: transparent;
+}
+
+/* ---------- incomplete-selection hint ----------
+   No add-to-cart button styles here: this widget has no button of
+   its own. It hooks into the page's existing native Add to Cart
+   button (see bindNativeAddToCart() in the JS). This hint shows
+   only when that native button is clicked with an incomplete tier
+   selected. */
+
+.bundle-qty-break__hint {
+  margin-top: 0.6rem;
+  padding: 0.55rem 0.9rem;
+  border-radius: 0.4rem;
+  background: var(--color-sale-background, #fdf0ef);
+  font-size: 0.82rem;
+  color: var(--color-sale, #c0392b);
+  text-align: center;
+}
+
+/* ===================================================================
+   Modal
+=================================================================== */
+
+.bundle-qty-break__modal[hidden] {
+  display: none;
+}
+
+.bundle-qty-break__modal {
+  position: fixed;
+  inset: 0;
+  /* Deliberately very high: this modal is appended directly to
+     <body> by the JS (see connectedCallback), specifically so it
+     can never get trapped behind a sticky/transformed header's own
+     stacking context. The z-index here is a backup, not the fix. */
+  z-index: 2147483000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+}
+
+.bundle-qty-break__modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+}
+
+.bundle-qty-break__modal-panel {
+  position: relative;
+  z-index: 1;
+  background: #fff;
+  width: min(560px, 100%);
+  max-height: min(640px, 85vh);
+  display: flex;
+  flex-direction: column;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  cursor: default;
+}
+
+.bundle-qty-break__modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--color-border, #ececec);
+}
+
+.bundle-qty-break__modal-header h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.bundle-qty-break__modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: var(--color-foreground-muted, #888);
+  border-radius: 50%;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.bundle-qty-break__modal-close:hover {
+  background: var(--color-background-secondary, #f3f3f3);
+  color: var(--color-foreground, #111);
+}
+
+.bundle-qty-break__modal-search {
+  padding: 1rem 1.5rem 0.5rem;
+}
+
+.bundle-qty-break__modal-search input {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--color-border, #d8d8d8);
+  border-radius: 0.4rem;
+  font-size: 0.9rem;
+}
+
+.bundle-qty-break__swipe-hint {
+  margin: 0;
+  padding: 0.4rem 1.5rem 0;
+  font-size: 0.75rem;
+  color: var(--color-foreground-muted, #999);
+  text-align: center;
+}
+
+/* This hint is most useful when the tab row can't fit on screen and
+   needs horizontal scrolling, which in practice is mobile/narrow
+   viewports. Hidden on wider screens where all tabs usually fit. */
+@media screen and (min-width: 750px) {
+  .bundle-qty-break__swipe-hint {
+    display: none;
+  }
+}
+
+/* ---------- tabs ---------- */
+
+.bundle-qty-break__tabs {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.75rem 1.5rem 0;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--color-border, #ececec);
+}
+
+.bundle-qty-break__tab {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  padding: 0.5rem 0.85rem;
+  font-size: 0.86rem;
+  font-weight: 600;
+  color: var(--color-foreground-muted, #888);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.bundle-qty-break__tab.is-active {
+  color: var(--color-foreground, #111);
+  border-bottom-color: var(--color-foreground, #111);
+}
+
+.bundle-qty-break__tab-new-badge {
+  position: relative;
+  display: inline-block;
+  margin-left: 0.35rem;
+  padding: 0.1rem 0.4rem;
+  background: #f0f0bc;
+  color: #000;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  border-radius: 0.25rem;
+  vertical-align: 1px;
+  overflow: hidden;
+  /* Establishes a containing block so the shimmer sweep below is
+     clipped to the badge's own rounded-rect shape, not the page. */
+  isolation: isolate;
+}
+
+.bundle-qty-break__tab-new-badge::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    rgba(255, 255, 255, 0.75) 50%,
+    transparent 70%
+  );
+  transform: translateX(-100%);
+  animation: bundle-qty-break-shimmer 2.6s ease-in-out infinite;
+}
+
+@keyframes bundle-qty-break-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  /* Hold at rest here until the animation loops, rather than
+     shimmering continuously back-to-back, which reads calmer. */
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bundle-qty-break__tab-new-badge::after {
+    animation: none;
+  }
+}
+
+/* ---------- product list ---------- */
+
+.bundle-qty-break__modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem 1.5rem 1.5rem;
+}
+
+.bundle-qty-break__tab-panel {
+  display: none;
+}
+
+.bundle-qty-break__tab-panel.is-active {
+  display: block;
+}
+
+.bundle-qty-break__product-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.bundle-qty-break__scroll-sentinel {
+  height: 1px;
+}
+
+.bundle-qty-break__loading {
+  text-align: center;
+  padding: 1rem 0;
+  font-size: 0.82rem;
+  color: var(--color-foreground-muted, #888);
+}
+
+.bundle-qty-break__loading[hidden] {
+  display: none;
+}
+
+.bundle-qty-break__product-row {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding-top: 0.9rem;
+  border-top: 1px solid var(--color-border, #f0f0f0);
+}
+
+.bundle-qty-break__product-row:first-child {
+  border-top: none;
+  padding-top: 0;
+}
+
+.bundle-qty-break__product-row[hidden] {
+  display: none;
+}
+
+.bundle-qty-break__product-thumb {
+  flex-shrink: 0;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 0.4rem;
+  overflow: hidden;
+  background: var(--color-background-secondary, #f3f3f3);
+}
+
+.bundle-qty-break__product-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.bundle-qty-break__product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  min-width: 0;
+}
+
+.bundle-qty-break__product-name {
+  font-weight: 600;
+  font-size: 0.92rem;
+}
+
+.bundle-qty-break__product-price .bundle-qty-break__price-now {
+  font-size: 0.88rem;
+}
+
+.bundle-qty-break__product-price .bundle-qty-break__price-compare {
+  display: inline;
+  margin-left: 0.4rem;
+}
+
+.bundle-qty-break__product-variant-picker {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.3rem;
+}
+
+.bundle-qty-break__variant-label {
+  font-size: 0.75rem;
+  color: var(--color-foreground-muted, #888);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.bundle-qty-break__variant-label select {
+  font-size: 0.82rem;
+  padding: 0.25rem 0.4rem;
+  border: 1px solid var(--color-border, #d8d8d8);
+  border-radius: 0.3rem;
+}
+
+.bundle-qty-break__no-results {
+  text-align: center;
+  color: var(--color-foreground-muted, #888);
+  padding: 2rem 0;
+}
+
+.bundle-qty-break__no-results:not([hidden]) {
+  display: block;
+}
+
+/* ---------- responsive ---------- */
+
+@media screen and (max-width: 749px) {
+  .bundle-qty-break {
+    margin-top: 0.75rem;
+  }
+
+  .bundle-qty-break__header {
+    margin-bottom: 0.4rem;
+  }
+
+  .bundle-qty-break__heading {
+    font-size: 1.05rem;
+  }
+
+  .bundle-qty-break__subheading {
+    margin-bottom: 0.6rem;
+    font-size: 0.78rem;
+  }
+
+  .bundle-qty-break__tiers {
+    gap: 0.4rem;
+  }
+
+  .bundle-qty-break__tier {
+    padding: 0.6rem 0.85rem;
+    gap: 0.55rem;
+  }
+
+  .bundle-qty-break__tier-main {
+    gap: 0.4rem;
+  }
+
+  .bundle-qty-break__corner-badge {
+    top: -0.6rem;
+    right: 0.75rem;
+    font-size: 0.65rem;
+    padding: 0.22rem 0.55rem;
+  }
+
+  .bundle-qty-break__slots {
+    gap: 0.4rem;
+    padding-top: 0.4rem;
+  }
+
+  .bundle-qty-break__modal-panel {
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    border-radius: 8px;
+  }
+}

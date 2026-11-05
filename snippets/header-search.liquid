@@ -1,0 +1,176 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  HEADER SEARCH
+  ----------------------------------------------------------------------------------------------------------------------
+
+  Code of the predictive search in the header. This uses the "predictive-search" component. The resources being
+  searched are controlled by the Search & Discovery app.
+
+  RAVA: adds a "Jump to" row (menu links) and a "Trending searches" row. Both show only while the input is empty and
+  disappear as soon as the customer types, so the native predictive results take over.
+
+  ********************************************
+  Supported variables
+  ********************************************
+
+  * jump_menu: linklist used for the "Jump to" links (optional)
+  * jump_heading: heading above the "Jump to" links (optional)
+  * trending_heading: heading above the trending searches (optional)
+  * trending_terms: comma separated search terms (optional)
+{%- endcomment -%}
+
+<header-search id="header-search-{{ section.id }}" class="header-search">
+  <div class="container">
+    <form id="predictive-search-form" action="{{ routes.search_url }}" method="GET" aria-owns="header-predictive-search" class="header-search__form" role="search">
+      <div class="header-search__form-control">
+        {%- render 'icon' with 'search', width: 20 -%}
+        <input
+          type="search"
+          name="q"
+          spellcheck="false"
+          class="header-search__input h5 sm:h4"
+          aria-label="{{ 'search.general.title' | t | escape }}"
+          placeholder="{{ 'search.general.search_placeholder' | t | escape }}"
+        >
+
+        <dialog-close-button class="contents">
+          <button type="button">
+            <span class="sr-only">{{ 'general.accessibility.close' | t }}</span>
+            {%- render 'icon' with 'close', width: 16 -%}
+          </button>
+        </dialog-close-button>
+      </div>
+    </form>
+
+    {%- assign trending_list = trending_terms | split: ',' -%}
+
+    {%- if jump_menu.links.size > 0 or trending_list.size > 0 -%}
+      <div class="rava-jump">
+        {%- if jump_menu.links.size > 0 -%}
+          <div class="rava-jump__group">
+            <p class="rava-jump__title">{{ jump_heading | default: 'Jump to' }}</p>
+            <ul class="rava-jump__list unstyled-list" role="list">
+              {%- for link in jump_menu.links -%}
+                <li><a class="rava-jump__chip" href="{{ link.url }}">{{ link.title }}</a></li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        {%- if trending_list.size > 0 -%}
+          <div class="rava-jump__group">
+            <p class="rava-jump__title">{{ trending_heading | default: 'Trending searches' }}</p>
+            <ul class="rava-jump__list rava-jump__list--terms unstyled-list" role="list">
+              {%- for term in trending_list -%}
+                {%- assign clean_term = term | strip -%}
+                {%- if clean_term != blank -%}
+                  <li>
+                    <a class="rava-jump__term" href="{{ routes.search_url }}?q={{ clean_term | url_encode }}&options%5Bprefix%5D=last">
+                      {%- render 'icon' with 'search', width: 14 -%}
+                      <span>{{ clean_term | escape }}</span>
+                    </a>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+      </div>
+
+      <style>
+        .rava-jump {
+          display: grid;
+          gap: 1.25rem;
+          padding-block: 0.25rem 1.5rem;
+        }
+
+        /* Hide as soon as the customer types: the native predictive results take over */
+        .header-search:has(.header-search__input:not(:placeholder-shown)) .rava-jump {
+          display: none;
+        }
+
+        .rava-jump__group {
+          display: grid;
+          gap: 0.75rem;
+        }
+
+        .rava-jump__title {
+          margin: 0;
+          font-family: var(--heading-font-family);
+          font-weight: 700;
+          font-size: 10px;
+          letter-spacing: 0.14em;
+          text-transform: uppercase;
+          color: rgb(var(--text-color) / 0.65);
+        }
+
+        .rava-jump__list {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+        }
+
+        .rava-jump__chip {
+          display: inline-flex;
+          align-items: center;
+          min-height: 40px;
+          padding: 0 1rem;
+          border-radius: 14px;
+          background: #EFE4BF;
+          color: #000;
+          font-size: 13px;
+          line-height: 1;
+          white-space: nowrap;
+          transition: background 0.2s ease;
+        }
+
+        .rava-jump__chip:hover,
+        .rava-jump__chip:focus-visible {
+          background: #EBE1A6;
+        }
+
+        .rava-jump__list--terms {
+          gap: 0.25rem 1.25rem;
+        }
+
+        .rava-jump__term {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+          min-height: 36px;
+          font-size: 14px;
+          color: rgb(var(--text-color));
+        }
+
+        .rava-jump__term svg {
+          opacity: 0.5;
+          flex-shrink: 0;
+        }
+
+        @media screen and (max-width: 699px) {
+          /* One swipeable row of chips on phones instead of wrapping onto 3 lines */
+          .rava-jump__list:not(.rava-jump__list--terms) {
+            flex-wrap: nowrap;
+            overflow-x: auto;
+            scrollbar-width: none;
+            margin-inline: calc(-1 * var(--container-gutter, 1.25rem));
+            padding-inline: var(--container-gutter, 1.25rem);
+          }
+
+          .rava-jump__list:not(.rava-jump__list--terms)::-webkit-scrollbar {
+            display: none;
+          }
+
+          .rava-jump__list--terms {
+            display: grid;
+            gap: 0;
+          }
+        }
+      </style>
+    {%- endif -%}
+
+    <predictive-search id="header-predictive-search" class="predictive-search">
+      <div class="predictive-search__content" slot="results"></div>
+    </predictive-search>
+  </div>
+</header-search>

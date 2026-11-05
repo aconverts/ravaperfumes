@@ -1,0 +1,513 @@
+/* ===== Mix It — RAVA ===== */
+
+.mix-it-wrapper {
+  padding: 80px 20px;
+  background: #fff;
+  color: #000;
+}
+
+.mix-it-container {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.mix-it-header {
+  text-align: center;
+  margin-bottom: 36px;
+}
+
+.mix-it-trust-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid #000;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.mix-it-title {
+  font-size: clamp(1.7rem, 4vw, 2.6rem);
+  letter-spacing: 0.06em;
+  text-transform: none;
+  margin: 0 0 10px;
+  font-weight: 600;
+  color: #000;
+}
+
+.mix-it-subtitle {
+  opacity: 0.55;
+  max-width: 480px;
+  margin: 0 auto;
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.mix-it-error {
+  text-align: center;
+  padding: 40px;
+  border: 1px solid #000;
+  border-radius: 14px;
+}
+
+.mix-it-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 70px;
+  align-items: center;
+}
+
+@media (max-width: 860px) {
+  .mix-it-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+/* ---------- Bottle ---------- */
+
+.mix-it-visual {
+  text-align: center;
+  position: sticky;
+  top: 60px;
+  z-index: 1;
+}
+
+.mix-it-bottle {
+  position: relative;
+  max-width: 220px;
+  margin: 0 auto 26px;
+}
+
+@media (min-width: 861px) {
+  .mix-it-bottle {
+    max-width: 340px;
+  }
+}
+
+@media (max-width: 860px) {
+  .mix-it-visual {
+    position: static;
+    top: auto;
+  }
+
+  .mix-it-bottle {
+    max-width: 130px;
+    margin: 0 auto 10px;
+  }
+}
+
+@media (max-width: 860px) {
+  .mix-it-wrapper {
+    padding: 40px 16px;
+  }
+
+  .mix-it-header {
+    margin-bottom: 28px;
+  }
+
+  .mix-it-grid {
+    gap: 18px;
+  }
+
+  .mix-it-scent-block {
+    padding: 14px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+  }
+
+  .mix-it-scent-label {
+    font-size: 0.82rem;
+    margin-bottom: 8px;
+  }
+
+  .mix-it-row {
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .mix-it-dd-trigger {
+    padding: 9px 12px;
+    font-size: 0.85rem;
+    border-radius: 10px;
+  }
+
+  .mix-it-dd-panel {
+    border-radius: 10px;
+    max-height: 220px;
+  }
+
+  .mix-it-percent-row {
+    gap: 10px;
+  }
+
+  .mix-it-percent-display {
+    font-size: 0.85rem;
+    min-width: 36px;
+  }
+
+  .mix-it-name-row {
+    margin-bottom: 12px;
+  }
+
+  .mix-it-name-row label {
+    font-size: 0.85rem;
+    margin-bottom: 5px;
+  }
+
+  .mix-it-name-row input {
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+  }
+
+  .mix-it-submit {
+    padding: 13px 16px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+  }
+}
+
+.mix-it-bottle-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+.mix-it-bottle-outline {
+  fill: #fff;
+  stroke: #000;
+  stroke-width: 2.5;
+}
+
+.mix-it-cap {
+  fill: #000;
+}
+
+.mix-it-liquid {
+  shape-rendering: geometricPrecision;
+}
+
+.mix-it-liquid-1 {
+  fill: #EFE4BF;
+}
+
+.mix-it-liquid-2 {
+  fill: #000;
+  fill-opacity: 0.85;
+}
+
+.mix-it-wave {
+  fill: #EFE4BF;
+}
+
+.mix-it-percent-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  mix-blend-mode: difference;
+  color: #fff;
+  pointer-events: none;
+}
+
+.mix-it-price-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mix-it-price {
+  font-size: 1.2rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.mix-it-price-compare {
+  font-size: 0.95rem;
+  color: #000;
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.mix-it-save-badge {
+  display: inline-block;
+  background: #d4231f;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  padding: 4px 9px;
+  border-radius: 999px;
+}
+
+/* ---------- Controls ---------- */
+
+.mix-it-scent-block {
+  border: 1px solid #000;
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 14px;
+  transition: border-color 0.3s ease;
+  position: relative;
+  z-index: 1;
+}
+
+.mix-it-scent-block.mix-it-block-active {
+  z-index: 50;
+}
+
+.mix-it-scent-label {
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  color: #000;
+  opacity: 1;
+  margin-bottom: 12px;
+  font-weight: 600;
+}
+
+.mix-it-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+@media (max-width: 480px) {
+  .mix-it-row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+
+.mix-it-dropdown {
+  position: relative;
+}
+
+.mix-it-dd-trigger {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 14px;
+  border: 1px solid #000;
+  border-radius: 14px;
+  background: #fff;
+  color: #000;
+  cursor: pointer;
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.mix-it-dd-trigger:hover:not(:disabled) {
+  background: #000;
+  color: #fff;
+}
+
+.mix-it-dd-trigger:hover:not(:disabled) svg path {
+  stroke: #fff;
+}
+
+.mix-it-dd-trigger:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.mix-it-dd-trigger svg path {
+  stroke: #000;
+  transition: stroke 0.25s ease;
+}
+
+.mix-it-dd-panel {
+  display: none;
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  background: #fff;
+  border: 1px solid #000;
+  border-radius: 14px;
+  max-height: 280px;
+  overflow-y: auto;
+  z-index: 20;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+}
+
+.mix-it-dd-panel.open {
+  display: block;
+}
+
+.mix-it-dd-search {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  background: #fff;
+  border-radius: 14px 14px 0 0;
+}
+
+.mix-it-dd-search:focus {
+  outline: none;
+}
+
+.mix-it-dd-list {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+}
+
+.mix-it-dd-list li {
+  padding: 11px 16px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background 0.2s ease;
+}
+
+.mix-it-dd-list li:hover {
+  background: #f5f5f0;
+}
+
+.mix-it-percent-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mix-it-percent-display {
+  min-width: 44px;
+  font-weight: 700;
+  font-size: 0.95rem;
+}
+
+.mix-it-range {
+  flex: 1;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 2px;
+  background: #000;
+  border-radius: 2px;
+  outline: none;
+}
+
+.mix-it-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #000;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #000;
+  cursor: pointer;
+}
+
+.mix-it-range::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #000;
+  border: 2px solid #fff;
+  box-shadow: 0 0 0 1px #000;
+  cursor: pointer;
+}
+
+.mix-it-split-warning {
+  color: #000;
+  font-size: 0.8rem;
+  margin-bottom: 16px;
+  opacity: 0.6;
+}
+
+.mix-it-name-row {
+  margin-bottom: 18px;
+}
+
+.mix-it-name-row label {
+  display: block;
+  font-size: 0.95rem;
+  margin-bottom: 8px;
+  color: #000;
+  opacity: 1;
+  font-weight: 600;
+}
+
+.mix-it-name-row input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #000;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  background: #fff;
+  color: #000;
+}
+
+.mix-it-name-row input:focus {
+  outline: none;
+  border-width: 1.5px;
+}
+
+/* ---------- Add to cart — sliding hover style ---------- */
+
+.mix-it-submit {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 15px 18px;
+  background: #EFE4BF;
+  color: #000;
+  border: 1px solid #000;
+  border-radius: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.mix-it-submit::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: #000;
+  transition: left 0.4s ease;
+  z-index: 0;
+}
+
+.mix-it-submit span {
+  position: relative;
+  z-index: 1;
+}
+
+.mix-it-submit:hover:not(:disabled)::before {
+  left: 0;
+}
+
+.mix-it-submit:hover:not(:disabled) {
+  color: #EFE4BF;
+}
+
+.mix-it-submit:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}

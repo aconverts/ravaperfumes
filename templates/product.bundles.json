@@ -1,0 +1,788 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "blocks": {
+        "liquid_AKGYtd": {
+          "type": "liquid",
+          "settings": {
+            "liquid": "{% comment %}\n  ============================================================\n  FREE DELIVERY BADGE — RAVA Perfumes\n  Place just below the product price in main-product.liquid:\n    {% render 'free-delivery-badge' %}\n  ============================================================\n{% endcomment %}\n\n{% assign free_delivery_threshold = 50 %}\n\n<link rel=\"stylesheet\" href=\"https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20,400,0,0&icon_names=local_shipping\" />\n\n<div class=\"rava-fdb-badge\" aria-label=\"Free delivery on orders over ${{ free_delivery_threshold }}\">\n  <span class=\"material-symbols-outlined rava-fdb-badge__icon\" aria-hidden=\"true\">local_shipping</span>\n  Free delivery on orders over <strong>${{ free_delivery_threshold }}</strong>\n</div>\n\n<style>\n  .rava-fdb-badge {\n    display: inline-flex;\n    align-items: center;\n    gap: 6px;\n    background: #ebe4ca;\n    border: 1px solid #d4c99a;\n    border-radius: 10px;\n    padding: 5px 12px;\n    font-size: 12px;\n    color: #4a3e1a;\n    margin-top: 8px;\n    margin-bottom: -24px;\n  }\n\n  .rava-fdb-badge__icon {\n    font-size: 16px;\n    color: #7a6530;\n    line-height: 1;\n    user-select: none;\n  }\n\n  .rava-fdb-badge strong {\n    color: #2e2610;\n  }\n\n  @media (prefers-color-scheme: dark) {\n    .rava-fdb-badge {\n      background: #2e2a18;\n      border-color: #5a4e28;\n      color: #e0d5a8;\n    }\n\n    .rava-fdb-badge__icon {\n      color: #c8b87a;\n    }\n\n    .rava-fdb-badge strong {\n      color: #f0e8c0;\n    }\n  }\n</style>"
+          }
+        },
+        "liquid_k7Hm3i": {
+          "type": "liquid",
+          "settings": {
+            "liquid": "<div class=\"demand-inline\">\n  <span class=\"blink-dot\"></span>\n  <span><strong>Low stock</strong> – high demand after announcing our offer</span>\n</div>\n\n<style>\n  .demand-inline {\n    display: inline-flex;\n    align-items: center;\n    gap: 6px;\n    margin-top: -10px;\n    font-size: 12.5px;\n    color: #111;\n    line-height: 1.2;\n  }\n\n  .demand-inline strong {\n    font-weight: 600;\n  }\n\n  .blink-dot {\n    width: 6px;\n    height: 6px;\n    background: #e10600;\n    border-radius: 50%;\n    flex-shrink: 0;\n    animation: blink 1.4s infinite ease-in-out;\n  }\n\n  @keyframes blink {\n    0% {\n      opacity: 1;\n    }\n    50% {\n      opacity: 0.2;\n    }\n    100% {\n      opacity: 1;\n    }\n  }\n</style>"
+          }
+        },
+        "title": {
+          "type": "title",
+          "settings": {
+            "heading_tag": "h3"
+          }
+        },
+        "price": {
+          "type": "price",
+          "settings": {
+            "show_taxes_notice": false
+          }
+        },
+        "liquid_zWJpbq": {
+          "type": "liquid",
+          "disabled": true,
+          "settings": {
+            "liquid": "<div class=\"valentine-offer-wrapper\">\n  <div class=\"valentine-title\">\n    Crazy Easter's Day Offer - Buy any amount, get the same FREE\n  </div>\n\n  <div class=\"valentine-box\">\n    Buy <span class=\"changing-number\">1</span> Perfumes\n    <strong>Get <span class=\"changing-number\">1</span> FREE</strong>\n  </div>\n</div>\n\n<style>\n  .valentine-offer-wrapper {\n    margin: 10px 0;\nmargin-top: -10px;\nmargin-bottom: -18px\n  }\n\n  .valentine-title {\n    font-size: 12.5px;\n    font-weight: 600;\n    margin-bottom: 5px;\n    color: #111;\n  }\n\n  .valentine-box {\n    background: #efe4bf\n\n;\n    color: #000;\n    padding: 6px 12px;\n    font-size: 12.5px;\n    font-weight: 500;\n    display: inline-flex;\n    align-items: center;\n    gap: 4px;\n    line-height: 1.3;\n  }\n\n  .valentine-box strong {\n    font-weight: 700;\n    margin-left: 4px;\n  }\n\n  .changing-number {\n    display: inline-block;\n    min-width: 10px;\n    text-align: center;\n    transition: opacity 0.4s ease, transform 0.4s ease;\n  }\n\n  .fade-out {\n    opacity: 0;\n    transform: translateY(4px);\n  }\n\n  .fade-in {\n    opacity: 1;\n    transform: translateY(0);\n  }\n</style>\n\n<script>\n  (function () {\n    const max = 15;\n    const numbers = document.querySelectorAll('.changing-number');\n\n    function randomNumber() {\n      return Math.floor(Math.random() * max) + 1;\n    }\n\n    setInterval(() => {\n      const num = randomNumber();\n\n      numbers.forEach(el => el.classList.add('fade-out'));\n\n      setTimeout(() => {\n        numbers.forEach(el => {\n          el.textContent = num;\n          el.classList.remove('fade-out');\n          el.classList.add('fade-in');\n        });\n      }, 400);\n    }, 1800);\n  })();\n</script>"
+          }
+        },
+        "liquid_rF94Ec": {
+          "type": "liquid",
+          "disabled": true,
+          "settings": {
+            "liquid": "<div class=\"valentine-offer-wrapper\">\n  <div class=\"valentine-title\">\n    Crazy Valentine Offer - Buy any amount, get the same FREE\n  </div>\n\n  <div class=\"valentine-box\">\n    Buy <span class=\"changing-number\">1</span> Perfumes\n    <strong>Get <span class=\"changing-number\">1</span> FREE</strong>\n  </div>\n</div>\n\n<style>\n  .valentine-offer-wrapper {\n    margin: 10px 0;\nmargin-top: -10px;\n  }\n\n  .valentine-title {\n    font-size: 12.5px;\n    font-weight: 600;\n    margin-bottom: 5px;\n    color: #111;\n  }\n\n  .valentine-box {\n    background: #972239;\n    color: #fff;\n    padding: 6px 12px;\n    font-size: 12.5px;\n    font-weight: 500;\n    display: inline-flex;\n    align-items: center;\n    gap: 4px;\n    line-height: 1.3;\n  }\n\n  .valentine-box strong {\n    font-weight: 700;\n    margin-left: 4px;\n  }\n\n  .changing-number {\n    display: inline-block;\n    min-width: 10px;\n    text-align: center;\n    transition: opacity 0.4s ease, transform 0.4s ease;\n  }\n\n  .fade-out {\n    opacity: 0;\n    transform: translateY(4px);\n  }\n\n  .fade-in {\n    opacity: 1;\n    transform: translateY(0);\n  }\n</style>\n\n<script>\n  (function () {\n    const max = 15;\n    const numbers = document.querySelectorAll('.changing-number');\n\n    function randomNumber() {\n      return Math.floor(Math.random() * max) + 1;\n    }\n\n    setInterval(() => {\n      const num = randomNumber();\n\n      numbers.forEach(el => el.classList.add('fade-out'));\n\n      setTimeout(() => {\n        numbers.forEach(el => {\n          el.textContent = num;\n          el.classList.remove('fade-out');\n          el.classList.add('fade-in');\n        });\n      }, 400);\n    }, 1800);\n  })();\n</script>"
+          }
+        },
+        "offers_U8LDkb": {
+          "type": "offers",
+          "disabled": true,
+          "settings": {
+            "stack_offers": true,
+            "offer_1_title": "Buy Any 2 Perfumes for 12% Off",
+            "offer_1_content": "",
+            "offer_2_title": "Buy<strong> Any 3 </strong>Perfumes for 18% Off",
+            "offer_2_content": "",
+            "offer_3_title": "Buy Any 4+ Perfumes for 25% Off",
+            "offer_3_content": "",
+            "background": "",
+            "text_color": "",
+            "border_color": ""
+          }
+        },
+        "variant_picker": {
+          "type": "variant_picker",
+          "disabled": true,
+          "settings": {
+            "hide_sold_out_variants": false,
+            "selector_style": "block",
+            "swatch_selector_style": "swatch",
+            "variant_image_options": "",
+            "size_chart_page": ""
+          }
+        },
+        "quantity_selector": {
+          "type": "quantity_selector",
+          "settings": {}
+        },
+        "buy_buttons": {
+          "type": "buy_buttons",
+          "settings": {
+            "show_payment_button": false,
+            "show_gift_card_recipient": true,
+            "atc_button_background": "#efe4bf",
+            "atc_button_text_color": "#1c1c1c",
+            "payment_button_background": "#f0f0bc",
+            "payment_button_text_color": "#ffffff"
+          }
+        },
+        "liquid_nBwbdw": {
+          "type": "liquid",
+          "settings": {
+            "liquid": "<style>\n.whatsapp-btn {\n  width: 100%;\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  gap: 5px;\n\n  position: relative;\n  overflow: hidden;\n\n  background: #000;\n  color: #fff;\n  border: 1px solid #000;\n  border-radius: 15px; /* updated */\n  padding: 10px 12px;\n\n  font-size: 15px;\n  font-weight: 500;\n  text-decoration: none;\n\n  transition: color 0.3s ease, border 0.3s ease;\n  margin-top: -20px;\n}\n\n/* Sliding background */\n.whatsapp-btn::before {\n  content: \"\";\n  position: absolute;\n  top: 0;\n  left: -100%;\n  width: 100%;\n  height: 100%;\n  background: #fff;\n  transition: left 0.4s ease;\n  z-index: 0;\n}\n\n.whatsapp-btn span,\n.whatsapp-btn img {\n  position: relative;\n  z-index: 1;\n}\n\n.whatsapp-btn:hover::before {\n  left: 0;\n}\n\n.whatsapp-btn:hover {\n  color: #000;\n}\n\n.whatsapp-btn:hover img {\n  filter: invert(1);\n}\n\n.whatsapp-btn img {\n  width: 15px;\n  height: 15px;\n  object-fit: contain;\n  transition: 0.3s;\n}\n</style>\n\n<a href=\"#\" class=\"whatsapp-btn\" id=\"whatsappBtn\">\n  <img src=\"https://cdn.shopify.com/s/files/1/0846/4105/4998/files/whatsapp_1.png?v=1774686774\" alt=\"WhatsApp Icon\">\n  <span>Buy on WhatsApp</span>\n</a>\n\n<script>\ndocument.addEventListener(\"DOMContentLoaded\", function () {\n  var btn = document.getElementById(\"whatsappBtn\");\n  if (!btn) return;\n\n  btn.addEventListener(\"click\", function(e) {\n    e.preventDefault();\n\n    // Safe Liquid (no quote breaking)\n    var productName = {{ product.title | json }};\n    var productUrl = \"{{ shop.url }}{{ product.url }}\";\n\n    var message = \"Hi, I want to buy this product:\\n\\n\" \n                + productName + \"\\n\" \n                + productUrl;\n\n    var url = \"https://wa.me/96178753370?text=\" + encodeURIComponent(message);\n\n    window.open(url, \"_blank\");\n  });\n});\n</script>"
+          }
+        },
+        "liquid_refYGD": {
+          "type": "liquid",
+          "settings": {
+            "liquid": "<!-- 👀 Customers Viewing Section -->\n<div id=\"product-viewers-section\" style=\"margin-top: -18px; margin-bottom: -12px; font-size: 14px; font-family: inherit; display: flex; align-items: center; gap: 6px;\">\n  👀 <span id=\"viewer-count\" style=\"color: #efe4bf; font-weight: 600;\">25</span>\n  <span style=\"color: #1e1e1e;\">customers are viewing this product right now</span>\n</div>\n\n<script>\n  document.addEventListener(\"DOMContentLoaded\", function () {\n    const min = 2;\n    const max = 9;\n    const randomCount = Math.floor(Math.random() * (max - min + 1)) + min;\n    const viewerElement = document.getElementById(\"viewer-count\");\n    if (viewerElement) {\n      viewerElement.textContent = randomCount;\n    }\n  });\n</script>"
+          }
+        },
+        "liquid_KqBEcN": {
+          "type": "liquid",
+          "disabled": true,
+          "settings": {
+            "liquid": "<div class=\"mothersday-bundle-timer\">\n  <div class=\"rbt-label\">\n  🐣 Easter Sale Ends In:\n</div>\n\n  <div class=\"rbt-values\">\n    <div class=\"rbt-time-box\">\n      <span id=\"rbt-days\">00</span>\n      <small>Days</small>\n    </div>\n    <div class=\"rbt-time-box\">\n      <span id=\"rbt-hours\">00</span>\n      <small>Hours</small>\n    </div>\n    <div class=\"rbt-time-box\">\n      <span id=\"rbt-minutes\">00</span>\n      <small>Minutes</small>\n    </div>\n    <div class=\"rbt-time-box\">\n      <span id=\"rbt-seconds\">00</span>\n      <small>Seconds</small>\n    </div>\n  </div>\n</div>\n\n<style>\n\n.mothersday-bundle-timer{\n  margin:0 !important;\n  padding:12px 10px !important;\n  text-align:center;\n  background:#efe4bf\n;\n}\n\n.rbt-label{\n  font-size:15px;\n  font-weight:700;\n  margin-bottom:8px;\n  color:#000;\n}\n\n.rbt-values{\n  display:flex;\n  justify-content:center;\n  gap:6px;\n  margin-bottom:8px;\n}\n\n.rbt-time-box{\n  background:#ffffff;\n  color:#000;\n  padding:6px 6px;\n  min-width:50px;\n  text-align:center;\n  border-radius:5px;\n  box-shadow:0 1px 4px rgba(0,0,0,0.08);\n}\n\n.rbt-time-box span{\n  display:block;\n  font-size:16px;\n  font-weight:800;\n  line-height:1.1;\n}\n\n.rbt-time-box small{\n  font-size:8px;\n  text-transform:uppercase;\n  letter-spacing:0.05em;\n  margin-top:2px;\n  display:block;\n}\n\n.rbt-cta-button{\n  width:100%;\n  margin-top:6px;\n  background:#ffffff;\n  border:2px solid #ffffff;\n  color:#C46B78;\n  text-decoration:none;\n  display:inline-block;\n  padding:8px 0;\n  font-weight:700;\n  border-radius:5px;\n  font-size:13px;\n  transition:all .25s ease;\n}\n\n.rbt-cta-button:hover{\n  background:#f8e4e7;\n  border-color:#f8e4e7;\n}\n\n/* Desktop layout */\n@media (min-width: 768px){\n\n.mothersday-bundle-timer{\n  display:flex;\n  align-items:center;\n  justify-content:center;\n  gap:18px;\n  padding:14px 20px !important;\n}\n\n.rbt-label{\n  margin-bottom:0;\n  font-size:18px;\n}\n\n.rbt-values{\n  margin-bottom:0;\n  gap:10px;\n}\n\n/* Bigger countdown boxes */\n.rbt-time-box{\n  padding:10px 12px;\n  min-width:70px;\n}\n\n.rbt-time-box span{\n  font-size:26px;\n}\n\n.rbt-time-box small{\n  font-size:10px;\n}\n\n/* Smaller button on same line */\n.rbt-cta-button{\n  width:auto;\n  margin-top:0;\n  padding:10px 18px;\n  font-size:14px;\n}\n\n}\n</style>\n\n<script>\n/* Dynamic: ends in 2 days + 20 hours from NOW */\nconst now = new Date().getTime();\nconst endDate = now + ((2 * 24 + 20) * 60 * 60 * 1000);\n\nsetInterval(function() {\n  const currentTime = new Date().getTime();\n  const distance = endDate - currentTime;\n\n  if (distance <= 0) {\n    document.getElementById(\"rbt-days\").innerHTML = \"00\";\n    document.getElementById(\"rbt-hours\").innerHTML = \"00\";\n    document.getElementById(\"rbt-minutes\").innerHTML = \"00\";\n    document.getElementById(\"rbt-seconds\").innerHTML = \"00\";\n    return;\n  }\n\n  const days = Math.floor(distance / (1000 * 60 * 60 * 24));\n  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));\n  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));\n  const seconds = Math.floor((distance % (1000 * 60)) / 1000);\n\n  document.getElementById(\"rbt-days\").innerHTML = String(days).padStart(2, '0');\n  document.getElementById(\"rbt-hours\").innerHTML = String(hours).padStart(2, '0');\n  document.getElementById(\"rbt-minutes\").innerHTML = String(minutes).padStart(2, '0');\n  document.getElementById(\"rbt-seconds\").innerHTML = String(seconds).padStart(2, '0');\n}, 1000);\n</script>"
+          }
+        },
+        "liquid_kGr9BD": {
+          "type": "liquid",
+          "disabled": true,
+          "settings": {
+            "liquid": "<div class=\"delivery-premium\">\n  <div class=\"delivery-label\">\n    <span class=\"status-dot\"></span>\n    Delivery time\n  </div>\n\n  <div class=\"delivery-text\">\n    Order now · Arrives by <strong id=\"delivery-dates\"></strong>\n  </div>\n</div>\n\n<style>\n  .delivery-premium {\n    margin: 14px 0;\n    padding: 12px 14px;\n    border: 1px solid rgba(0, 0, 0, 0.08);\n    background: rgba(0, 0, 0, 0.02);\nborder-radius: 8px;\n  }\n\n  .delivery-label {\n    display: flex;\n    align-items: center;\n    gap: 6px;\n    font-size: 11px;\n    text-transform: uppercase;\n    letter-spacing: 0.08em;\n    color: rgba(0, 0, 0, 0.6);\n    margin-bottom: 6px;\n  }\n\n  .status-dot {\n    width: 6px;\n    height: 6px;\n    background: #e10600; /* urgency red */\n    border-radius: 50%;\n  }\n\n  .delivery-text {\n    font-size: 14px;\n    color: #111;\n    line-height: 1.4;\n  }\n\n  .delivery-text strong {\n    font-weight: 600;\n  }\n</style>\n\n<script>\n  (function () {\n    const minDate = new Date();\n    const maxDate = new Date();\n\n    minDate.setDate(minDate.getDate() + 2);\n    maxDate.setDate(maxDate.getDate() + 4);\n\n    const format = (date) =>\n      date.toLocaleDateString('en-US', {\n        weekday: 'short',\n        month: 'short',\n        day: 'numeric'\n      });\n\n    const el = document.getElementById('delivery-dates');\n    if (el) {\n      el.textContent = format(minDate) + ' – ' + format(maxDate);\n    }\n  })();\n</script>"
+          }
+        },
+        "liquid_AJcHk8": {
+          "type": "liquid",
+          "settings": {
+            "liquid": "<div class=\"delivery-premium\">\n  <div class=\"delivery-label\">\n    <span class=\"status-dot\"></span>\n    Delivery time\n  </div>\n\n  <div class=\"delivery-text\">\n    Order now · Arrives by <strong id=\"delivery-dates\"></strong>\n  </div>\n</div>\n\n<style>\n  .delivery-premium {\n    margin: 14px 0;\n    padding: 12px 14px;\n    border: 1px solid rgba(0, 0, 0, 0.08);\n    background: rgba(0, 0, 0, 0.02);\n    border-radius: 8px;\n  }\n\n  .delivery-label {\n    display: flex;\n    align-items: center;\n    gap: 6px;\n    font-size: 11px;\n    text-transform: uppercase;\n    letter-spacing: 0.08em;\n    color: rgba(0, 0, 0, 0.6);\n    margin-bottom: 6px;\n  }\n\n  .status-dot {\n    width: 6px;\n    height: 6px;\n    background: #e10600;\n    border-radius: 50%;\n  }\n\n  .delivery-text {\n    font-size: 14px;\n    color: #111;\n    line-height: 1.4;\n  }\n\n  .delivery-text strong {\n    font-weight: 600;\n  }\n</style>\n\n<script>\n  (function () {\n\n    function addBusinessDays(date, days) {\n      let result = new Date(date);\n      let added = 0;\n\n      while (added < days) {\n        result.setDate(result.getDate() + 1);\n        const day = result.getDay();\n\n        // Skip Saturday (6) and Sunday (0)\n        if (day !== 0 && day !== 6) {\n          added++;\n        }\n      }\n\n      return result;\n    }\n\n    const today = new Date();\n\n    const minDate = addBusinessDays(today, 4);\n    const maxDate = addBusinessDays(today, 5);\n\n    const format = (date) =>\n      date.toLocaleDateString('en-US', {\n        weekday: 'short',\n        month: 'short',\n        day: 'numeric'\n      });\n\n    const el = document.getElementById('delivery-dates');\n    if (el) {\n      el.textContent = format(minDate) + ' – ' + format(maxDate);\n    }\n\n  })();\n</script>"
+          }
+        },
+        "liquid_zY6yzP": {
+          "type": "liquid",
+          "disabled": true,
+          "settings": {
+            "liquid": "<div class=\"delivery-warning\">\n  <div class=\"warning-header\">\n    <span class=\"warning-icon\">📦</span>\n    <strong>Shipping Update</strong>\n  </div>\n  <p>\n    Due to the current situation in Lebanon, deliveries might occasionally take a little longer than usual. \n    Our team is working hard to get your order to you as quickly as possible — thank you for your patience. \n  </p>\n</div>\n\n<style>\n.delivery-warning{\n  margin-top:10px;\n  padding:12px 14px;\n  border-radius:8px;\n  background:#f8f9fb;\n  border:1px solid rgba(0,0,0,0.08);\n  font-size:13px;\n  line-height:1.45;\n}\n\n.warning-header{\n  display:flex;\n  align-items:center;\n  gap:6px;\n  margin-bottom:4px;\n}\n\n.warning-icon{\n  font-size:14px;\n}\n\n.delivery-warning strong{\n  font-size:12px;\n  letter-spacing:0.05em;\n  text-transform:uppercase;\n  color:#0B1F3A;\n}\n\n.delivery-warning p{\n  margin:0;\n  color:#444;\n}\n</style>"
+          }
+        },
+        "description_WC4WjJ": {
+          "type": "description",
+          "settings": {
+            "collapse_content": true,
+            "show_below_gallery": false
+          }
+        },
+        "complementary_products_AikVnR": {
+          "type": "complementary_products",
+          "settings": {
+            "title": "96% of people also bought these perfumes:",
+            "products_count": 3,
+            "show_below_gallery": true,
+            "stack_products": true,
+            "show_quick_buy": true
+          }
+        },
+        "feature_with_icon_3MaaMg": {
+          "type": "feature_with_icon",
+          "settings": {
+            "text": "Quality Guarantee",
+            "link": "",
+            "icon": "none",
+            "custom_icon": "shopify://shop_images/perfume_2.png",
+            "icon_width": 20,
+            "background": "#ffffff",
+            "text_color": "#000000",
+            "border_color": ""
+          }
+        },
+        "feature_with_icon_ck9BLk": {
+          "type": "feature_with_icon",
+          "settings": {
+            "text": "Make Your Home Smell Better",
+            "link": "",
+            "icon": "none",
+            "custom_icon": "shopify://shop_images/guarantee-certificate_2.png",
+            "icon_width": 20,
+            "background": "#ffffff",
+            "text_color": "#000000",
+            "border_color": ""
+          }
+        },
+        "feature_with_icon_Hj9mRm": {
+          "type": "feature_with_icon",
+          "settings": {
+            "text": "Secure Packaging Guarantee",
+            "link": "",
+            "icon": "none",
+            "custom_icon": "shopify://shop_images/box_1.png",
+            "icon_width": 20,
+            "background": "#ffffff",
+            "text_color": "#000000",
+            "border_color": ""
+          }
+        },
+        "feature_with_icon_jj4FTa": {
+          "type": "feature_with_icon",
+          "settings": {
+            "text": "Long-Lasting Scent Guarantee",
+            "link": "",
+            "icon": "none",
+            "custom_icon": "shopify://shop_images/hourglass_1.png",
+            "icon_width": 20,
+            "background": "#ffffff",
+            "text_color": "#000000",
+            "border_color": ""
+          }
+        }
+      },
+      "block_order": [
+        "liquid_AKGYtd",
+        "liquid_k7Hm3i",
+        "title",
+        "price",
+        "liquid_zWJpbq",
+        "liquid_rF94Ec",
+        "offers_U8LDkb",
+        "variant_picker",
+        "quantity_selector",
+        "buy_buttons",
+        "liquid_nBwbdw",
+        "liquid_refYGD",
+        "liquid_KqBEcN",
+        "liquid_kGr9BD",
+        "liquid_AJcHk8",
+        "liquid_zY6yzP",
+        "description_WC4WjJ",
+        "complementary_products_AikVnR",
+        "feature_with_icon_3MaaMg",
+        "feature_with_icon_ck9BLk",
+        "feature_with_icon_Hj9mRm",
+        "feature_with_icon_jj4FTa"
+      ],
+      "custom_css": [
+        "h1 {margin-top: -20px; margin-bottom: -8px;}"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "allow_transparent_header": false,
+        "transparent_header_use_primary_colors": false,
+        "container_size": "xl",
+        "product_info_size": 35,
+        "show_sticky_add_to_cart": true,
+        "center_basic_info": false,
+        "desktop_media_layout": "grid",
+        "desktop_media_grid_gap": 30,
+        "mobile_controls": "dots",
+        "enable_media_autoplay": false,
+        "enable_video_looping": true,
+        "enable_image_zoom": false,
+        "max_image_zoom_level": 3
+      }
+    },
+    "slideshow_arnYTF": {
+      "type": "slideshow",
+      "blocks": {
+        "image_XLQjP3": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/rava_webiste_middle_easter.jpg",
+            "subheading": "",
+            "title": "",
+            "mobile_text_position": "place-self-center text-center",
+            "desktop_text_position": "sm:place-self-center sm:text-center",
+            "content_max_width": 780,
+            "button_1_text": "",
+            "button_1_link": "shopify://collections/home-spray-perfume-bundles",
+            "button_1_style": "solid",
+            "button_1_background": "#ffffff",
+            "button_1_text_color": "#000000",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "button_2_background": "#ffffff",
+            "button_2_text_color": "#000000",
+            "background": "",
+            "background_opacity": 0,
+            "text_color": "#ffffff",
+            "border_color": "",
+            "gradient_overlay": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_XLQjP3"
+      ],
+      "disabled": true,
+      "name": "t:sections.slideshow.presets.slideshow.name",
+      "settings": {
+        "allow_transparent_header": true,
+        "show_next_section_button": false,
+        "media_size": "auto",
+        "show_initial_transition": false,
+        "autoplay": true,
+        "autoplay_pause_on_video": true,
+        "cycle_speed": 5,
+        "background": "#000000",
+        "controls_color": "#ffffff"
+      }
+    },
+    "related_products_d83Vyy": {
+      "type": "related-products",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "hide_product_information": false,
+        "stack_products": false,
+        "recommendations_count": 10,
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 4,
+        "horizontal_spacing_factor": 1,
+        "vertical_spacing_factor": 1,
+        "subheading": "",
+        "title": "96% Of Customers Also Bought This",
+        "content": ""
+      }
+    },
+    "image_with_text_p3cing": {
+      "type": "image-with-text",
+      "blocks": {
+        "subheading_dAEhn4": {
+          "type": "subheading",
+          "settings": {
+            "text": "★★★★★ 4.8/5 stars | 40,000+ customers"
+          }
+        },
+        "heading_j7GHUf": {
+          "type": "heading",
+          "settings": {
+            "text": "The Perfect Scent Duo, Your Perfume & Home Spray",
+            "heading_tag": "h2"
+          }
+        },
+        "richtext_ijqWKG": {
+          "type": "richtext",
+          "settings": {
+            "content": "<p>Our bundles are inspired by the world’s most iconic fragrances. <strong>We recreate the scents you love and transform them into long-lasting home sprays & perfumes </strong>designed for your space.</p>"
+          }
+        }
+      },
+      "block_order": [
+        "subheading_dAEhn4",
+        "heading_j7GHUf",
+        "richtext_ijqWKG"
+      ],
+      "custom_css": [
+        ".h1 {text-align: left;}",
+        ".h6 {text-align: left;}",
+        ".prose {text-align: left;}"
+      ],
+      "name": "t:sections.image_with_text.presets.image_with_text.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": true,
+        "image": "{{ product.featured_image }}",
+        "reveal_on_scroll": true,
+        "image_position": "start",
+        "content_width": "sm",
+        "remove_vertical_spacing": true
+      }
+    },
+    "viral_videos_CJ9TaH": {
+      "type": "viral-videos",
+      "blocks": {
+        "item_UDgGhq": {
+          "type": "item",
+          "settings": {
+            "video": "shopify://files/videos/JH-38.3 int male.mp4",
+            "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "autoplay": true,
+            "product": "emporio-armani-stronger-with-you-absolutely",
+            "use_variants": true,
+            "modal_heading": "",
+            "modal_text": ""
+          }
+        },
+        "item_Vnkjqb": {
+          "type": "item",
+          "settings": {
+            "video": "shopify://files/videos/WhatsApp Video 2026-02-10 at 7.20.58 PM.mp4",
+            "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "autoplay": true,
+            "product": "sauvage-edt",
+            "use_variants": true,
+            "modal_heading": "",
+            "modal_text": ""
+          }
+        },
+        "item_AEGAcJ": {
+          "type": "item",
+          "settings": {
+            "video": "shopify://files/videos/AL-87-1 INT MALE.mp4",
+            "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "autoplay": true,
+            "product": "emporio-armani-stronger-with-you-absolutely",
+            "use_variants": true,
+            "modal_heading": "",
+            "modal_text": ""
+          }
+        },
+        "item_GyjCjr": {
+          "type": "item",
+          "settings": {
+            "video": "shopify://files/videos/WhatsApp Video 2026-02-10 at 7.22.40 PM.mp4",
+            "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "autoplay": true,
+            "product": "bleu-dechanei-parfum",
+            "use_variants": true,
+            "modal_heading": "",
+            "modal_text": ""
+          }
+        },
+        "item_7NMy8h": {
+          "type": "item",
+          "settings": {
+            "video": "shopify://files/videos/JH-44.1 INT FEMALE.mp4",
+            "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+            "autoplay": true,
+            "product": "burberry-body",
+            "use_variants": true,
+            "modal_heading": "",
+            "modal_text": ""
+          }
+        }
+      },
+      "block_order": [
+        "item_UDgGhq",
+        "item_Vnkjqb",
+        "item_AEGAcJ",
+        "item_GyjCjr",
+        "item_7NMy8h"
+      ],
+      "disabled": true,
+      "name": "SS - Shoppable Video",
+      "settings": {
+        "heading": "<h2>OVER 5 MILLION VIEWS ON SOCIAL MEDIA</h2>",
+        "heading_custom": false,
+        "heading_font": "josefin_sans_n4",
+        "heading_size": 28,
+        "heading_size_mobile": 28,
+        "heading_height": 130,
+        "heading_align": "center",
+        "heading_align_mobile": "center",
+        "slider_view": 5,
+        "slider_view_mobile": 1.3,
+        "slider_gap": 16,
+        "slider_gap_mobile": 16,
+        "slider_mt": 20,
+        "card_radius": 10,
+        "card_border_thickness": 0,
+        "card_shadow": true,
+        "video_ratio": "portrait",
+        "video_ratio_mobile": "portrait",
+        "video_overlay": 0.3,
+        "image_width": 44,
+        "image_width_mobile": 44,
+        "image_radius": 6,
+        "image_border_thickness": 0,
+        "title_custom": false,
+        "title_font": "josefin_sans_n4",
+        "title_size": 14,
+        "title_size_mobile": 14,
+        "title_height": 130,
+        "title_uppercase": false,
+        "price_custom": false,
+        "price_font": "josefin_sans_n4",
+        "price_size": 14,
+        "price_size_mobile": 14,
+        "price_height": 130,
+        "button": "Add To Cart",
+        "button_soldout": "Sold Out",
+        "button_custom": false,
+        "button_font": "josefin_sans_n4",
+        "button_size": 16,
+        "button_size_mobile": 16,
+        "button_padding_vertical": 10,
+        "button_padding_vertical_mobile": 10,
+        "button_padding_horizontal": 10,
+        "button_padding_horizontal_mobile": 10,
+        "reload_after_adding": false,
+        "redirect_after_adding": false,
+        "option_custom": false,
+        "option_font": "josefin_sans_n4",
+        "option_size": 12,
+        "option_size_mobile": 12,
+        "option_height": 100,
+        "option_mt": 24,
+        "variants_price_custom": false,
+        "variants_price_font": "josefin_sans_n4",
+        "variants_price_size": 14,
+        "variants_price_size_mobile": 14,
+        "variants_price_height": 100,
+        "variants_price_mt": 10,
+        "variants_price_align": "center",
+        "variants_price_align_mobile": "center",
+        "modal_width": 740,
+        "modal_width_mobile": 100,
+        "modal_radius": 16,
+        "modal_border_thickness": 0,
+        "modal_overlay": 50,
+        "close_size": 42,
+        "close_size_mobile": 42,
+        "close_radius": 8,
+        "close_border_thickness": 0,
+        "buttons_size": 48,
+        "buttons_size_mobile": 48,
+        "buttons_radius": 8,
+        "buttons_border_thickness": 0,
+        "modal_video_radius": 0,
+        "modal_video_border_thickness": 0,
+        "modal_video_ratio": "portrait",
+        "modal_video_ratio_mobile": "portrait",
+        "modal_heading_custom": false,
+        "modal_heading_font": "josefin_sans_n4",
+        "modal_heading_size": 28,
+        "modal_heading_size_mobile": 28,
+        "modal_heading_height": 130,
+        "modal_heading_align": "center",
+        "modal_heading_align_mobile": "center",
+        "modal_text_custom": false,
+        "modal_text_font": "josefin_sans_n4",
+        "modal_text_size": 16,
+        "modal_text_size_mobile": 16,
+        "modal_text_height": 130,
+        "modal_text_align": "center",
+        "modal_text_align_mobile": "center",
+        "modal_text_mt": 16,
+        "use_modal_product": true,
+        "modal_image_width": 70,
+        "modal_image_width_mobile": 66,
+        "modal_image_radius": 12,
+        "modal_title_custom": false,
+        "modal_title_font": "josefin_sans_n4",
+        "modal_title_size": 16,
+        "modal_title_size_mobile": 16,
+        "modal_title_height": 130,
+        "modal_title_uppercase": false,
+        "modal_price_custom": false,
+        "modal_price_font": "josefin_sans_n4",
+        "modal_price_size": 14,
+        "modal_price_size_mobile": 14,
+        "modal_price_height": 130,
+        "modal_button": "Add To Cart",
+        "modal_button_soldout": "Sold Out",
+        "modal_button_custom": false,
+        "modal_button_font": "josefin_sans_n4",
+        "modal_button_size": 16,
+        "modal_button_size_mobile": 16,
+        "modal_button_radius": 8,
+        "modal_button_border_thickness": 1,
+        "modal_button_mt": 16,
+        "modal_button_align": "center",
+        "modal_button_align_mobile": "center",
+        "card_bg_color": "#ffffff",
+        "card_border_color": "#000000",
+        "card_shadow_color": "#000000",
+        "video_border_color": "#000000",
+        "video_overlay_color": "#000000",
+        "image_border_color": "#000000",
+        "title_color": "#ffffff",
+        "price_color": "#ffffff",
+        "button_color": "#ffffff",
+        "button_hover_color": "#ffffff",
+        "button_bg_color": "#dd9ea6",
+        "button_bg_hover_color": "#dd9ea6",
+        "arrow_bg_color": "#dd9ea6",
+        "arrow_border_color": "#ffffff",
+        "arrow_icon_color": "#ffffff",
+        "option_color": "#000000",
+        "variants_price_color": "#000000",
+        "modal_bg_color": "#ffffff",
+        "modal_border_color": "#000000",
+        "close_bg_color": "#ffffff",
+        "close_border_color": "#000000",
+        "close_icon_color": "#ffffff",
+        "buttons_bg_color": "#ffffff",
+        "buttons_border_color": "#000000",
+        "buttons_icon_color": "#ffffff",
+        "modal_video_border_color": "#000000",
+        "modal_content_bg_color": "#ffffff",
+        "modal_heading_color": "#000000",
+        "modal_text_color": "#000000",
+        "modal_title_color": "#000000",
+        "modal_price_color": "#000000",
+        "modal_button_color": "#ffffff",
+        "modal_button_hover_color": "#000000",
+        "modal_button_bg_color": "#000000",
+        "modal_button_bg_hover_color": "#ffffff",
+        "modal_button_border_color": "#000000",
+        "modal_button_border_hover_color": "#000000",
+        "heading_color": "#000000",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "border_color": "#000000",
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "padding_top": 36,
+        "padding_bottom": 36,
+        "padding_horizontal": 5,
+        "padding_horizontal_mobile": 1.5,
+        "full_width": false,
+        "content_width": 140,
+        "border_thickness": 0,
+        "lazy": true
+      }
+    },
+    "productvideos_efbxM6": {
+      "type": "productvideos",
+      "blocks": {
+        "item_xFxwUT": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2025-09-14_at_8.09.34_PM.png",
+            "video": "shopify://files/videos/JH-38.3 int male.mp4",
+            "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+          }
+        },
+        "item_aWhm89": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2025-09-14_at_8.11.01_PM.png",
+            "video": "shopify://files/videos/AL-89-2 INT MALE.mp4",
+            "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+          }
+        },
+        "item_wq49XB": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2025-09-14_at_8.11.57_PM.png",
+            "video": "shopify://files/videos/JH-44.1 INT FEMALE.mp4",
+            "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+          }
+        },
+        "item_633z94": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2025-09-14_at_8.13.53_PM.png",
+            "video": "shopify://files/videos/AL-87-1 INT MALE.mp4",
+            "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+          }
+        },
+        "item_U6Fjbz": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2025-09-14_at_8.18.33_PM.png",
+            "video": "shopify://files/videos/JH-42.3 INT FEMALE.mp4",
+            "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+          }
+        },
+        "item_YHDmTG": {
+          "type": "item",
+          "settings": {
+            "image": "shopify://shop_images/Screenshot_2025-09-14_at_8.16.41_PM.png",
+            "video": "shopify://files/videos/AL-92-1 int female.mp4",
+            "video_url": "https://www.youtube.com/watch?v=_9VUPq3SxOc"
+          }
+        }
+      },
+      "block_order": [
+        "item_xFxwUT",
+        "item_aWhm89",
+        "item_wq49XB",
+        "item_633z94",
+        "item_U6Fjbz",
+        "item_YHDmTG"
+      ],
+      "disabled": true,
+      "name": "SS - Scrolling videos",
+      "settings": {
+        "scrolling_velocity": 100,
+        "scrolling_velocity_mobile": 100,
+        "reverse_direction": false,
+        "pause_hover": true,
+        "item_width": 270,
+        "item_width_mobile": 240,
+        "item_gap": 32,
+        "item_gap_mobile": 32,
+        "item_radius": 16,
+        "item_border_thickness": 4,
+        "image_ratio": "portrait",
+        "image_ratio_mobile": "portrait",
+        "player_size": 56,
+        "player_size_mobile": 52,
+        "modal_width": 30,
+        "modal_width_mobile": 70,
+        "modal_radius": 8,
+        "modal_border_thickness": 0,
+        "modal_ratio": "portrait",
+        "modal_ratio_mobile": "portrait",
+        "modal_controls": false,
+        "player_color": "#ffffff",
+        "item_border_color": "#000000",
+        "item_border_gradient": "linear-gradient(90deg, rgba(232, 173, 35, 1), rgba(248, 226, 51, 1) 100%)",
+        "modal_border_color": "#000000",
+        "close_bg_color": "#ffffff",
+        "close_icon_color": "#000000",
+        "background_color": "#ffffff",
+        "background_gradient": "",
+        "border_color": "#000000",
+        "margin_top": 0,
+        "margin_bottom": 0,
+        "margin_horizontal": 0,
+        "margin_horizontal_mobile": 0,
+        "padding_top": 52,
+        "padding_bottom": 52,
+        "full_width": true,
+        "content_width": 120,
+        "border_thickness": 0,
+        "section_radius": 0,
+        "lazy": true
+      }
+    },
+    "scrolling_content_pGMGY9": {
+      "type": "scrolling-content",
+      "blocks": {
+        "text_tLCDG4": {
+          "type": "text",
+          "settings": {
+            "text": "<strong>Make Your Home Smell Better</strong>"
+          }
+        }
+      },
+      "block_order": [
+        "text_tLCDG4"
+      ],
+      "disabled": true,
+      "name": "t:sections.scrolling_content.presets.scrolling_content.name",
+      "settings": {
+        "separate_section_with_border": false,
+        "scrolling_speed": 0.3,
+        "scroll_direction": "left",
+        "pause_on_hover": false,
+        "text_font": "heading",
+        "text_font_size_mobile": 18,
+        "text_font_size_desktop": 20,
+        "section_vertical_spacing_mobile": 12,
+        "section_vertical_spacing_desktop": 80,
+        "item_horizontal_spacing_mobile": 80,
+        "item_horizontal_spacing_desktop": 120,
+        "background": "#dd9ea6",
+        "text_color": "#ffffff"
+      }
+    },
+    "1759003986202c2194": {
+      "type": "apps",
+      "blocks": {
+        "revie_reviews_por_whatsapp_app_block_3_qrADjX": {
+          "type": "shopify://apps/revie-reviews-por-whatsapp/blocks/app-block-3/32a49769-cfbe-4f29-8b19-1ae20fdb2abe",
+          "settings": {
+            "title": "Reviews",
+            "format": "2",
+            "title_color": "#000000",
+            "title_size": 24,
+            "title_pos": "flex-start",
+            "star_color": "#000000",
+            "size": 15,
+            "back_color": "#ffffff",
+            "text_color": "#000000",
+            "size_text": 15,
+            "name": "2",
+            "truncate": "1",
+            "max_reviews": 20,
+            "image": "3",
+            "from": "1",
+            "width_elements": 4,
+            "content_padding": 22,
+            "mobil_content_padding": 16,
+            "movil_count": "1.5",
+            "max_width": 900
+          }
+        }
+      },
+      "block_order": [
+        "revie_reviews_por_whatsapp_app_block_3_qrADjX"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": true,
+        "remove_vertical_spacing": true,
+        "remove_horizontal_spacing": false
+      }
+    }
+  },
+  "order": [
+    "main",
+    "slideshow_arnYTF",
+    "related_products_d83Vyy",
+    "image_with_text_p3cing",
+    "viral_videos_CJ9TaH",
+    "productvideos_efbxM6",
+    "scrolling_content_pGMGY9",
+    "1759003986202c2194"
+  ]
+}

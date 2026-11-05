@@ -1,0 +1,374 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "story_strip_RzqHbw": {
+      "type": "story-strip",
+      "blocks": {
+        "circle_AVK8nD": {
+          "type": "circle",
+          "settings": {
+            "image": "shopify://shop_images/Beige_Chanel_ad44d9e0-bfc5-4036-a405-5ae1228b6411.jpg",
+            "label": "tanning oil",
+            "collection": "tanning-oils",
+            "link": "",
+            "ring_color_1": "#f58529",
+            "ring_color_2": "#dd2a7b"
+          }
+        },
+        "circle_qaGqfj": {
+          "type": "circle",
+          "settings": {
+            "image": "shopify://shop_images/212_Herrera_Men_Roll_On.jpg",
+            "label": "ROLL ON",
+            "collection": "roll-on",
+            "link": "",
+            "ring_color_1": "#f58529",
+            "ring_color_2": "#dd2a7b"
+          }
+        },
+        "close_friends_BnJY3J": {
+          "type": "close_friends",
+          "settings": {
+            "image": "shopify://shop_images/BleuElectriqueYvesSaintLaurent_471cc88c-071d-4dbf-9c12-e8965ba647f7.jpg",
+            "label": "perfumes",
+            "collection": "all-perfumes",
+            "link": "",
+            "close_friends_color": "#4cd964"
+          }
+        },
+        "circle_PkPgxz": {
+          "type": "circle",
+          "settings": {
+            "image": "shopify://shop_images/Amarige_Givenchy_Hair_Mist.jpg",
+            "label": "HAIR MIST",
+            "collection": "hair-mist",
+            "link": "",
+            "ring_color_1": "#f58529",
+            "ring_color_2": "#dd2a7b"
+          }
+        },
+        "circle_AyY6G9": {
+          "type": "circle",
+          "settings": {
+            "image": "shopify://shop_images/212_Herrera_Men_Body_Splash.jpg",
+            "label": "BODY SPLASH",
+            "collection": "body-splash",
+            "link": "",
+            "ring_color_1": "#f58529",
+            "ring_color_2": "#dd2a7b"
+          }
+        }
+      },
+      "block_order": [
+        "circle_AVK8nD",
+        "circle_qaGqfj",
+        "close_friends_BnJY3J",
+        "circle_PkPgxz",
+        "circle_AyY6G9"
+      ],
+      "name": "Circle Nav Strip",
+      "settings": {
+        "title": "",
+        "title_color": "#000000",
+        "label_color": "#000000",
+        "bg_color": "#ffffff"
+      }
+    },
+    "custom_liquid_TNriYU": {
+      "type": "custom-liquid",
+      "disabled": true,
+      "name": "t:sections.custom_liquid.presets.custom_liquid.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "remove_vertical_spacing": true,
+        "remove_horizontal_spacing": true,
+        "liquid": "<div class=\"happy-customers\">\n  <div class=\"avatars\">\n    <img src=\"https://img.freepik.com/free-photo/stylish-african-american-woman-smiling_23-2148770405.jpg\" alt=\"Customer 1\" class=\"avatar\">\n    <img src=\"https://thumbs.dreamstime.com/b/beautiful-african-american-woman-relaxing-outside-happy-middle-aged-smiling-46298787.jpg\" alt=\"Customer 2\" class=\"avatar\">\n    <img src=\"https://media.istockphoto.com/id/1320651997/photo/young-woman-close-up-isolated-studio-portrait.jpg?s=612x612&w=0&k=20&c=lV6pxz-DknISGT2jjiSvUmSaw0hpMDf-dBpT8HTSAUI=\" alt=\"Customer 3\" class=\"avatar\">\n  </div>\n  <span class=\"text\" id=\"rotating-text\">40,000+ HAPPY CUSTOMERS</span>\n</div>\n\n<style>\n.happy-customers {\n  display: flex;\n  align-items: center;\n  background-image: linear-gradient(45deg, #f0f0bc\n, #000000 95%);\n  padding: 5px 50px;\n  font-family: Arial, sans-serif;\n  font-size: 12px;\n  color: white;\n}\n\n.avatars {\n  display: flex;\n  margin-right: 10px;\n  margin-left: 10px;\n}\n\n.avatar {\n  width: 22px;\n  height: 22px;\n  border-radius: 50%;\n  border: 2px solid white;\n  margin-left: -7px;\n  object-fit: cover;\n}\n\n.text {\n  font-weight: bold;\n  text-transform: uppercase;\n  letter-spacing: 1px;\n  transition: opacity 0.4s ease;\n}\n</style>\n\n<script>\n  (function () {\n    const messages = [\n      \"40,000+ HAPPY CUSTOMERS\",\n      \"BUY 1 BUNDLE GET 1 FREE!\",\n      \"NEW HOME SPRAYS JUST DROPPED\",\n      \"SALE IS ENDING VERY SOON\"\n    ];\n\n    let index = 0;\n    const textEl = document.getElementById(\"rotating-text\");\n\n    setInterval(() => {\n      textEl.style.opacity = \"0\";\n\n      setTimeout(() => {\n        index = (index + 1) % messages.length;\n        textEl.textContent = messages[index];\n        textEl.style.opacity = \"1\";\n      }, 400);\n    }, 3500);\n  })();\n</script>",
+        "text_alignment": "center"
+      }
+    },
+    "scrolling_content_JJiMeT": {
+      "type": "scrolling-content",
+      "blocks": {
+        "text_CTQVbV": {
+          "type": "text",
+          "settings": {
+            "text": "Welcome to our shop"
+          }
+        },
+        "text_j8EPGg": {
+          "type": "text",
+          "settings": {
+            "text": "Discover our products"
+          }
+        }
+      },
+      "block_order": [
+        "text_CTQVbV",
+        "text_j8EPGg"
+      ],
+      "disabled": true,
+      "name": "t:sections.scrolling_content.presets.scrolling_content.name",
+      "settings": {
+        "separate_section_with_border": false,
+        "scrolling_speed": 0.1,
+        "scroll_direction": "left",
+        "pause_on_hover": false,
+        "text_font": "heading",
+        "text_font_size_mobile": 10,
+        "text_font_size_desktop": 10,
+        "section_vertical_spacing_mobile": 10,
+        "section_vertical_spacing_desktop": 10,
+        "item_horizontal_spacing_mobile": 80,
+        "item_horizontal_spacing_desktop": 120,
+        "background": "",
+        "text_color": "#ffffff"
+      }
+    },
+    "collection-banner": {
+      "type": "collection-banner",
+      "custom_css": [
+        ".section-spacing {padding-top: 1px; padding-bottom: 1px;}"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "image_size": "auto",
+        "allow_transparent_header": true,
+        "show_image": false,
+        "reveal": true,
+        "enable_parallax": true,
+        "show_collection_title": true,
+        "show_collection_description": true,
+        "show_breadcrumb": false,
+        "content_width": "xxs",
+        "text_alignment": "center",
+        "overlay_color": "#000000",
+        "overlay_opacity": 30
+      }
+    },
+    "slideshow_cVpTMD": {
+      "type": "slideshow",
+      "blocks": {
+        "image_RdNaPh": {
+          "type": "image",
+          "settings": {
+            "image": "shopify://shop_images/application_middle_2_copy.webp",
+            "subheading": "",
+            "title": "",
+            "mobile_text_position": "place-self-center text-center",
+            "desktop_text_position": "sm:place-self-center sm:text-center",
+            "content_max_width": 780,
+            "button_1_text": "",
+            "button_1_link": "",
+            "button_1_style": "solid",
+            "button_1_background": "#ffffff",
+            "button_1_text_color": "#000000",
+            "button_2_text": "",
+            "button_2_link": "",
+            "button_2_style": "outline",
+            "button_2_background": "#ffffff",
+            "button_2_text_color": "#000000",
+            "background": "",
+            "background_opacity": 2,
+            "text_color": "#ffffff",
+            "border_color": "",
+            "gradient_overlay": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_RdNaPh"
+      ],
+      "name": "t:sections.slideshow.presets.slideshow.name",
+      "settings": {
+        "allow_transparent_header": false,
+        "show_next_section_button": false,
+        "media_size": "auto",
+        "show_initial_transition": false,
+        "autoplay": true,
+        "autoplay_pause_on_video": true,
+        "cycle_speed": 5,
+        "background": "#000000",
+        "controls_color": "#ffffff"
+      }
+    },
+    "rava_offer_timer_3WJFk8": {
+      "type": "rava-offer-timer",
+      "name": "RAVA offer timer",
+      "settings": {
+        "text": "BUY 1 GET 2 offer is ending soon",
+        "end_datetime": "2026-11-05T00:00:00+02:00",
+        "when_expired": "hide",
+        "expired_text": "The offer has ended",
+        "background": "#000000",
+        "text_color": "#ebe1a6",
+        "padding_mobile": 12,
+        "padding_desktop": 14,
+        "padding_bottom_mobile": 18,
+        "padding_bottom_desktop": 20
+      }
+    },
+    "custom_liquid_jkPpFK": {
+      "type": "custom-liquid",
+      "disabled": true,
+      "name": "t:sections.custom_liquid.presets.custom_liquid.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": true,
+        "remove_vertical_spacing": true,
+        "remove_horizontal_spacing": true,
+        "liquid": "<div class=\"mothersday-bundle-timer\">\n  <div class=\"rbt-label\">\n  🐣 Easter Sale Ends In:\n</div>\n\n  <div class=\"rbt-values\">\n    <div class=\"rbt-time-box\">\n      <span id=\"rbt-days\">00</span>\n      <small>Days</small>\n    </div>\n    <div class=\"rbt-time-box\">\n      <span id=\"rbt-hours\">00</span>\n      <small>Hours</small>\n    </div>\n    <div class=\"rbt-time-box\">\n      <span id=\"rbt-minutes\">00</span>\n      <small>Minutes</small>\n    </div>\n    <div class=\"rbt-time-box\">\n      <span id=\"rbt-seconds\">00</span>\n      <small>Seconds</small>\n    </div>\n  </div>\n</div>\n\n<style>\n\n.mothersday-bundle-timer{\n  margin:0 !important;\n  padding:12px 10px !important;\n  text-align:center;\n  background:#efe4bf\n;\n}\n\n.rbt-label{\n  font-size:15px;\n  font-weight:700;\n  margin-bottom:8px;\n  color:#000;\n}\n\n.rbt-values{\n  display:flex;\n  justify-content:center;\n  gap:6px;\n  margin-bottom:8px;\n}\n\n.rbt-time-box{\n  background:#ffffff;\n  color:#000;\n  padding:6px 6px;\n  min-width:50px;\n  text-align:center;\n  border-radius:5px;\n  box-shadow:0 1px 4px rgba(0,0,0,0.08);\n}\n\n.rbt-time-box span{\n  display:block;\n  font-size:16px;\n  font-weight:800;\n  line-height:1.1;\n}\n\n.rbt-time-box small{\n  font-size:8px;\n  text-transform:uppercase;\n  letter-spacing:0.05em;\n  margin-top:2px;\n  display:block;\n}\n\n.rbt-cta-button{\n  width:100%;\n  margin-top:6px;\n  background:#ffffff;\n  border:2px solid #ffffff;\n  color:#C46B78;\n  text-decoration:none;\n  display:inline-block;\n  padding:8px 0;\n  font-weight:700;\n  border-radius:5px;\n  font-size:13px;\n  transition:all .25s ease;\n}\n\n.rbt-cta-button:hover{\n  background:#f8e4e7;\n  border-color:#f8e4e7;\n}\n\n/* Desktop layout */\n@media (min-width: 768px){\n\n.mothersday-bundle-timer{\n  display:flex;\n  align-items:center;\n  justify-content:center;\n  gap:18px;\n  padding:14px 20px !important;\n}\n\n.rbt-label{\n  margin-bottom:0;\n  font-size:18px;\n}\n\n.rbt-values{\n  margin-bottom:0;\n  gap:10px;\n}\n\n/* Bigger countdown boxes */\n.rbt-time-box{\n  padding:10px 12px;\n  min-width:70px;\n}\n\n.rbt-time-box span{\n  font-size:26px;\n}\n\n.rbt-time-box small{\n  font-size:10px;\n}\n\n/* Smaller button on same line */\n.rbt-cta-button{\n  width:auto;\n  margin-top:0;\n  padding:10px 18px;\n  font-size:14px;\n}\n\n}\n</style>\n\n<script>\n/* Dynamic: ends in 2 days + 20 hours from NOW */\nconst now = new Date().getTime();\nconst endDate = now + ((2 * 24 + 20) * 60 * 60 * 1000);\n\nsetInterval(function() {\n  const currentTime = new Date().getTime();\n  const distance = endDate - currentTime;\n\n  if (distance <= 0) {\n    document.getElementById(\"rbt-days\").innerHTML = \"00\";\n    document.getElementById(\"rbt-hours\").innerHTML = \"00\";\n    document.getElementById(\"rbt-minutes\").innerHTML = \"00\";\n    document.getElementById(\"rbt-seconds\").innerHTML = \"00\";\n    return;\n  }\n\n  const days = Math.floor(distance / (1000 * 60 * 60 * 24));\n  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));\n  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));\n  const seconds = Math.floor((distance % (1000 * 60)) / 1000);\n\n  document.getElementById(\"rbt-days\").innerHTML = String(days).padStart(2, '0');\n  document.getElementById(\"rbt-hours\").innerHTML = String(hours).padStart(2, '0');\n  document.getElementById(\"rbt-minutes\").innerHTML = String(minutes).padStart(2, '0');\n  document.getElementById(\"rbt-seconds\").innerHTML = String(seconds).padStart(2, '0');\n}, 1000);\n</script>",
+        "text_alignment": "center"
+      }
+    },
+    "multi_column_XLnrTW": {
+      "type": "multi-column",
+      "blocks": {
+        "image_with_text_rkdCK9": {
+          "type": "image_with_text",
+          "settings": {
+            "title": "<strong>Get 1 Perfume for FREE with Every 1 Perfume You Buy</strong>",
+            "heading_tag": "h3",
+            "content": "<p>THERE IS NO LIMIT! </p><p>Example:<br/><strong>Buy 1 Perfume, Get 1 for FREE<br/>Buy 3 Perfumes, Get 3 for FREE<br/>Buy 10 Perfumes, Get 10 for FREE</strong></p><p></p>",
+            "link_url": "",
+            "link_text": ""
+          }
+        },
+        "image_with_text_DwDjn7": {
+          "type": "image_with_text",
+          "disabled": true,
+          "settings": {
+            "title": "THERE IS NO LIMIT!",
+            "heading_tag": "h6",
+            "content": "<p>Exam<br/>j</p>",
+            "link_url": "",
+            "link_text": ""
+          }
+        },
+        "image_with_text_R3aYty": {
+          "type": "image_with_text",
+          "disabled": true,
+          "settings": {
+            "title": "Buy <strong>Any 4+</strong> Perfumes for 25% Off",
+            "heading_tag": "h6",
+            "content": "",
+            "link_url": "",
+            "link_text": ""
+          }
+        }
+      },
+      "block_order": [
+        "image_with_text_rkdCK9",
+        "image_with_text_DwDjn7",
+        "image_with_text_R3aYty"
+      ],
+      "disabled": true,
+      "name": "t:sections.multi_column.presets.multi_column.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "columns_per_row": 3,
+        "stack_on_mobile": true,
+        "overlap_image": false,
+        "content_alignment": "center",
+        "text_alignment": "center",
+        "spacing": "xs",
+        "subheading": "",
+        "title": "",
+        "content": ""
+      }
+    },
+    "main": {
+      "type": "main-collection",
+      "blocks": {
+        "push_promo_npNLH6": {
+          "type": "push_promo",
+          "settings": {
+            "color_scheme": "scheme-1",
+            "bordered": true,
+            "position": 10,
+            "size": "1",
+            "media_type": "image",
+            "overlay_color": "#0000004d",
+            "content_position": "align-self-center",
+            "alignment": "center",
+            "subheading": "BLACK NOVEMBER OFFER IS ENDING SOON",
+            "heading": "BUY 1 PERFUME & GET 1 ROLL ON + 1 HAIR MIST FOR FREE",
+            "heading_tag": "h4",
+            "style": "solid",
+            "link_text": "",
+            "url": ""
+          }
+        },
+        "rava_helper_BFzDHn": {
+          "type": "rava_helper",
+          "settings": {
+            "position": 38,
+            "action": "whatsapp",
+            "icon": "whatsapp",
+            "title": "Not sure which one?",
+            "text": "Our team is available on Whatsapp to help you with your purchase",
+            "button_text": "Ask on WhatsApp",
+            "whatsapp_number": "+961 78 753 370",
+            "whatsapp_message": "Hi RAVA, I'm looking at [collection] and need help choosing.",
+            "link": "",
+            "open_new_tab": false,
+            "background": "#f3f4b5"
+          }
+        }
+      },
+      "block_order": [
+        "push_promo_npNLH6",
+        "rava_helper_BFzDHn"
+      ],
+      "custom_css": [
+        "{margin-top: 4px;}"
+      ],
+      "settings": {
+        "color_scheme": "",
+        "hide_product_information": false,
+        "products_per_page": 50,
+        "products_per_row_mobile": "2",
+        "products_size_desktop": "medium",
+        "show_grid_mode_selector": true,
+        "horizontal_spacing_factor": 1,
+        "vertical_spacing_factor": 0.7,
+        "filter_layout": "sidebar",
+        "quick_links_menu": "",
+        "show_sort_by": true,
+        "show_filters": true,
+        "show_results_count": true,
+        "show_filter_group_name": false,
+        "show_filter_values_count": true,
+        "open_filters_by_default": false,
+        "show_quick_filters": true,
+        "quick_filters_all_label": "All",
+        "quick_filters_layout": "two_rows",
+        "quick_filters_gender": "For him|men\nFor her|women",
+        "quick_filters_show_brands": true,
+        "quick_filters_brand_prefix": "Brand:",
+        "quick_filters_pinned_brands": "Dior, Giorgio Armani, Yves Saint Laurent, Kayali, Hugo Boss, Paco Rabanne, Carolina Herrera, Givenchy, Versace, Gucci, Valentino, Parfums de Marly, Tom Ford, Creed",
+        "quick_filters": "For him|men\nFresh|family-fresh-citrus\nSweet|family-gourmand\nWarm & spicy|family-warm-spicy\nWoody|family-woody-earthy\nFloral|family-floral\nOud|oud\nDate night|occasion-date-night\nNight out|occasion-night-out\nOffice|occasion-work-office\nEveryday|occasion-daily-signature\nSummer|occasion-vacations-summer\nBest sellers|Best Seller\nNew in|New\nDiscontinued|Discontinued"
+      }
+    }
+  },
+  "order": [
+    "story_strip_RzqHbw",
+    "custom_liquid_TNriYU",
+    "scrolling_content_JJiMeT",
+    "collection-banner",
+    "slideshow_cVpTMD",
+    "rava_offer_timer_3WJFk8",
+    "custom_liquid_jkPpFK",
+    "multi_column_XLnrTW",
+    "main"
+  ]
+}

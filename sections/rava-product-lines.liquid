@@ -1,0 +1,1105 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  RAVA PRODUCT LINES + SCENT EXPLORER
+  ----------------------------------------------------------------------------------------------------------------------
+
+  1) "Product line" blocks: RAVA's product lines as clean portrait cards.
+  2) "Scent" blocks: a scent picker. The customer taps a scent and sees that scent in every product line, using the
+     theme's own product cards (same badges, prices and quick add / quick buy as the rest of the store), so they can
+     add any format to the cart without leaving the homepage.
+
+  Uses the theme's heading styles, colors, product cards and carousel, so it stays consistent with the store.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign line_blocks = section.blocks | where: 'type', 'line'
+  assign scent_blocks = section.blocks | where: 'type', 'scent'
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} {
+    --product-list-items-per-row: {{ section.settings.products_per_row_mobile }};
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} {
+      --product-list-items-per-row: {{ section.settings.products_per_row_desktop }};
+    }
+  }
+
+  #shopify-section-{{ section.id }} .rpl {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr); /* keeps scroll rows inside the page width */
+    gap: 2rem;
+  }
+
+  /* ---------- Line cards ---------- */
+  #shopify-section-{{ section.id }} .rpl__grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.75rem 0.75rem;
+  }
+
+  {%- if section.settings.mobile_layout == 'scroll' -%}
+    @media screen and (max-width: 699px) {
+      #shopify-section-{{ section.id }} .rpl__grid {
+        grid-template-columns: none;
+        grid-auto-flow: column;
+        grid-auto-columns: 62vw;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: none;
+        margin-inline: calc(-1 * var(--container-gutter));
+        padding-inline: var(--container-gutter);
+        scroll-padding-inline: var(--container-gutter);
+      }
+
+      #shopify-section-{{ section.id }} .rpl__grid::-webkit-scrollbar { display: none; }
+      #shopify-section-{{ section.id }} .rpl__card { scroll-snap-align: start; }
+    }
+  {%- endif -%}
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .rpl__grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2.5rem 1.25rem;
+    }
+  }
+
+  @media screen and (min-width: 1150px) {
+    #shopify-section-{{ section.id }} .rpl__grid {
+      grid-template-columns: repeat({{ line_blocks.size | at_most: 6 | at_least: 1 }}, minmax(0, 1fr));
+      gap: 1.5rem;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .rpl__card {
+    display: grid;
+    gap: 0.875rem;
+    align-content: start;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .rpl__media {
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    background: rgb(var(--text-color) / 0.05);
+  }
+
+  /* Offer badge on a line card (e.g. Perfume) */
+  #shopify-section-{{ section.id }} .rpl__badge {
+    position: absolute;
+    z-index: 1;
+    inset-block-start: 0.5rem;
+    inset-inline-start: 0.5rem;
+    max-width: calc(100% - 1rem);
+    padding: 0.25rem 0.4375rem;
+    background: #000;
+    color: {{ section.settings.highlight_color }};
+    font-family: var(--heading-font-family);
+    font-weight: 900;
+    font-size: 9px;
+    line-height: 1.3;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    text-align: start;
+    overflow: hidden;
+  }
+
+  #shopify-section-{{ section.id }} .rpl__badge::before {
+    content: "";
+    position: absolute;
+    top: -60%;
+    left: -50%;
+    width: 35%;
+    height: 220%;
+    transform: rotate(20deg);
+    background: linear-gradient(to right, rgb(255 255 255 / 0) 0%, rgb(255 255 255 / 0.35) 50%, rgb(255 255 255 / 0) 100%);
+    animation: badgeShimmer 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .rpl__badge {
+      font-size: 10px;
+      inset-block-start: 0.625rem;
+      inset-inline-start: 0.625rem;
+    }
+  }
+
+  /* Heading with the rolling yellow highlight */
+  #shopify-section-{{ section.id }} .rpl__header {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: center;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .rpl__header .h2 {
+    margin: 0;
+  }
+
+  #shopify-section-{{ section.id }} .rpl__header .rpl__intro {
+    max-width: 38rem;
+    color: rgb(var(--text-color) / 0.75);
+  }
+
+  #shopify-section-{{ section.id }} .rpl__roll {
+    display: inline-block;
+    position: relative;
+    height: 1.3em;
+    padding-inline: 0.3em;
+    vertical-align: bottom;
+    overflow: hidden;
+    background: {{ section.settings.highlight_color }};
+    color: #000;
+  }
+
+  /* Phones: the yellow box always sits on its own line, so the heading never jumps */
+  #shopify-section-{{ section.id }} .rpl__roll-wrap {
+    display: block;
+    margin-top: 0.25em;
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .rpl__roll-wrap {
+      {%- if section.settings.desktop_highlight_layout == 'inline' -%}
+        display: inline;
+        margin-top: 0;
+      {%- endif -%}
+    }
+  }
+
+  #shopify-section-{{ section.id }} .rpl__roll-track {
+    display: block;
+    transition: transform 0.5s cubic-bezier(.645, .045, .355, 1);
+  }
+
+  #shopify-section-{{ section.id }} .rpl__roll-word {
+    display: block;
+    text-align: center;
+    height: 1.3em;
+    line-height: 1.3em;
+    white-space: nowrap;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #shopify-section-{{ section.id }} .rpl__roll,
+    #shopify-section-{{ section.id }} .rpl__roll-track { transition: none; }
+    #shopify-section-{{ section.id }} .rpl__badge::before { animation: none; opacity: 0; }
+  }
+
+  #shopify-section-{{ section.id }} .rpl__media img,
+  #shopify-section-{{ section.id }} .rpl__media svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .rpl__info {
+    display: grid;
+    gap: 0.25rem;
+    text-align: {{ section.settings.card_alignment }};
+  }
+
+  #shopify-section-{{ section.id }} .rpl__name {
+    margin: 0;
+    font-family: var(--heading-font-family);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .rpl__text {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgb(var(--text-color) / 0.7);
+  }
+
+  #shopify-section-{{ section.id }} .rpl__price {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .rpl__cta {
+    font-size: 12px;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .rpl__name { font-size: 12px; }
+    #shopify-section-{{ section.id }} .rpl__text { font-size: 14px; }
+    #shopify-section-{{ section.id }} .rpl__price { font-size: 14px; }
+  }
+
+  /* ---------- Scent explorer ---------- */
+  #shopify-section-{{ section.id }} .rse {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.5rem;
+    {%- if line_blocks.size > 0 -%}
+      padding-block-start: 2.5rem;
+      border-block-start: 1px solid rgb(var(--text-color) / 0.15);
+    {%- endif -%}
+  }
+
+  #shopify-section-{{ section.id }} .rse__head {
+    display: grid;
+    gap: 0.5rem;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .rse__label {
+    margin: 0;
+    font-family: var(--heading-font-family);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(var(--text-color) / 0.7);
+  }
+
+  #shopify-section-{{ section.id }} .rse__title {
+    margin: 0;
+    font-family: var(--heading-font-family);
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.14em;
+  }
+
+  #shopify-section-{{ section.id }} .rse__sub {
+    margin: 0;
+    font-size: 13px;
+    color: rgb(var(--text-color) / 0.7);
+  }
+
+  /* Scent picker cards */
+  #shopify-section-{{ section.id }} .rse__picker {
+    display: flex;
+    gap: 0.625rem;
+    overflow-x: auto;
+    scrollbar-width: none;
+    scroll-snap-type: x proximity;
+       margin-inline: calc(-1 * var(--container-gutter));
+    padding-inline: var(--container-gutter);
+    scroll-padding-inline: var(--container-gutter);
+    padding-block: 2px;
+  }
+
+  #shopify-section-{{ section.id }} .rse__picker::-webkit-scrollbar { display: none; }
+
+  #shopify-section-{{ section.id }} .rse__scent {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: 52px auto;
+    align-items: center;
+    column-gap: 0.75rem;
+    min-width: 168px;
+    padding: 0.5rem 1rem 0.5rem 0.5rem;
+    border: 1px solid #D9D9D9;
+    border-radius: 12px;
+    background: rgb(var(--background));
+    color: rgb(var(--text-color));
+    text-align: start;
+    cursor: pointer;
+    scroll-snap-align: start;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  #shopify-section-{{ section.id }} .rse__scent:hover {
+    border-color: rgb(var(--text-color) / 0.5);
+  }
+
+  #shopify-section-{{ section.id }} .rse__scent[aria-selected="true"] {
+    border-color: rgb(var(--text-color));
+    box-shadow: inset 0 0 0 1px rgb(var(--text-color));
+  }
+
+  #shopify-section-{{ section.id }} .rse__thumb {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgb(var(--text-color) / 0.05);
+  }
+
+  #shopify-section-{{ section.id }} .rse__thumb img,
+  #shopify-section-{{ section.id }} .rse__thumb svg {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .rse__scent-name {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  #shopify-section-{{ section.id }} .rse__scent-meta {
+    display: block;
+    margin-top: 2px;
+    font-family: var(--heading-font-family);
+    font-weight: 700;
+    font-size: 10px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgb(var(--text-color) / 0.6);
+  }
+
+  @media screen and (min-width: 1000px) {
+    #shopify-section-{{ section.id }} .rse__picker {
+      justify-content: safe center;
+      margin-inline: 0;
+      padding-inline: 0;
+      flex-wrap: wrap;
+    }
+  }
+
+  /* Panels */
+  #shopify-section-{{ section.id }} .rse__panel {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.25rem;
+  }
+
+  #shopify-section-{{ section.id }} .rse__panel[hidden] {
+    display: none;
+  }
+
+  #shopify-section-{{ section.id }} .rse__panel-note {
+    margin: 0;
+    text-align: center;
+    font-size: 13px;
+    color: rgb(var(--text-color) / 0.7);
+  }
+
+  #shopify-section-{{ section.id }} .rse__panel-cta {
+    justify-self: center;
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .rse__title { font-size: 22px; }
+    #shopify-section-{{ section.id }} .rse__sub,
+    #shopify-section-{{ section.id }} .rse__panel-note { font-size: 14px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    #shopify-section-{{ section.id }} .rse__panel:not([hidden]) {
+      animation: rse-fade 0.35s ease;
+    }
+
+    @keyframes rse-fade {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  }
+</style>
+
+<div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+  <div class="container">
+    <div class="rpl">
+      {%- liquid
+        assign roll_words = section.settings.roll_words | split: ','
+        assign first_word = roll_words.first | strip
+      -%}
+
+      <div class="rpl__header">
+        {%- if section.settings.subheading != blank -%}
+          <p class="h6">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.heading_start != blank or first_word != blank -%}
+          <h2 class="h2">
+            {{- section.settings.heading_start -}}
+            {%- if first_word != blank %}
+              <span class="rpl__roll-wrap"><rava-word-roll class="rpl__roll" aria-label="{{ first_word | escape }}">
+                <span class="rpl__roll-track" aria-hidden="true">
+                  {%- for word in roll_words -%}
+                    {%- assign clean_word = word | strip -%}
+                    {%- if clean_word != blank -%}<span class="rpl__roll-word">{{ clean_word | escape }}</span>{%- endif -%}
+                  {%- endfor -%}
+                </span>
+              </rava-word-roll></span>
+            {%- endif -%}
+          </h2>
+        {%- endif -%}
+
+        {%- if section.settings.content != blank -%}
+          <div class="prose rpl__intro">{{ section.settings.content }}</div>
+        {%- endif -%}
+      </div>
+
+      <script>
+        if (!window.customElements.get('rava-word-roll')) {
+          class RavaWordRoll extends HTMLElement {
+            connectedCallback() {
+              this.track = this.querySelector('.rpl__roll-track');
+              this.words = Array.from(this.querySelectorAll('.rpl__roll-word'));
+              this.index = 0;
+              this.fit();
+
+              this.onResize = () => this.fit();
+              window.addEventListener('resize', this.onResize, { passive: true });
+              if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => this.fit());
+
+              const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+              if (reduce || this.words.length < 2) return;
+
+              // Only roll while the heading is on screen
+              this.observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry) => entry.isIntersecting ? this.start() : this.stop());
+              });
+              this.observer.observe(this);
+            }
+
+            disconnectedCallback() {
+              this.stop();
+              window.removeEventListener('resize', this.onResize);
+              if (this.observer) this.observer.disconnect();
+            }
+
+            start() {
+              if (this.timer) return;
+              this.timer = setInterval(() => this.next(), 2200);
+            }
+
+            stop() {
+              clearInterval(this.timer);
+              this.timer = null;
+            }
+
+            fit() {
+              const word = this.words[this.index];
+              if (!word) return;
+
+              // The box keeps one fixed width (the longest phrase), so nothing around it moves
+              this.style.width = 'auto';
+              this.words.forEach((w) => { w.style.width = 'max-content'; });
+              const widest = Math.max.apply(null, this.words.map((w) => w.offsetWidth));
+              this.words.forEach((w) => { w.style.width = ''; });
+              const pad = parseFloat(getComputedStyle(this).paddingLeft) * 2;
+              this.style.width = (widest + pad) + 'px';
+
+              this.track.style.transform = 'translateY(' + (-word.offsetTop) + 'px)';
+              this.setAttribute('aria-label', word.textContent);
+            }
+
+            next() {
+              this.index = (this.index + 1) % this.words.length;
+              const word = this.words[this.index];
+              this.track.style.transform = 'translateY(' + (-word.offsetTop) + 'px)';
+              this.setAttribute('aria-label', word.textContent);
+            }
+          }
+
+          window.customElements.define('rava-word-roll', RavaWordRoll);
+        }
+      </script>
+
+      {%- comment -%} ---------- 1. PRODUCT LINE CARDS ---------- {%- endcomment -%}
+      {%- if line_blocks.size > 0 -%}
+        <div class="rpl__grid">
+          {%- for block in line_blocks -%}
+            {%- liquid
+              assign line_title = block.settings.title | default: block.settings.collection.title
+
+              # Fallbacks: if no collection or image is picked, use RAVA's existing category photos and collections
+              # (the same ones as the old "Our Categories" section), matched by the card name.
+              assign fallback_handle = ''
+              assign fallback_file = ''
+              case line_title
+                when 'Perfume', 'Perfumes'
+                  assign fallback_handle = 'all-perfumes'
+                  assign fallback_file = 'perfume_8a4259c9-6505-4068-83c0-888fd829e783.jpg'
+                when 'Roll On'
+                  assign fallback_handle = 'roll-on'
+                  assign fallback_file = 'roll_on.jpg'
+                when 'Hair Mist'
+                  assign fallback_handle = 'hair-mist'
+                  assign fallback_file = 'hairmist.jpg'
+                when 'Body Splash'
+                  assign fallback_handle = 'body-splash'
+                  assign fallback_file = 'body_splash.jpg'
+                when 'Home Spray'
+                  assign fallback_handle = 'home-sprays'
+                  assign fallback_file = 'homespray.jpg'
+                when 'Tanning Oil'
+                  assign fallback_handle = 'tanning-oils'
+                  assign fallback_file = 'tanning_oil.jpg'
+              endcase
+
+              assign line_collection = block.settings.collection
+              if line_collection == blank and fallback_handle != ''
+                assign line_collection = collections[fallback_handle]
+              endif
+
+              assign line_image = block.settings.image | default: line_collection.featured_image
+              if block.settings.image == blank and fallback_file != ''
+                assign file_image = images[fallback_file]
+                if file_image != blank
+                  assign line_image = file_image
+                endif
+              endif
+
+              # Link: custom link > picked collection > the matching RAVA collection by name
+              assign fallback_url = ''
+              if fallback_handle != ''
+                assign fallback_url = routes.collections_url | append: '/' | append: fallback_handle
+              endif
+              assign line_url = block.settings.link | default: block.settings.collection.url | default: fallback_url | default: '#'
+
+              # Badge: the block's own badge, or the section's offer badge on the Perfume card
+              assign line_badge = block.settings.badge_text
+              if line_badge == blank and fallback_handle == 'all-perfumes'
+                assign line_badge = section.settings.perfume_badge
+              endif
+            -%}
+
+            <a href="{{ line_url }}" class="rpl__card group" {{ block.shopify_attributes }}>
+              <div class="rpl__media">
+                {%- if line_badge != blank -%}
+                  <span class="rpl__badge">{{ line_badge }}</span>
+                {%- endif -%}
+                {%- if line_image != blank -%}
+                  {{- line_image | image_url: width: line_image.width | image_tag:
+                    loading: 'lazy',
+                    sizes: '(max-width: 699px) 50vw, (max-width: 1149px) 33vw, 17vw',
+                    widths: '300,400,500,600,800,1000',
+                    class: 'zoom-image group-hover:zoom',
+                    alt: line_title
+                  -}}
+                {%- else -%}
+                  {{- 'product-1' | placeholder_svg_tag -}}
+                {%- endif -%}
+              </div>
+
+              <div class="rpl__info">
+                {%- if line_title != blank -%}<p class="rpl__name">{{ line_title }}</p>{%- endif -%}
+                {%- if block.settings.text != blank -%}<p class="rpl__text">{{ block.settings.text }}</p>{%- endif -%}
+                {%- if block.settings.price_text != blank -%}<p class="rpl__price">{{ block.settings.price_text }}</p>{%- endif -%}
+                {%- if section.settings.show_cta and block.settings.cta_text != blank -%}<span class="rpl__cta">{{ block.settings.cta_text }}</span>{%- endif -%}
+              </div>
+            </a>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} ---------- 2. SCENT EXPLORER ---------- {%- endcomment -%}
+      {%- if scent_blocks.size > 0 -%}
+        <rava-scent-explorer class="rse">
+          <div class="rse__head">
+            {%- if section.settings.explorer_label != blank -%}<p class="rse__label">{{ section.settings.explorer_label }}</p>{%- endif -%}
+            {%- if section.settings.explorer_heading != blank -%}<h3 class="rse__title">{{ section.settings.explorer_heading }}</h3>{%- endif -%}
+            {%- if section.settings.explorer_text != blank -%}<p class="rse__sub">{{ section.settings.explorer_text }}</p>{%- endif -%}
+          </div>
+
+          <div class="rse__picker" role="tablist" aria-label="{{ section.settings.explorer_heading | default: 'Choose a scent' | escape }}">
+            {%- for block in scent_blocks -%}
+              {%- liquid
+                assign first_product = block.settings.products | first
+                assign scent_thumb = block.settings.image | default: first_product.featured_media
+                assign formats_count = block.settings.products.size
+              -%}
+
+              <button
+                type="button"
+                class="rse__scent"
+                role="tab"
+                id="rse-tab-{{ block.id }}"
+                aria-controls="rse-panel-{{ block.id }}"
+                aria-selected="{% if forloop.first %}true{% else %}false{% endif %}"
+                tabindex="{% if forloop.first %}0{% else %}-1{% endif %}"
+                {{ block.shopify_attributes }}
+              >
+                <span class="rse__thumb">
+                  {%- if scent_thumb != blank -%}
+                    {{- scent_thumb | image_url: width: 160 | image_tag: loading: 'lazy', widths: '104,160', sizes: '52px', alt: '' -}}
+                  {%- else -%}
+                    {{- 'product-1' | placeholder_svg_tag -}}
+                  {%- endif -%}
+                </span>
+                <span>
+                  <span class="rse__scent-name">{{ block.settings.name | escape }}</span>
+                  <span class="rse__scent-meta">
+                    {%- if formats_count > 0 -%}{{ formats_count }} formats{%- else -%}Add products{%- endif -%}
+                  </span>
+                </span>
+              </button>
+            {%- endfor -%}
+          </div>
+
+          {%- for block in scent_blocks -%}
+            <div
+              class="rse__panel"
+              role="tabpanel"
+              id="rse-panel-{{ block.id }}"
+              aria-labelledby="rse-tab-{{ block.id }}"
+              {% unless forloop.first %}hidden{% endunless %}
+            >
+              {%- if block.settings.description != blank -%}
+                <p class="rse__panel-note">{{ block.settings.description }}</p>
+              {%- endif -%}
+
+              {%- capture scent_products -%}
+                {%- for product in block.settings.products -%}
+                  {%- render 'product-card', product: product, position: forloop.index, block: block, quick_buy_context: 'scent' -%}
+                {%- else -%}
+                  {%- for i in (1..4) -%}
+                    {%- render 'product-card-placeholder', loop_index: forloop.index0 -%}
+                  {%- endfor -%}
+                {%- endfor -%}
+              {%- endcapture -%}
+
+              {%- assign scent_carousel_id = 'rse-carousel-' | append: block.id -%}
+
+              <product-list class="floating-controls-container floating-controls-container--inside floating-controls-container--on-hover">
+                <carousel-prev-button class="floating-controls-container__control" aria-controls="{{ scent_carousel_id }}">
+                  <button type="button" class="prev-next-button prev-next-button--prev circle-button hover:animate-icon-inline" disabled>
+                    <span class="sr-only">{{ 'general.accessibility.previous' | t }}</span>
+                    {%- render 'icon' with 'arrow-left', direction_aware: true -%}
+                  </button>
+                </carousel-prev-button>
+
+                <scroll-carousel
+                  id="{{ scent_carousel_id }}"
+                  group-cells
+                  allow-drag
+                  class="product-list product-list--carousel scroll-area bleed md:unbleed"
+                >
+                  {{- scent_products -}}
+                </scroll-carousel>
+
+                <carousel-next-button class="floating-controls-container__control" aria-controls="{{ scent_carousel_id }}">
+                  <button type="button" class="prev-next-button prev-next-button--next circle-button hover:animate-icon-inline">
+                    <span class="sr-only">{{ 'general.accessibility.next' | t }}</span>
+                    {%- render 'icon' with 'arrow-right', direction_aware: true -%}
+                  </button>
+                </carousel-next-button>
+              </product-list>
+
+              {%- if block.settings.button_text != blank and block.settings.button_link != blank -%}
+                <div class="rse__panel-cta">
+                  {%- render 'button', href: block.settings.button_link, content: block.settings.button_text, style: 'outline' -%}
+                </div>
+              {%- endif -%}
+            </div>
+          {%- endfor -%}
+        </rava-scent-explorer>
+
+        <script>
+          if (!window.customElements.get('rava-scent-explorer')) {
+            class RavaScentExplorer extends HTMLElement {
+              connectedCallback() {
+                this.tabs = Array.from(this.querySelectorAll('[role="tab"]'));
+                this.tabs.forEach((tab, index) => {
+                  tab.addEventListener('click', () => this.select(index));
+                  tab.addEventListener('keydown', (event) => {
+                    if (event.key !== 'ArrowRight' && event.key !== 'ArrowLeft') return;
+                    event.preventDefault();
+                    const step = event.key === 'ArrowRight' ? 1 : -1;
+                    const next = (index + step + this.tabs.length) % this.tabs.length;
+                    this.select(next);
+                    this.tabs[next].focus();
+                  });
+                });
+
+                // Theme editor: show the scent whose block is selected in the sidebar
+                this.addEventListener('shopify:block:select', (event) => {
+                  const index = this.tabs.indexOf(event.target.closest('[role="tab"]'));
+                  if (index > -1) this.select(index);
+                });
+              }
+
+              select(index) {
+                this.tabs.forEach((tab, i) => {
+                  const selected = i === index;
+                  tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+                  tab.setAttribute('tabindex', selected ? '0' : '-1');
+                  const panel = document.getElementById(tab.getAttribute('aria-controls'));
+                  if (panel) panel.hidden = !selected;
+                });
+
+                // Keep the chosen scent card in view on phones
+                const tab = this.tabs[index];
+                const picker = tab.parentElement;
+                if (picker.scrollWidth > picker.clientWidth) {
+                  picker.scrollTo({ left: tab.offsetLeft - picker.clientWidth / 2 + tab.clientWidth / 2, behavior: 'smooth' });
+                }
+
+                // Let the theme carousel re-measure now that the panel is visible
+                window.dispatchEvent(new Event('resize'));
+              }
+            }
+
+            window.customElements.define('rava-scent-explorer', RavaScentExplorer);
+          }
+        </script>
+      {%- endif -%}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "RAVA product lines",
+  "class": "shopify-section--rava-product-lines",
+  "tag": "section",
+  "max_blocks": 16,
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Six product lines"
+    },
+    {
+      "type": "text",
+      "id": "heading_start",
+      "label": "Heading (before the highlight)",
+      "default": "Your scent,"
+    },
+    {
+      "type": "text",
+      "id": "roll_words",
+      "label": "Highlighted words",
+      "info": "Comma separated. They roll one after another inside the yellow box. Put one only for a fixed highlight.",
+      "default": "as a perfume, as a roll on, as a hair mist, as a body splash, as a home spray, as a tanning oil, in every format"
+    },
+    {
+      "type": "select",
+      "id": "desktop_highlight_layout",
+      "label": "Highlight on desktop",
+      "info": "On phones the yellow box is always on its own line.",
+      "options": [
+        {
+          "value": "inline",
+          "label": "Same line as the heading"
+        },
+        {
+          "value": "below",
+          "label": "Own line"
+        }
+      ],
+      "default": "inline"
+    },
+    {
+      "type": "color",
+      "id": "highlight_color",
+      "label": "Highlight color",
+      "default": "#F3F4B5"
+    },
+    {
+      "type": "text",
+      "id": "perfume_badge",
+      "label": "Offer badge on the Perfume card",
+      "info": "Shows on the Perfume photo. Leave empty to hide it.",
+      "default": "Buy 1, get 1 Roll On + 1 Hair Mist free"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Text",
+      "default": "<p>Love a scent? Wear it as a perfume, a roll on, a hair mist or a body splash, and bring it home.</p>"
+    },
+    {
+      "type": "header",
+      "content": "Product line cards"
+    },
+    {
+      "type": "select",
+      "id": "mobile_layout",
+      "label": "Mobile layout",
+      "options": [
+        {
+          "value": "grid",
+          "label": "2 columns (all visible)"
+        },
+        {
+          "value": "scroll",
+          "label": "Swipe row"
+        }
+      ],
+      "default": "grid"
+    },
+    {
+      "type": "select",
+      "id": "card_alignment",
+      "label": "Card text alignment",
+      "options": [
+        {
+          "value": "start",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta",
+      "label": "Show link text under each card",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Scent explorer"
+    },
+    {
+      "type": "paragraph",
+      "content": "Add 'Scent' blocks to build the picker. Each scent shows its products with the store's normal product cards and quick add."
+    },
+    {
+      "type": "text",
+      "id": "explorer_label",
+      "label": "Small label",
+      "default": "Shop by scent"
+    },
+    {
+      "type": "text",
+      "id": "explorer_heading",
+      "label": "Heading",
+      "default": "Pick a scent. Get it in every format."
+    },
+    {
+      "type": "text",
+      "id": "explorer_text",
+      "label": "Text",
+      "default": "Wear the same scent on skin, hair and body. Layering helps it last longer."
+    },
+    {
+      "type": "select",
+      "id": "products_per_row_mobile",
+      "label": "Products per row (mobile)",
+      "options": [
+        {
+          "value": "1",
+          "label": "1"
+        },
+        {
+          "value": "2",
+          "label": "2"
+        }
+      ],
+      "default": "2"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_desktop",
+      "label": "Products per row (desktop)",
+      "min": 3,
+      "max": 6,
+      "step": 1,
+      "default": 4
+    }
+  ],
+  "blocks": [
+    {
+      "type": "line",
+      "name": "Product line",
+      "settings": [
+        {
+          "type": "collection",
+          "id": "collection",
+          "label": "Collection",
+          "info": "Used for the link, and for the image and name if you leave them empty."
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image",
+          "info": "Portrait 4:5 works best (for example 1200 x 1500 px)."
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Name"
+        },
+        {
+          "type": "text",
+          "id": "text",
+          "label": "What it's for"
+        },
+        {
+          "type": "text",
+          "id": "price_text",
+          "label": "Price line",
+          "info": "For example: From $7.99"
+        },
+        {
+          "type": "text",
+          "id": "badge_text",
+          "label": "Badge on image",
+          "info": "Optional. Small black badge on the photo, for example the current offer."
+        },
+        {
+          "type": "text",
+          "id": "cta_text",
+          "label": "Link text",
+          "default": "Shop now"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Custom link",
+          "info": "Optional. Overrides the collection link."
+        }
+      ]
+    },
+    {
+      "type": "scent",
+      "name": "Scent",
+      "settings": [
+        {
+          "type": "text",
+          "id": "name",
+          "label": "Scent name",
+          "default": "Scent name"
+        },
+        {
+          "type": "product_list",
+          "id": "products",
+          "label": "Products (this scent in each format)",
+          "info": "Pick the same scent as Perfume, Roll On, Hair Mist, Body Splash, Home Spray, Tanning Oil. Up to 6, in the order you want them shown.",
+          "limit": 6
+        },
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Thumbnail",
+          "info": "Optional. Uses the first product's photo if empty."
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Short description",
+          "info": "Optional. In plain words, for example: Sweet vanilla and warm amber. For evenings."
+        },
+        {
+          "type": "text",
+          "id": "button_text",
+          "label": "Button text",
+          "default": "See all formats"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link",
+          "info": "Optional. For example a search for this scent."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "RAVA product lines",
+      "blocks": [
+        {
+          "type": "line",
+          "settings": {
+            "title": "Perfume",
+            "text": "The designer and niche scents you know.",
+            "price_text": "From $17.99",
+            "cta_text": "Shop now"
+          }
+        },
+        {
+          "type": "line",
+          "settings": {
+            "title": "Roll On",
+            "text": "Your perfume in a pocket size. Reapply anywhere.",
+            "price_text": "$7.99",
+            "cta_text": "Shop now"
+          }
+        },
+        {
+          "type": "line",
+          "settings": {
+            "title": "Hair Mist",
+            "text": "Light scent made for hair. Won't dry it out.",
+            "price_text": "$9.99",
+            "cta_text": "Shop now"
+          }
+        },
+        {
+          "type": "line",
+          "settings": {
+            "title": "Body Splash",
+            "text": "A fresh all-over layer for every day.",
+            "price_text": "$10.99",
+            "cta_text": "Shop now"
+          }
+        },
+        {
+          "type": "line",
+          "settings": {
+            "title": "Home Spray",
+            "text": "Your signature scent, for every room.",
+            "price_text": "$19.99",
+            "cta_text": "Shop now"
+          }
+        },
+        {
+          "type": "line",
+          "settings": {
+            "title": "Tanning Oil",
+            "text": "A sun-ready glow with a scent that stays.",
+            "price_text": "$19.99",
+            "cta_text": "Shop now"
+          }
+        },
+        {
+          "type": "scent",
+          "settings": {
+            "name": "Kayali Vanilla 28"
+          }
+        },
+        {
+          "type": "scent",
+          "settings": {
+            "name": "Baccarat Rouge 540"
+          }
+        },
+        {
+          "type": "scent",
+          "settings": {
+            "name": "Sauvage"
+          }
+        },
+        {
+          "type": "scent",
+          "settings": {
+            "name": "Good Girl"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

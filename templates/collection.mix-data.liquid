@@ -1,0 +1,14 @@
+{%- layout none -%}
+{%- comment -%}
+  RAVA Mix It: lightweight product feed for the Mix Your Own Perfume builder.
+  Add to: templates/collection.mix-data.liquid
+  Called as /collections/<handle>?view=mix-data&page=N (250 products per page).
+  Do not assign this template to any collection in the admin.
+{%- endcomment -%}
+{%- paginate collection.products by 250 -%}
+{"pages":{{ paginate.pages | default: 1 }},"products":[
+{%- for product in collection.products -%}
+{"id":{{ product.id | json }},"title":{{ product.title | json }},"vendor":{{ product.vendor | json }},"image":{{ product.featured_image | image_url: width: 200 | json }},"handle":{{ product.handle | json }}}{%- unless forloop.last -%},{%- endunless -%}
+{%- endfor -%}
+]}
+{%- endpaginate -%}

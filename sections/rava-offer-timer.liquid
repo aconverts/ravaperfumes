@@ -1,0 +1,274 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  RAVA OFFER TIMER
+  ----------------------------------------------------------------------------------------------------------------------
+
+  Compact black strip with the offer line and a live countdown. Meant to sit right under the hero slideshow.
+  No button: the banner above already has one.
+
+  The end time is entered with its timezone offset, so every visitor counts down to the same moment whatever their
+  phone's timezone. Lebanon in November = +02:00.
+{%- endcomment -%}
+
+{%- liquid
+  assign heavy_font = settings.heading_font | font_modify: 'weight', '900'
+  if heavy_font == blank
+    assign heavy_font = settings.heading_font | font_modify: 'weight', '800'
+  endif
+-%}
+
+<style>
+  {%- if heavy_font != blank -%}
+    {{ heavy_font | font_face: font_display: 'swap' }}
+  {%- endif -%}
+
+  #shopify-section-{{ section.id }} .rava-timer {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    padding: {{ section.settings.padding_mobile }}px 1rem {{ section.settings.padding_bottom_mobile }}px;
+    background: {{ section.settings.background }};
+    color: {{ section.settings.text_color }};
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .rava-timer__text {
+    margin: 0;
+    font-family: var(--heading-font-family);
+    font-weight: {% if heavy_font != blank %}{{ heavy_font.weight }}{% else %}700{% endif %};
+    font-size: 14px;
+    line-height: 1.2;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .rava-timer__clock {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-family: var(--heading-font-family);
+    font-variant-numeric: tabular-nums;
+  }
+
+  #shopify-section-{{ section.id }} .rava-timer__unit {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    min-width: 42px;
+    justify-content: center;
+    padding: 5px 6px;
+    border: 1px solid currentColor;
+    border-radius: 12px;
+  }
+
+  #shopify-section-{{ section.id }} .rava-timer__num {
+    font-weight: {% if heavy_font != blank %}{{ heavy_font.weight }}{% else %}700{% endif %};
+    font-size: 15px;
+    line-height: 1;
+  }
+
+  #shopify-section-{{ section.id }} .rava-timer__label {
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  #shopify-section-{{ section.id }} .rava-timer__sep {
+    font-weight: 700;
+    opacity: 0.6;
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .rava-timer {
+      padding-block: {{ section.settings.padding_desktop }}px {{ section.settings.padding_bottom_desktop }}px;
+      gap: 1.5rem;
+    }
+
+    #shopify-section-{{ section.id }} .rava-timer__text {
+      font-size: 17px;
+    }
+
+    #shopify-section-{{ section.id }} .rava-timer__unit {
+      min-width: 52px;
+      padding: 6px 8px;
+    }
+
+    #shopify-section-{{ section.id }} .rava-timer__num {
+      font-size: 18px;
+    }
+  }
+</style>
+
+<rava-offer-timer
+  class="rava-timer"
+  data-end="{{ section.settings.end_datetime | escape }}"
+  data-expired="{{ section.settings.when_expired }}"
+  data-expired-text="{{ section.settings.expired_text | escape }}"
+  role="timer"
+  aria-live="off"
+>
+  <p class="rava-timer__text" data-rava-timer-text>{{ section.settings.text | escape }}</p>
+
+  <div class="rava-timer__clock" aria-label="Time left">
+    <span class="rava-timer__unit"><span class="rava-timer__num" data-unit="d">00</span><span class="rava-timer__label">d</span></span>
+    <span class="rava-timer__sep" aria-hidden="true">:</span>
+    <span class="rava-timer__unit"><span class="rava-timer__num" data-unit="h">00</span><span class="rava-timer__label">h</span></span>
+    <span class="rava-timer__sep" aria-hidden="true">:</span>
+    <span class="rava-timer__unit"><span class="rava-timer__num" data-unit="m">00</span><span class="rava-timer__label">m</span></span>
+    <span class="rava-timer__sep" aria-hidden="true">:</span>
+    <span class="rava-timer__unit"><span class="rava-timer__num" data-unit="s">00</span><span class="rava-timer__label">s</span></span>
+  </div>
+</rava-offer-timer>
+
+<script>
+  if (!window.customElements.get('rava-offer-timer')) {
+    class RavaOfferTimer extends HTMLElement {
+      connectedCallback() {
+        this.end = Date.parse(this.dataset.end);
+        this.nums = {
+          d: this.querySelector('[data-unit="d"]'),
+          h: this.querySelector('[data-unit="h"]'),
+          m: this.querySelector('[data-unit="m"]'),
+          s: this.querySelector('[data-unit="s"]')
+        };
+
+        if (isNaN(this.end)) {
+          // Bad date in the settings: hide rather than show 00:00:00:00
+          this.closest('.shopify-section').style.display = 'none';
+          return;
+        }
+
+        this.render();
+        this.interval = setInterval(() => this.render(), 1000);
+      }
+
+      disconnectedCallback() {
+        clearInterval(this.interval);
+      }
+
+      render() {
+        const left = this.end - Date.now();
+
+        if (left <= 0) {
+          clearInterval(this.interval);
+          if (this.dataset.expired === 'hide') {
+            this.closest('.shopify-section').style.display = 'none';
+          } else {
+            this.querySelector('[data-rava-timer-text]').textContent = this.dataset.expiredText;
+            this.querySelector('.rava-timer__clock').style.display = 'none';
+          }
+          return;
+        }
+
+        const pad = (n) => String(n).padStart(2, '0');
+        const s = Math.floor(left / 1000);
+        this.nums.d.textContent = pad(Math.floor(s / 86400));
+        this.nums.h.textContent = pad(Math.floor((s % 86400) / 3600));
+        this.nums.m.textContent = pad(Math.floor((s % 3600) / 60));
+        this.nums.s.textContent = pad(s % 60);
+      }
+    }
+
+    window.customElements.define('rava-offer-timer', RavaOfferTimer);
+  }
+</script>
+
+{% schema %}
+{
+  "name": "RAVA offer timer",
+  "class": "shopify-section--rava-offer-timer",
+  "tag": "section",
+  "settings": [
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "BUY 1 GET 2 offer is ending soon"
+    },
+    {
+      "type": "text",
+      "id": "end_datetime",
+      "label": "Ends at",
+      "info": "Format: 2026-11-05T00:00:00+02:00 (year-month-day, T, hour:minute:second, Lebanon offset +02:00). 00:00 = the very start of that day.",
+      "default": "2026-11-05T00:00:00+02:00"
+    },
+    {
+      "type": "select",
+      "id": "when_expired",
+      "label": "When the timer ends",
+      "options": [
+        { "value": "hide", "label": "Hide the strip" },
+        { "value": "text", "label": "Show a message" }
+      ],
+      "default": "hide"
+    },
+    {
+      "type": "text",
+      "id": "expired_text",
+      "label": "Message after it ends",
+      "default": "The offer has ended"
+    },
+    {
+      "type": "color",
+      "id": "background",
+      "label": "Background",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#EBE1A6"
+    },
+    {
+      "type": "range",
+      "id": "padding_mobile",
+      "label": "Space above (mobile)",
+      "min": 6,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_desktop",
+      "label": "Space above (desktop)",
+      "min": 6,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_mobile",
+      "label": "Space below (mobile)",
+      "min": 6,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom_desktop",
+      "label": "Space below (desktop)",
+      "min": 6,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    }
+  ],
+  "presets": [
+    {
+      "name": "RAVA offer timer"
+    }
+  ]
+}
+{% endschema %}

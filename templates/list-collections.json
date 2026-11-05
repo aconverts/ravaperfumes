@@ -1,0 +1,168 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "main": {
+      "type": "main-list-collections",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "",
+        "show_title": true,
+        "collections": [
+          "roll-on"
+        ],
+        "collections_per_row_mobile": "2",
+        "collections_per_row_desktop": 3,
+        "image_size": "auto",
+        "content_position": "place-self-end-start text-start",
+        "text_color": "#ffffff",
+        "overlay_color": "#000000",
+        "overlay_opacity": 30
+      }
+    },
+    "collection_list_Rk7Ce9": {
+      "type": "collection-list",
+      "blocks": {
+        "collection_hnFFUT": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "",
+            "collection": "roll-on",
+            "image": "shopify://shop_images/roll_on.jpg",
+            "expand_collection": false,
+            "content_position": "place-self-end-center text-center",
+            "subheading": "",
+            "title": "Roll On",
+            "button_text": "Shop Now",
+            "button_link": "",
+            "button_style": "link",
+            "overlay_color": "#000000",
+            "overlay_opacity": 6
+          }
+        },
+        "collection_hHmwyn": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "",
+            "collection": "hair-mist",
+            "image": "shopify://shop_images/hairmist.jpg",
+            "expand_collection": false,
+            "content_position": "place-self-end-center text-center",
+            "subheading": "",
+            "title": "Hair Mist",
+            "button_text": "Shop Now",
+            "button_link": "",
+            "button_style": "link",
+            "overlay_color": "#000000",
+            "overlay_opacity": 20
+          }
+        },
+        "collection_Bg6cgL": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "",
+            "collection": "body-splash",
+            "image": "shopify://shop_images/body_splash.jpg",
+            "expand_collection": false,
+            "content_position": "place-self-end-center text-center",
+            "subheading": "",
+            "title": "Body Splash",
+            "button_text": "Shop Now",
+            "button_link": "",
+            "button_style": "link",
+            "overlay_color": "#000000",
+            "overlay_opacity": 5
+          }
+        },
+        "collection_PEzAQU": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "",
+            "collection": "home-sprays",
+            "image": "shopify://shop_images/homespray.jpg",
+            "expand_collection": false,
+            "content_position": "place-self-end-center text-center",
+            "subheading": "",
+            "title": "Home Spray",
+            "button_text": "Shop Now",
+            "button_link": "",
+            "button_style": "link",
+            "overlay_color": "#000000",
+            "overlay_opacity": 12
+          }
+        },
+        "collection_yCLNkj": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "",
+            "collection": "tanning-oils",
+            "image": "shopify://shop_images/ChatGPT_Image_Jun_23_2026_12_49_37_AM.png",
+            "expand_collection": false,
+            "content_position": "place-self-end-center text-center",
+            "subheading": "",
+            "title": "Tanning Oil",
+            "button_text": "Shop Now",
+            "button_link": "",
+            "button_style": "link",
+            "overlay_color": "#000000",
+            "overlay_opacity": 3
+          }
+        },
+        "collection_RNBqW3": {
+          "type": "collection",
+          "settings": {
+            "color_scheme": "",
+            "collection": "all-perfumes",
+            "image": "shopify://shop_images/ChatGPT_Image_Jun_23_2026_12_40_44_AM.png",
+            "expand_collection": false,
+            "content_position": "place-self-end-center text-center",
+            "subheading": "",
+            "title": "Perfumes",
+            "button_text": "Shop Now",
+            "button_link": "",
+            "button_style": "link",
+            "overlay_color": "#000000",
+            "overlay_opacity": 3
+          }
+        }
+      },
+      "block_order": [
+        "collection_hnFFUT",
+        "collection_hHmwyn",
+        "collection_Bg6cgL",
+        "collection_PEzAQU",
+        "collection_yCLNkj",
+        "collection_RNBqW3"
+      ],
+      "custom_css": [
+        "{margin-top: -20px;}"
+      ],
+      "name": "t:sections.collection_list.presets.collection_list.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "image_size": "xs",
+        "show_text_outside": false,
+        "space_items": true,
+        "stack_collections": true,
+        "collections_per_row_desktop": 3,
+        "stack_collections_mobile": true,
+        "collections_per_row_mobile": "2",
+        "subheading": "★★★★★ 4.8/5 stars | 120,000+ customers",
+        "title": "Our Categories",
+        "content": ""
+      }
+    }
+  },
+  "order": [
+    "main",
+    "collection_list_Rk7Ce9"
+  ]
+}

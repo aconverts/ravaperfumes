@@ -1,0 +1,23 @@
+{%- comment -%}
+  RAVA GIFT LIST
+  Not added to any page. The cart drawer gift picker loads it once per visit, in the background:
+  /collections/roll-on?sort_by=best-selling&section_id=rava-gift-list   (same for hair-mist)
+  -> 50 best-selling gifts per page (Shopify maximum); the picker loads pages 1 and 2 = top 100.
+  Loaded separately (not inside the cart drawer) so adding to cart stays fast.
+{%- endcomment -%}
+{%- paginate collection.products by 50 -%}
+  <div class="rgp-grid" data-rgp-popular-grid>
+    {%- for p in collection.products -%}
+      {%- if p.type == 'Roll On' or p.type == 'Hair Mist' -%}
+        {%- render 'rava-gift-picker-tile', gift: p -%}
+      {%- endif -%}
+    {%- endfor -%}
+  </div>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "RAVA gift list",
+  "settings": []
+}
+{% endschema %}

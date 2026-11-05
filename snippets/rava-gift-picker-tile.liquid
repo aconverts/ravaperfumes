@@ -1,0 +1,25 @@
+{%- comment -%}
+  One gift in the RAVA gift picker. The same markup is built in JS for search results (assets/rava-instant-cart.js).
+  * gift: a Roll On / Hair Mist product
+{%- endcomment -%}
+
+{%- if gift != blank and gift.available -%}
+  {%- liquid
+    assign gv = gift.selected_or_first_available_variant
+    assign was = gv.price
+    if gv.compare_at_price > gv.price
+      assign was = gv.compare_at_price
+    endif
+    assign short = gift.title | remove: ' Roll On 50ml' | remove: ' Hair Mist 100ml' | remove: ' Roll On' | remove: ' Hair Mist'
+  -%}
+  <button type="button" class="rgp-tile" data-rgp-add="{{ gv.id }}" data-type="{{ gift.type | escape }}" title="{{ gift.title | escape }}">
+    <span class="rgp-tile__media">
+      {%- if gift.featured_image -%}
+        {{- gift.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', alt: gift.title, sizes: '100px' -}}
+      {%- endif -%}
+    </span>
+    <span class="rgp-tile__name">{{ short | escape }}</span>
+    <span class="rgp-tile__price"><s>{{ was | money }}</s> <strong>FREE</strong></span>
+    <span class="rgp-tile__cta">Add free</span>
+  </button>
+{%- endif -%}

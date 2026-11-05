@@ -1,0 +1,175 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "type": "header",
+  "name": "Header group",
+  "sections": {
+    "countdown-timer": {
+      "type": "countdown-condensed",
+      "disabled": true,
+      "settings": {
+        "color_scheme": "schema-3",
+        "content": "super Sale Up to 40% off",
+        "link_text": "shop now",
+        "link_url": "shopify://collections/all",
+        "expiration_date": "2025-11-25",
+        "expiration_behavior": "leave",
+        "desktop_justification": "space-between"
+      }
+    },
+    "custom_liquid_HhQDLe": {
+      "type": "custom-liquid",
+      "disabled": true,
+      "name": "t:sections.custom_liquid.presets.custom_liquid.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "remove_vertical_spacing": true,
+        "remove_horizontal_spacing": true,
+        "liquid": "<div class=\"happy-customers\">\n  <div class=\"avatars\">\n    \n  </div>\n  <span class=\"text\">Get 1 Perfume for FREE with every 1 Perfume You Buy</span>\n</div>\n\n<style>\n.happy-customers {\n  display: flex;\n  align-items: center;\nbackground-image: linear-gradient(0deg, #000000, #000000 80%);\n  border-radius: 0px;\n  padding: 5px 50px;\n  font-family: Arial, sans-serif;\n  font-size: 12px;\n  color: white;\n  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);\n}\n\n.avatars {\n  display: flex;\n  margin-right: 10px;\nmargin-left: 10px\n}\n\n.avatar {\n  width: 22px;\n  height: 22px;\n  border-radius: 50%;\n  border: 2px solid white;\n  margin-left: -7px; \n object-fit: cover;\n}\n\n.text {\n  font-weight: bold;\n  text-transform: uppercase;\n  letter-spacing: 1px;\n}\n\n</style>",
+        "text_alignment": "center"
+      }
+    },
+    "custom_liquid_ybPd9X": {
+      "type": "custom-liquid",
+      "disabled": true,
+      "name": "t:sections.custom_liquid.presets.custom_liquid.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "remove_vertical_spacing": true,
+        "remove_horizontal_spacing": true,
+        "liquid": "<div class=\"happy-customers\">\n  <div class=\"avatars\">\n    \n  </div>\n  <span class=\"text\">BLACK FRIDAY SALE: Get FREE Perfumes🎉</span>\n</div>\n\n<style>\n.happy-customers {\n  display: flex;\n  align-items: center;\nbackground-image: linear-gradient(0deg, #000000, #000000 80%);\n  border-radius: 0px;\n  padding: 5px 20px;\n  font-family: Arial, sans-serif;\n  font-size: 12px;\n  color: white;\n  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);\n}\n\n.avatars {\n  display: flex;\n  margin-right: 10px;\nmargin-left: 10px\n}\n\n.avatar {\n  width: 22px;\n  height: 22px;\n  border-radius: 50%;\n  border: 2px solid white;\n  margin-left: -7px; \n object-fit: cover;\n}\n\n.text {\n  font-weight: bold;\n  text-transform: uppercase;\n  letter-spacing: 1px;\n}\n\n</style>",
+        "text_alignment": "center"
+      }
+    },
+    "announcement_bar_NCUqjy": {
+      "type": "announcement-bar",
+      "blocks": {
+        "message_nCNHQF": {
+          "type": "message",
+          "settings": {
+            "text": "<a href=\"/collections/all-perfumes\" title=\"All Perfumes\">Black November: Buy 1 perfume, get Roll On + Hair Mist FREE</a>"
+          }
+        },
+        "message_EjrnRn": {
+          "type": "message",
+          "settings": {
+            "text": "BLACK NOVEMBER OFFER ENDING SOON ⚡️"
+          }
+        },
+        "message_qqETwJ": {
+          "type": "message",
+          "settings": {
+            "text": "FREE DELIVERY FOR ORDERS ABOVE $100 🔥"
+          }
+        },
+        "message_e6XmAL": {
+          "type": "message",
+          "settings": {
+            "text": "Delivery All Over Lebanon 🇱🇧"
+          }
+        }
+      },
+      "block_order": [
+        "message_nCNHQF",
+        "message_EjrnRn",
+        "message_qqETwJ",
+        "message_e6XmAL"
+      ],
+      "name": "t:sections.announcement_bar.name",
+      "settings": {
+        "color_scheme": "scheme-2",
+        "enable_sticky": false,
+        "autoplay": true,
+        "cycle_speed": 3,
+        "desktop_font_size": 12,
+        "mobile_font_size": 11
+      }
+    },
+    "header": {
+      "type": "header",
+      "blocks": {
+        "mega_menu_KK6469": {
+          "type": "mega_menu",
+          "settings": {
+            "menu_item": "Shop By Brand",
+            "images_position": "right",
+            "image_1_heading": "",
+            "image_1_text": "",
+            "image_1_link": "",
+            "image_2_heading": "",
+            "image_2_text": "",
+            "image_2_link": ""
+          }
+        }
+      },
+      "block_order": [
+        "mega_menu_KK6469"
+      ],
+      "settings": {
+        "color_scheme": "scheme-1",
+        "enable_sticky": true,
+        "hide_on_scroll": false,
+        "show_separation_border": true,
+        "reduce_padding": false,
+        "logo": "shopify://shop_images/Untitled_design__23_-removebg-preview.png",
+        "logo_max_width": 115,
+        "logo_mobile_max_width": 85,
+        "menu": "main-menu-updated",
+        "sidebar_menu": "main-menu-updated",
+        "customer_account_menu": "customer-account-main-menu",
+        "menu_open_trigger": "hover",
+        "menu_text_font": "heading",
+        "enable_search": true,
+        "search_jump_menu": "",
+        "search_jump_heading": "Jump to",
+        "search_trending_heading": "Trending searches",
+        "search_trending_terms": "Sauvage, Baccarat Rouge 540, Kayali Vanilla 28, Bleu de Chanel, Good Girl",
+        "sidebar_color_scheme": "scheme-1",
+        "sidebar_text_font": "heading",
+        "sidebar_show_dividers": true,
+        "sidebar_open_second_level_menus": false,
+        "layout": "drawer",
+        "show_icons": true,
+        "show_country_selector": true,
+        "show_country_name": false,
+        "show_country_flag": true,
+        "show_locale_selector": false,
+        "transparent_header_text_color": "#000000"
+      }
+    },
+    "rava_search_bar_y3EqxX": {
+      "type": "rava-search-bar",
+      "custom_css": [
+        "{margin-top: 5px;}"
+      ],
+      "name": "RAVA search bar",
+      "settings": {
+        "placeholder_prefix": "Search 1,500+ scents, e.g.",
+        "examples": "Sauvage, Baccarat Rouge 540, Kayali Vanilla 28, Bleu de Chanel, Good Girl, Black Opium",
+        "show_on": "all",
+        "show_on_desktop": true,
+        "desktop_max_width": 1000,
+        "spacing_top": 6,
+        "spacing_bottom": 0,
+        "color_scheme": ""
+      }
+    }
+  },
+  "order": [
+    "countdown-timer",
+    "custom_liquid_HhQDLe",
+    "custom_liquid_ybPd9X",
+    "announcement_bar_NCUqjy",
+    "header",
+    "rava_search_bar_y3EqxX"
+  ]
+}

@@ -1,0 +1,26 @@
+{%- comment -%}
+  Renders a translation if it exists, otherwise falls back to plain text.
+  Liquid's `t` filter always returns a string (even a "translation
+  missing: ..." placeholder when the key isn't in locales/*.json), so
+  the built-in `default` filter never actually triggers for `t`. This
+  snippet does the missing-key check explicitly instead.
+
+  Usage:
+    {%- render 't-or-default', key: 'products.bundle.choose', fallback: 'Choose' -%}
+
+  With interpolation params, pass them through `t_params` as a Liquid
+  hash created via `assign ... | t: ...` is not possible through render
+  params, so for parameterized strings (count, percent) this snippet
+  is not used — those are handled inline in bundle-quantity-break.liquid
+  with their own explicit fallback logic.
+{%- endcomment -%}
+
+{%- liquid
+  assign t_value = key | t
+  assign t_value_downcase = t_value | downcase
+  if t_value_downcase contains 'translation missing'
+    echo fallback
+  else
+    echo t_value
+  endif
+-%}

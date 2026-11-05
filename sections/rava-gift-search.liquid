@@ -1,0 +1,20 @@
+{%- comment -%}
+  RAVA GIFT SEARCH
+  Not added to any page. Called by the cart drawer gift picker through Shopify predictive search:
+  /search/suggest?q=...&resources[type]=product&section_id=rava-gift-search
+  Returns the matching Roll On / Hair Mist tiles (the picker keeps only the active tab's type).
+{%- endcomment -%}
+<div class="rgp-grid" data-rgp-search-results>
+  {%- for p in predictive_search.resources.products -%}
+    {%- if p.type == 'Roll On' or p.type == 'Hair Mist' -%}
+      {%- render 'rava-gift-picker-tile', gift: p -%}
+    {%- endif -%}
+  {%- endfor -%}
+</div>
+
+{% schema %}
+{
+  "name": "RAVA gift search",
+  "settings": []
+}
+{% endschema %}

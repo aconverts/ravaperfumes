@@ -1,0 +1,209 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  RAVA OFFER TIMER (snippet)
+  ----------------------------------------------------------------------------------------------------------------------
+
+  Same countdown as the homepage strip, counting down to a real end date (not a fake looping timer).
+  Used by the homepage section (style: strip) and on the product page through a Custom Liquid block (style: box).
+
+  When the end date passes, the timer removes itself (or shows expired_text), only its own box, never the whole section.
+
+  ********************************************
+  Supported variables
+  ********************************************
+
+  * text: the offer line (default "BUY 1 GET 2 offer is ending soon")
+  * end: end date with timezone, for example 2026-11-05T00:00:00+02:00
+  * style: 'strip' (full width, homepage) or 'box' (rounded box, product page). Default 'box'
+  * when_expired: 'hide' (default) or 'text'
+  * expired_text: message shown when when_expired is 'text'
+  * background / text_color: optional colors (default black / #EBE1A6)
+{%- endcomment -%}
+
+{%- liquid
+  assign timer_text = text | default: 'BUY 1 GET 2 offer is ending soon'
+  assign timer_end = end | default: '2026-11-05T00:00:00+02:00'
+  assign timer_style = style | default: 'box'
+  assign timer_bg = background | default: '#000000'
+  assign timer_color = text_color | default: '#EBE1A6'
+
+  assign heavy_font = settings.heading_font | font_modify: 'weight', '900'
+  if heavy_font == blank
+    assign heavy_font = settings.heading_font | font_modify: 'weight', '800'
+  endif
+-%}
+
+  <style>
+    {%- if heavy_font != blank -%}
+      {{ heavy_font | font_face: font_display: 'swap' }}
+    {%- endif -%}
+
+    .rava-timer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.25rem;
+      padding: var(--rava-timer-pt, 12px) 1rem var(--rava-timer-pb, 14px);
+      background: var(--rava-timer-bg, #000);
+      color: var(--rava-timer-color, #EBE1A6);
+      text-align: center;
+    }
+
+    .rava-timer--box {
+      gap: 0.5rem 1rem;
+      padding: 12px 14px;
+      border-radius: 12px;
+    }
+
+    .rava-timer[hidden] { display: none; }
+
+    .rava-timer__text {
+      margin: 0;
+      font-family: var(--heading-font-family);
+      font-weight: {% if heavy_font != blank %}{{ heavy_font.weight }}{% else %}700{% endif %};
+      font-size: 14px;
+      line-height: 1.2;
+      letter-spacing: 0.02em;
+      text-transform: uppercase;
+    }
+
+    .rava-timer__clock {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-family: var(--heading-font-family);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .rava-timer__unit {
+      display: inline-flex;
+      align-items: baseline;
+      justify-content: center;
+      gap: 2px;
+      min-width: 42px;
+      padding: 5px 6px;
+      border: 1px solid currentColor;
+      border-radius: 12px;
+    }
+
+    .rava-timer__num {
+      font-weight: {% if heavy_font != blank %}{{ heavy_font.weight }}{% else %}700{% endif %};
+      font-size: 15px;
+      line-height: 1;
+    }
+
+    .rava-timer__label {
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 1;
+      text-transform: uppercase;
+      opacity: 0.85;
+    }
+
+    .rava-timer__sep {
+      font-weight: 700;
+      opacity: 0.6;
+    }
+
+    @media screen and (min-width: 700px) {
+      .rava-timer--strip {
+        gap: 1.5rem;
+        padding-block: var(--rava-timer-pt-desk, 14px) var(--rava-timer-pb-desk, 20px);
+      }
+
+      .rava-timer--strip .rava-timer__text { font-size: 17px; }
+      .rava-timer--strip .rava-timer__unit { min-width: 52px; padding: 6px 8px; }
+      .rava-timer--strip .rava-timer__num { font-size: 18px; }
+    }
+  </style>
+
+
+<rava-offer-timer
+  class="rava-timer rava-timer--{{ timer_style }}"
+  style="--rava-timer-bg: {{ timer_bg }}; --rava-timer-color: {{ timer_color }};{{ extra_style }}"
+  data-end="{{ timer_end | escape }}"
+  data-expired="{{ when_expired | default: 'hide' }}"
+  data-expired-text="{{ expired_text | escape }}"
+  role="timer"
+  aria-live="off"
+>
+  <p class="rava-timer__text" data-rava-timer-text>{{ timer_text | escape }}</p>
+
+  <div class="rava-timer__clock" aria-label="Time left">
+    <span class="rava-timer__unit"><span class="rava-timer__num" data-unit="d">00</span><span class="rava-timer__label">d</span></span>
+    <span class="rava-timer__sep" aria-hidden="true">:</span>
+    <span class="rava-timer__unit"><span class="rava-timer__num" data-unit="h">00</span><span class="rava-timer__label">h</span></span>
+    <span class="rava-timer__sep" aria-hidden="true">:</span>
+    <span class="rava-timer__unit"><span class="rava-timer__num" data-unit="m">00</span><span class="rava-timer__label">m</span></span>
+    <span class="rava-timer__sep" aria-hidden="true">:</span>
+    <span class="rava-timer__unit"><span class="rava-timer__num" data-unit="s">00</span><span class="rava-timer__label">s</span></span>
+  </div>
+</rava-offer-timer>
+
+<script>
+  if (!window.customElements.get('rava-offer-timer')) {
+    class RavaOfferTimer extends HTMLElement {
+      connectedCallback() {
+        /* The element can be "connected" before its children are parsed (when this script already ran for
+           another timer on the page): wait until the digits exist, otherwise the clock stays at 00. */
+        if (this.querySelector('[data-unit="s"]')) {
+          this.init();
+        } else if (document.readyState === 'loading') {
+          document.addEventListener('DOMContentLoaded', () => this.init(), { once: true });
+        } else {
+          requestAnimationFrame(() => this.init());
+        }
+      }
+
+      init() {
+        if (this.interval) return;
+        this.end = Date.parse(this.dataset.end);
+        this.nums = {
+          d: this.querySelector('[data-unit="d"]'),
+          h: this.querySelector('[data-unit="h"]'),
+          m: this.querySelector('[data-unit="m"]'),
+          s: this.querySelector('[data-unit="s"]')
+        };
+
+        if (isNaN(this.end)) {
+          this.hidden = true; /* bad date: hide rather than show 00:00:00:00 */
+          return;
+        }
+
+        if (!this.nums.s) return;
+        this.render();
+        this.interval = setInterval(() => this.render(), 1000);
+      }
+
+      disconnectedCallback() {
+        clearInterval(this.interval);
+        this.interval = null;
+      }
+
+      render() {
+        const left = this.end - Date.now();
+
+        if (left <= 0) {
+          clearInterval(this.interval);
+          if (this.dataset.expired === 'text' && this.dataset.expiredText) {
+            this.querySelector('[data-rava-timer-text]').textContent = this.dataset.expiredText;
+            this.querySelector('.rava-timer__clock').style.display = 'none';
+          } else {
+            this.hidden = true;
+          }
+          return;
+        }
+
+        const pad = (n) => String(n).padStart(2, '0');
+        const s = Math.floor(left / 1000);
+        this.nums.d.textContent = pad(Math.floor(s / 86400));
+        this.nums.h.textContent = pad(Math.floor((s % 86400) / 3600));
+        this.nums.m.textContent = pad(Math.floor((s % 3600) / 60));
+        this.nums.s.textContent = pad(s % 60);
+      }
+    }
+
+    window.customElements.define('rava-offer-timer', RavaOfferTimer);
+  }
+</script>

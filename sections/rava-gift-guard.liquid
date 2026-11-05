@@ -1,0 +1,245 @@
+{%- comment -%}
+  ============================================================
+  RAVA FREE GIFT CHECKOUT GUARD
+  Rendered once from layout/theme.liquid:  {% section 'rava-gift-guard' %}
+  Settings: Theme editor > any page > "Free gift checkout guard"
+
+  When the customer clicks Checkout:
+  - Cart already has all its gifts  -> nothing happens, checkout as normal (zero delay)
+  - Gifts missing                   -> the matching scent of each perfume is added,
+                                       a small line shows above Checkout, then checkout
+
+  The JSON below is the live cart with each line's matching gift products.
+  It is rendered on page load and re-fetched through the Section Rendering API
+  after every cart change, so the check is ready before the customer clicks.
+
+  This only puts the gift in the cart. The automatic Buy X Get Y discount
+  in Shopify admin is what makes it free.
+  ============================================================
+{%- endcomment -%}
+
+{%- if section.settings.enabled and section.blocks.size > 0 -%}
+  <script type="application/json" data-rava-gift-guard-config>
+    {
+      "sectionId": {{ section.id | json }},
+      "qualifyingTypes": {{ section.settings.qualifying_types | json }},
+      "mode": {{ section.settings.gift_mode | json }},
+      "noticeDelay": {{ section.settings.notice_delay | json }},
+      "text": {
+        "title": {{ section.settings.notice_title | json }}
+      },
+      "gifts": [
+        {%- for block in section.blocks -%}
+          {%- assign fb = block.settings.fallback_product -%}
+          {
+            "label": {{ block.settings.label | json }},
+            "productType": {{ block.settings.product_type | strip | json }},
+            "preferredTags": {{ block.settings.preferred_tags | json }},
+            "fallback": {% if fb != blank and fb.available %}{
+              "productId": {{ fb.id }},
+              "variantId": {{ fb.selected_or_first_available_variant.id }},
+              "title": {{ fb.title | json }}
+            }{% else %}null{% endif %}
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+
+  <script type="application/json" data-rava-gift-guard-cart>
+    {
+      "items": [
+        {%- for item in cart.items -%}
+          {
+            "productId": {{ item.product_id }},
+            "productType": {{ item.product.type | json }},
+            "title": {{ item.product.title | json }},
+            "quantity": {{ item.quantity }},
+            "tags": {{ item.product.tags | json }},
+            "matches": [
+              {%- for block in section.blocks -%}
+                {%- liquid
+                  assign mf_parts = block.settings.metafield | strip | split: '.'
+                  assign mf_ns = mf_parts[0] | strip
+                  assign mf_key = mf_parts[1] | strip
+                  assign match = nil
+                  if mf_ns != blank and mf_key != blank
+                    assign match = item.product.metafields[mf_ns][mf_key].value
+                  endif
+                -%}
+                {%- if match != blank and match.available -%}
+                  {
+                    "productId": {{ match.id }},
+                    "variantId": {{ match.selected_or_first_available_variant.id }},
+                    "title": {{ match.title | json }}
+                  }
+                {%- else -%}
+                  null
+                {%- endif -%}
+                {%- unless forloop.last -%},{%- endunless -%}
+              {%- endfor -%}
+            ]
+          }{%- unless forloop.last -%},{%- endunless -%}
+        {%- endfor -%}
+      ]
+    }
+  </script>
+
+  <style>
+    .rava-gift-inline-notice {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      background: #EFE4BF;
+      color: #000;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 0 0 10px;
+      font-size: 13px;
+      line-height: 1.4;
+      text-align: left;
+      animation: ravaGiftInlineIn 0.2s ease;
+    }
+    .rava-gift-inline-notice__icon {
+      flex: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #000;
+      color: #EFE4BF;
+      font-size: 11px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+    @keyframes ravaGiftInlineIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <script src="{{ 'rava-gift-guard.js' | asset_url }}" defer></script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Free gift checkout guard",
+  "class": "shopify-section--rava-gift-guard",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enabled",
+      "label": "Enable auto-add of missing gifts at checkout",
+      "default": true
+    },
+    {
+      "type": "paragraph",
+      "content": "This only adds the gift to the cart. The automatic Buy X Get Y discount in Shopify admin makes it free. When you change the offer, update both."
+    },
+    {
+      "type": "text",
+      "id": "qualifying_types",
+      "label": "Qualifying product types",
+      "info": "Comma separated, exact product Type. Example: Perfume",
+      "default": "Perfume"
+    },
+    {
+      "type": "select",
+      "id": "gift_mode",
+      "label": "Gift mode",
+      "options": [
+        { "value": "one_of", "label": "ONE gift per item (roll on OR hair mist)" },
+        { "value": "each", "label": "EVERY gift per item (roll on AND hair mist)" }
+      ],
+      "default": "one_of"
+    },
+    {
+      "type": "range",
+      "id": "notice_delay",
+      "label": "Show 'Free gift added' line for",
+      "info": "Only when a gift was auto-added. Set to 0 to skip the line and go straight to checkout.",
+      "min": 0,
+      "max": 3000,
+      "step": 250,
+      "unit": "ms",
+      "default": 1000
+    },
+    {
+      "type": "text",
+      "id": "notice_title",
+      "label": "Line text",
+      "info": "Shown before the gift name, above the Checkout button",
+      "default": "Free gift added:"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "gift_option",
+      "name": "Gift option",
+      "settings": [
+        {
+          "type": "paragraph",
+          "content": "Order matters: the first gift option is the default auto-added gift."
+        },
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Label",
+          "default": "Roll On"
+        },
+        {
+          "type": "text",
+          "id": "product_type",
+          "label": "Gift product type",
+          "info": "Cart lines with this exact product Type count as this gift. Example: Roll On",
+          "default": "Roll On"
+        },
+        {
+          "type": "text",
+          "id": "metafield",
+          "label": "Matching scent metafield on the perfume",
+          "info": "Example: custom.matching_roll_on",
+          "default": "custom.matching_roll_on"
+        },
+        {
+          "type": "text",
+          "id": "preferred_tags",
+          "label": "Prefer this gift for perfumes tagged",
+          "info": "Comma separated tags. Example: For Her. Leave empty for no preference."
+        },
+        {
+          "type": "product",
+          "id": "fallback_product",
+          "label": "Fallback gift",
+          "info": "Used only when the perfume has no matching scent in stock. Leave empty to skip."
+        }
+      ]
+    }
+  ],
+  "default": {
+    "blocks": [
+      {
+        "type": "gift_option",
+        "settings": {
+          "label": "Roll On",
+          "product_type": "Roll On",
+          "metafield": "custom.matching_roll_on",
+          "preferred_tags": ""
+        }
+      },
+      {
+        "type": "gift_option",
+        "settings": {
+          "label": "Hair Mist",
+          "product_type": "Hair Mist",
+          "metafield": "custom.matching_hair_mist",
+          "preferred_tags": "For Her"
+        }
+      }
+    ]
+  }
+}
+{% endschema %}

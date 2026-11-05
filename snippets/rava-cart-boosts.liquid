@@ -1,0 +1,144 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  RAVA CART BOOSTS (cart drawer)
+  ----------------------------------------------------------------------------------------------------------------------
+
+  1. Free delivery progress bar (threshold in the cart drawer settings, default $50)
+  2. "Add 1 more perfume, get 2 more free gifts" box: shown whenever the cart has at least one perfume,
+     whatever the quantity (the offer has no limit)
+
+  Both are plain Liquid: the theme re-renders the cart drawer after every cart change, so they always match the cart.
+
+  ********************************************
+  Supported variables
+  ********************************************
+
+  * threshold: free delivery threshold in dollars (number), 0 or blank hides the bar
+  * grace: unlock this many dollars earlier (default 1), so a $99 cart of .99 prices counts as $100
+  * perfumes_url: where the "Add a perfume" button goes
+  * show_upsell: true / false
+  * part: 'ship' (delivery bar, top of the drawer) or 'gift' (perfume box, under the products)
+{%- endcomment -%}
+
+{%- liquid
+  assign threshold_cents = threshold | times: 100 | round
+  assign grace_cents = grace | default: 1 | times: 100 | round
+  # Real unlock point: $100 goal with $1 grace = unlocked from $99.00
+  assign unlock_cents = threshold_cents | minus: grace_cents
+  if unlock_cents < 1
+    assign unlock_cents = threshold_cents
+  endif
+
+  # Same total as the theme's own free shipping bar: shippable lines, minus cart-level discounts
+  assign shipping_total = 0
+  for line_item in cart.items
+    if line_item.requires_shipping
+      assign shipping_total = shipping_total | plus: line_item.final_line_price
+    endif
+  endfor
+  for discount_application in cart.cart_level_discount_applications
+    assign shipping_total = shipping_total | minus: discount_application.total_allocated_amount
+  endfor
+
+  assign perfume_qty = 0
+  for line_item in cart.items
+    if line_item.product.type == 'Perfume'
+      assign perfume_qty = perfume_qty | plus: line_item.quantity
+    endif
+  endfor
+
+  assign gift_qty = perfume_qty | times: 2
+  assign next_perfume_qty = perfume_qty | plus: 1
+  assign next_gift_qty = next_perfume_qty | times: 2
+-%}
+
+{%- if part == 'ship' and threshold_cents > 0 and cart.requires_shipping -%}
+    {%- liquid
+      assign remaining = unlock_cents | minus: shipping_total
+      assign progress = shipping_total | times: 100.0 | divided_by: unlock_cents
+      if progress > 100
+        assign progress = 100
+      endif
+    -%}
+
+    <div class="rcb-ship{% if remaining <= 0 %} is-done{% endif %}">
+      <p class="rcb-ship__text">
+        {%- if remaining > 0 -%}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 7h11v9H3zM14 10h4l3 3v3h-7z"></path><circle cx="7" cy="17.5" r="1.5"></circle><circle cx="17" cy="17.5" r="1.5"></circle></svg>
+          <span>You're <strong>{{ remaining | money }}</strong> away from <strong>FREE delivery</strong></span>
+        {%- else -%}
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"></path></svg>
+          <span>You've unlocked <strong>FREE delivery</strong></span>
+        {%- endif -%}
+      </p>
+
+      <div class="rcb-ship__track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ progress | round }}" aria-label="Progress to free delivery">
+        <span class="rcb-ship__fill" style="--rcb-progress: {{ progress }}%;"></span>
+      </div>
+    </div>
+{%- endif -%}
+
+{%- if part == 'gift' and show_upsell != false and perfume_qty > 0 -%}
+    <div class="rcb-gift">
+      <span class="rcb-gift__icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"></rect><path d="M5 12v9h14v-9M12 8v13M12 8c-1.5-3.5-6-4-6-1.2C6 8.5 12 8 12 8zM12 8c1.5-3.5 6-4 6-1.2C18 8.5 12 8 12 8z"></path></svg>
+      </span>
+
+      <div class="rcb-gift__copy">
+        <p class="rcb-gift__title">Add 1 more perfume, get <strong>2 more FREE gifts</strong></p>
+        <p class="rcb-gift__text">1 perfume = 2 gifts of your choice (Roll On or Hair Mist) for <strong>FREE</strong></p>
+      </div>
+
+      {%- if perfumes_url != blank -%}
+        <a href="{{ perfumes_url }}" class="rcb-gift__btn">Add a perfume</a>
+      {%- endif -%}
+    </div>
+{%- endif -%}
+
+{%- comment -%} ---------------- Social proof: rotating real customer reviews ---------------- {%- endcomment -%}
+{%- if part == 'proof' and reviews != blank -%}
+  {%- assign review_lines = reviews | newline_to_br | split: '<br />' -%}
+  <div class="rcb-proof" data-rcb-proof>
+    <p class="rcb-proof__head">
+      <span class="rcb-proof__stars" aria-hidden="true">“</span>
+      {{ proof_heading | default: 'What our customers say' | escape }}
+    </p>
+    <div class="rcb-proof__slides">
+      {%- assign shown = 0 -%}
+      {%- for line in review_lines -%}
+        {%- assign parts = line | strip | split: '|' -%}
+        {%- if parts[0] == blank -%}{%- continue -%}{%- endif -%}
+        <figure class="rcb-proof__slide{% if shown == 0 %} is-active{% endif %}">
+          <blockquote>“{{ parts[0] | strip | escape }}”</blockquote>
+          {%- if parts[1] != blank -%}<figcaption>{{ parts[1] | strip | escape }}</figcaption>{%- endif -%}
+        </figure>
+        {%- assign shown = shown | plus: 1 -%}
+      {%- endfor -%}
+    </div>
+  </div>
+  <script>
+    (function () {
+      if (window.__rcbProof) return;
+      window.__rcbProof = setInterval(function () {
+        var box = document.querySelector('cart-drawer [data-rcb-proof]');
+        if (!box || !box.offsetParent) return;
+        var slides = box.querySelectorAll('.rcb-proof__slide');
+        if (slides.length < 2) return;
+        var i = Array.prototype.findIndex.call(slides, function (s) { return s.classList.contains('is-active'); });
+        slides[i].classList.remove('is-active');
+        slides[(i + 1) % slides.length].classList.add('is-active');
+      }, 4000);
+    })();
+  </script>
+{%- endif -%}
+
+{%- comment -%} ---------------- Trust line under Checkout ---------------- {%- endcomment -%}
+{%- if part == 'trust' and trust != blank -%}
+  {%- assign trust_lines = trust | newline_to_br | split: '<br />' -%}
+  <ul class="rcb-trust" role="list">
+    {%- for line in trust_lines -%}
+      {%- assign t = line | strip -%}
+      {%- if t != blank -%}<li>{{ t | escape }}</li>{%- endif -%}
+    {%- endfor -%}
+  </ul>
+{%- endif -%}

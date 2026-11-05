@@ -1,0 +1,137 @@
+{%- comment -%}
+----------------------------------------------------------------------------------------------------------------------
+PRODUCT BADGES COMPONENT
+----------------------------------------------------------------------------------------------------------------------
+
+This component is used in product listing and product page to render the badges of a given product
+
+********************************************
+Supported variables
+********************************************
+
+* product: the product to render the badges
+* variant: the specific variant to show the badge from
+* vertical: if set to true, the badges are outputted vertically
+* types: the types of badge to output. Can be "custom", "sold_out" or "discount" (or a combination separated by comma). If nothing is set, all badges are outputted.
+* context: can be "product" or "card"
+{%- endcomment -%}
+
+{%- liquid
+  assign badge_types = types | default: 'custom, sold_out, discount' | split: ','
+  assign variant = variant | default: product.selected_or_first_available_variant
+
+  # ------------------------------------------------------------------
+  # RAVA "+2 FREE GIFTS" badge (product cards, perfumes only)
+  # Change these 3 lines to edit or stop the badge.
+  # The badge stops by itself at the end date (same moment as the offer timer).
+  # ------------------------------------------------------------------
+  assign rava_gift_badge_enabled = true
+  assign rava_gift_badge_text = '+2 FREE GIFTS'
+  assign rava_gift_badge_ends = '2026-11-05 00:00:00 +0200'
+
+  assign rava_now = 'now' | date: '%s' | plus: 0
+  assign rava_end = rava_gift_badge_ends | date: '%s' | plus: 0
+
+  assign rava_is_perfume_card = false
+  if context == 'card' and product.type == 'Perfume'
+    assign rava_is_perfume_card = true
+  endif
+
+  assign rava_show_gift_badge = false
+  if rava_gift_badge_enabled and rava_is_perfume_card and rava_now < rava_end
+    assign rava_show_gift_badge = true
+  endif
+-%}
+
+{%- capture badges -%}
+  {%- for badge_type in badge_types -%}
+    {%- assign stripped_badge_type = badge_type | strip -%}
+
+    {%- case stripped_badge_type -%}
+      {%- when 'custom' -%}
+        {%- assign custom_badges = product.metafields.custom.badges.value -%}
+
+        {%- for custom_badge in custom_badges -%}
+          <span class="badge badge--custom badge--{{ custom_badge | handle }}">{{ custom_badge }}</span>
+        {%- endfor -%}
+
+      {%- when 'sold_out' -%}
+        {%- if settings.show_sold_out_badge and variant.available == false -%}
+          <sold-out-badge class="badge badge--sold-out">
+            {{- 'product.general.sold_out_badge' | t -}}
+          </sold-out-badge>
+        {%- endif -%}
+
+      {%- when 'discount' -%}
+        {%- comment -%} RAVA: no sale badge on perfume cards, the gift badge replaces it {%- endcomment -%}
+        {%- if settings.show_discount and rava_is_perfume_card == false -%}
+          {%- liquid
+            assign show_on_sale_badge = false
+
+            if context == 'product'
+              if variant.compare_at_price > variant.price
+                assign show_on_sale_badge = true
+              endif
+            elsif context == 'card'
+              if product.compare_at_price > product.price
+                assign show_on_sale_badge = true
+              endif
+            endif
+          -%}
+
+          {%- if product.compare_at_price > product.price -%}
+            {%- if settings.discount_mode == 'percentage' -%}
+              {%- assign savings = variant.compare_at_price | minus: variant.price | times: 100.0 | divided_by: variant.compare_at_price | round | append: '%' -%}
+            {%- else -%}
+              {%- capture savings -%}{{ variant.compare_at_price | minus: variant.price | money }}{%- endcapture -%}
+            {%- endif -%}
+
+            {%- if show_on_sale_badge -%}
+              <on-sale-badge class="badge badge--on-sale">
+                {%- liquid
+                  if context == 'product'
+                    echo 'product.general.discount_badge_html' | t: savings: savings
+                  elsif context == 'card'
+                    if product.compare_at_price_varies or variant.compare_at_price == blank
+                      echo 'product.general.on_sale_badge' | t
+                    else
+                      echo 'product.general.discount_badge_html' | t: savings: savings
+                    endif
+                  endif
+                -%}
+              </on-sale-badge>
+            {%- endif -%}
+
+          {%- endif -%}
+        {%- endif -%}
+    {%- endcase -%}
+  {%- endfor -%}
+
+
+
+{%- if product.type == 'Roll On' or product.type == 'Hair Mist' or product.type == 'Body Splash' -%}    <span class="badge badge--offer-new">
+      NEW IN
+    </span>
+  {%- elsif rava_show_gift_badge -%}
+    <span class="badge badge--rava-gift">{{ rava_gift_badge_text }}</span>
+  {%- elsif rava_is_perfume_card -%}
+    {%- comment -%} Perfume card after the offer ends: no extra badge {%- endcomment -%}
+  {%- else -%}
+    <span class="badge badge--offer-item">
+      ON SALE
+    </span>
+  {%- endif -%}
+
+  {%- if product.tags contains 'Best Seller' -%}
+    <span class="badge badge--on-sale badge--best-seller">
+      BEST SELLER 🔥
+    </span>
+  {%- endif -%}
+
+{%- endcapture -%}
+
+{%- if badges != blank -%}
+  <badge-list class="badge-list {% if vertical %}badge-list--vertical{% endif %}">
+    {{- badges -}}
+  </badge-list>
+{%- endif -%}

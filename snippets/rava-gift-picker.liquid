@@ -1,0 +1,189 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  RAVA GIFT PICKER (cart drawer)
+  ----------------------------------------------------------------------------------------------------------------------
+
+  Every perfume in the cart = 2 free gifts that the customer CHOOSES (any Roll On / Hair Mist, any scent).
+
+  * Gift slots bar: "Choose your free gifts: 1 of 4 chosen" + one bubble per slot (photo when chosen, + when empty)
+  * Picker panel: takes over the drawer body. Tabs Roll On / Hair Mist, search, "Matches your perfume" first,
+    then the 100 best sellers of each type (loaded once per visit from sections/rava-gift-list.liquid, NOT rendered
+    here, so the cart drawer stays light and add to cart stays fast). Search uses Shopify's predictive search.
+  * Opens automatically right after a perfume is added (assets/rava-instant-cart.js), and from the slots bar.
+
+  Chosen gifts are normal cart lines with the hidden property _rava_gift = 1 (the Shopify discount makes them free).
+
+  ********************************************
+  Supported variables
+  ********************************************
+
+  * gifts_per_perfume: number of free gifts per perfume (default 2)
+  * roll_on_collection / hair_mist_collection: collection handles used for "Best sellers" (default roll-on / hair-mist)
+{%- endcomment -%}
+
+{%- liquid
+  assign per = gifts_per_perfume | default: 2
+  assign ro_handle = roll_on_collection | default: 'roll-on'
+  assign hm_handle = hair_mist_collection | default: 'hair-mist'
+
+  assign perfume_qty = 0
+  assign chosen = 0
+  assign matching_ro = ''
+  assign matching_hm = ''
+
+  # A gift counts as chosen when it was picked in the picker (_rava_gift), added by the checkout guard (_free_gift),
+  # or when it is a Roll On / Hair Mist that the discount made free (added from a collection or product page).
+  for line_item in cart.items
+    assign gift_units = 0
+    if line_item.properties['_rava_gift'] != blank or line_item.properties['_free_gift'] != blank
+      assign gift_units = line_item.quantity
+    elsif line_item.product.type == 'Roll On' or line_item.product.type == 'Hair Mist'
+      if line_item.original_price > 0 and line_item.final_line_price < line_item.original_line_price
+        assign saved = line_item.original_line_price | minus: line_item.final_line_price
+        assign gift_units = saved | divided_by: line_item.original_price
+      endif
+    endif
+
+    if gift_units > 0
+      assign chosen = chosen | plus: gift_units
+    elsif line_item.product.type == 'Perfume'
+      assign perfume_qty = perfume_qty | plus: line_item.quantity
+      assign mro = line_item.product.metafields.custom.matching_roll_on.value
+      assign mhm = line_item.product.metafields.custom.matching_hair_mist.value
+      if mro != blank and mro.available
+        assign mro_key = mro.handle | append: ','
+        unless matching_ro contains mro_key
+          assign matching_ro = matching_ro | append: mro_key
+        endunless
+      endif
+      if mhm != blank and mhm.available
+        assign mhm_key = mhm.handle | append: ','
+        unless matching_hm contains mhm_key
+          assign matching_hm = matching_hm | append: mhm_key
+        endunless
+      endif
+    endif
+  endfor
+
+  assign total_slots = perfume_qty | times: per
+  assign slots_left = total_slots | minus: chosen
+  if slots_left < 0
+    assign slots_left = 0
+  endif
+-%}
+
+{%- if perfume_qty > 0 -%}
+  <div
+    class="rgp"
+    data-rava-gift-picker
+    data-slots-left="{{ slots_left }}"
+    data-slots-total="{{ total_slots }}"
+    data-chosen="{{ chosen }}"
+  >
+    {%- comment -%} ---------------- Slots bar ---------------- {%- endcomment -%}
+    <div class="rgp-bar{% if slots_left == 0 %} is-done{% endif %}">
+      <div class="rgp-bar__copy">
+        <p class="rgp-bar__title">
+          {%- if slots_left > 0 -%}
+            🎁 Choose your {{ slots_left }} free {% if slots_left == 1 %}gift{% else %}gifts{% endif %}
+          {%- else -%}
+            🎁 All {{ total_slots }} free gifts chosen
+          {%- endif -%}
+        </p>
+        <div class="rgp-bar__slots" aria-hidden="true">
+          {%- assign shown = 0 -%}
+          {%- for line_item in cart.items -%}
+            {%- liquid
+              assign gift_units = 0
+              if line_item.properties['_rava_gift'] != blank or line_item.properties['_free_gift'] != blank
+                assign gift_units = line_item.quantity
+              elsif line_item.product.type == 'Roll On' or line_item.product.type == 'Hair Mist'
+                if line_item.original_price > 0 and line_item.final_line_price < line_item.original_line_price
+                  assign saved = line_item.original_line_price | minus: line_item.final_line_price
+                  assign gift_units = saved | divided_by: line_item.original_price
+                endif
+              endif
+            -%}
+            {%- if gift_units > 0 -%}
+              {%- for i in (1..gift_units) -%}
+                {%- if shown < total_slots -%}
+                  <span class="rgp-slot is-filled">{{ line_item.image | image_url: width: 80 | image_tag: loading: 'lazy', alt: '' }}</span>
+                  {%- assign shown = shown | plus: 1 -%}
+                {%- endif -%}
+              {%- endfor -%}
+            {%- endif -%}
+          {%- endfor -%}
+          {%- for i in (1..slots_left) -%}
+            {%- if forloop.index <= 12 -%}<span class="rgp-slot">+</span>{%- endif -%}
+          {%- endfor -%}
+        </div>
+      </div>
+
+      {%- if slots_left > 0 -%}
+        <button type="button" class="rgp-bar__btn" data-rgp-open>Choose</button>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} ---------------- Picker panel ---------------- {%- endcomment -%}
+    <div class="rgp-panel" data-rgp-panel hidden>
+      <div class="rgp-panel__head">
+        <button type="button" class="rgp-panel__back" data-rgp-close aria-label="Back to cart">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"></path></svg>
+        </button>
+        <div>
+          <p class="rgp-panel__title">Choose your free gifts</p>
+          <p class="rgp-panel__sub" data-rgp-left>{{ slots_left }} left to choose, any scent</p>
+        </div>
+      </div>
+
+      <p class="rgp-msg" data-rgp-msg role="status" hidden></p>
+
+      <div class="rgp-tabs" role="tablist">
+        <button type="button" role="tab" class="rgp-tab is-active" data-rgp-tab="Roll On" aria-selected="true">Roll On</button>
+        <button type="button" role="tab" class="rgp-tab" data-rgp-tab="Hair Mist" aria-selected="false">Hair Mist</button>
+      </div>
+
+      <label class="rgp-search">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></svg>
+        <input type="search" placeholder="Search a scent, e.g. Baccarat" data-rgp-search autocomplete="off">
+      </label>
+
+      <div class="rgp-results" data-rgp-results hidden></div>
+
+      {%- for type in (1..2) -%}
+        {%- liquid
+          if type == 1
+            assign type_name = 'Roll On'
+            assign matching = matching_ro
+            assign popular_url = routes.collections_url | append: '/' | append: ro_handle
+          else
+            assign type_name = 'Hair Mist'
+            assign matching = matching_hm
+            assign popular_url = routes.collections_url | append: '/' | append: hm_handle
+          endif
+          assign matching_handles = matching | split: ','
+        -%}
+
+        <div class="rgp-list" data-rgp-list="{{ type_name }}" {% if type == 2 %}hidden{% endif %}>
+          {%- if matching_handles.size > 0 -%}
+            <p class="rgp-list__label">Matches your perfume</p>
+            <div class="rgp-grid">
+              {%- for h in matching_handles -%}
+                {%- render 'rava-gift-picker-tile', gift: all_products[h] -%}
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+
+          <p class="rgp-list__label">Best sellers</p>
+          <div
+            class="rgp-popular"
+            data-rgp-popular="{{ type_name }}"
+            data-src="{{ popular_url }}?sort_by=best-selling&section_id=rava-gift-list"
+          >
+            <p class="rgp-empty">Loading the best sellers...</p>
+          </div>
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}

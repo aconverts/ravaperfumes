@@ -1,0 +1,320 @@
+{%- comment -%}
+  RAVA: Mix It (Build Your Own Perfume)
+  2 scents, free % split (must total 100), fixed price, custom name.
+  Includes "Popular Mixes" (For Him / For Her). Mixes live in assets/mix-it-presets.js.
+  Full catalog loads from templates/collection.mix-data.liquid (Liquid alone caps at 50 products).
+  Add this file to: sections/mix-it.liquid
+  Requires assets: mix-it.css, mix-it.js, mix-it-brand-map.json,
+                   mix-it-presets.css, mix-it-presets.js
+{%- endcomment -%}
+
+{{ 'mix-it.css' | asset_url | stylesheet_tag }}
+{{ 'mix-it-presets.css' | asset_url | stylesheet_tag }}
+
+{%- assign mix_product = all_products[section.settings.mix_product] -%}
+{%- assign source_collection = collections[section.settings.source_collection] -%}
+
+{%- assign default_gender = section.settings.presets_default_gender | default: 'him' -%}
+
+<section class="mix-it-wrapper" data-section-id="{{ section.id }}">
+  <div class="mix-it-container">
+
+    <div class="mix-it-header">
+      <div class="mix-it-trust-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.18 21 12 17.27 5.82 21 7 14.14l-5-4.87 7.1-1.01L12 2z"/></svg>
+        <span>{{ section.settings.trust_badge | default: '120,000+ Happy Customers' }}</span>
+      </div>
+      <h1 class="mix-it-title">{{ section.settings.heading | default: 'Mix Your Own Perfume' }}</h1>
+      <p class="mix-it-subtitle">{{ section.settings.subheading | default: 'Pick two fragrances, set the blend, and name it yours. We bottle it just for you.' }}</p>
+    </div>
+
+    {%- if mix_product == nil -%}
+      <div class="mix-it-error">
+        This section needs a product selected in the theme editor (Settings → "Custom Mix Product") before it will work.
+      </div>
+    {%- else -%}
+
+    <form method="post" action="/cart/add" id="mix-it-form" accept-charset="UTF-8" class="mix-it-form" enctype="multipart/form-data">
+      <input type="hidden" name="form_type" value="product">
+      <input type="hidden" name="utf8" value="✓">
+      <input type="hidden" name="id" value="{{ mix_product.selected_or_first_available_variant.id }}">
+      <input type="hidden" name="properties[_Popular Mix]" value="" data-mix-preset-input>
+
+      <div class="mix-it-grid">
+
+        <div class="mix-it-visual">
+          <div class="mix-it-bottle" id="mix-it-bottle">
+            <svg class="mix-it-bottle-svg" viewBox="0 0 200 360" xmlns="http://www.w3.org/2000/svg">
+              <defs>
+                <clipPath id="mix-it-bottle-clip">
+                  <path d="M80,8 H120 V40 C120,46 126,50 134,56 C152,68 168,86 168,118 V330 C168,344 156,356 142,356 H58 C44,356 32,344 32,330 V118 C32,86 48,68 66,56 C74,50 80,46 80,40 Z"/>
+                </clipPath>
+              </defs>
+
+              <path class="mix-it-bottle-outline" d="M80,8 H120 V40 C120,46 126,50 134,56 C152,68 168,86 168,118 V330 C168,344 156,356 142,356 H58 C44,356 32,344 32,330 V118 C32,86 48,68 66,56 C74,50 80,46 80,40 Z" />
+
+              <g clip-path="url(#mix-it-bottle-clip)">
+                <rect id="mix-it-liquid-2" class="mix-it-liquid mix-it-liquid-2" x="0" y="360" width="200" height="360"></rect>
+                <rect id="mix-it-liquid-1" class="mix-it-liquid mix-it-liquid-1" x="0" y="360" width="200" height="360"></rect>
+                <path id="mix-it-wave" class="mix-it-wave" d="M0,8 C25,0 25,16 50,8 C75,0 75,16 100,8 C125,0 125,16 150,8 C175,0 175,16 200,8 V20 H0 Z" transform="translate(0,352)"></path>
+              </g>
+
+              <rect class="mix-it-cap" x="86" y="0" width="28" height="14" rx="3"></rect>
+            </svg>
+            <div class="mix-it-percent-label" id="mix-it-percent-label">0%</div>
+          </div>
+          {%- assign mix_variant = mix_product.selected_or_first_available_variant -%}
+          <div class="mix-it-price-row">
+            <span class="mix-it-price">{{ mix_variant.price | money }}</span>
+            {%- if mix_variant.compare_at_price > mix_variant.price -%}
+              <span class="mix-it-price-compare">{{ mix_variant.compare_at_price | money }}</span>
+              {%- assign mix_savings = mix_variant.compare_at_price | minus: mix_variant.price -%}
+              <span class="mix-it-save-badge">Save {{ mix_savings | money }}</span>
+            {%- endif -%}
+          </div>
+        </div>
+
+        <div class="mix-it-controls">
+
+          {%- comment -%} ===== Popular Mixes (cards rendered by mix-it-presets.js) ===== {%- endcomment -%}
+          {%- if section.settings.presets_enabled -%}
+          <div class="mix-presets" data-mix-presets hidden
+            data-default-gender="{{ default_gender }}"
+            data-tag="{{ section.settings.presets_tag | escape }}">
+            <div class="mix-presets-head">
+              <p class="mix-presets-title">{{ section.settings.presets_heading | default: 'Popular Mixes' }}</p>
+              <div class="mix-presets-tabs" role="tablist">
+                <button type="button" role="tab" class="mix-presets-tab" data-gender="him" aria-selected="false">For Him</button>
+                <button type="button" role="tab" class="mix-presets-tab" data-gender="her" aria-selected="false">For Her</button>
+              </div>
+            </div>
+            {%- if section.settings.presets_hint != blank -%}
+              <p class="mix-presets-hint">{{ section.settings.presets_hint }}</p>
+            {%- endif -%}
+            <div class="mix-presets-track" data-gender="him" role="tabpanel"></div>
+            <div class="mix-presets-track" data-gender="her" role="tabpanel" hidden></div>
+            <div class="mix-presets-divider">{{ section.settings.presets_divider | default: 'Or build your own' }}</div>
+          </div>
+          {%- endif -%}
+          {%- comment -%} ===== End Popular Mixes ===== {%- endcomment -%}
+
+          {%- for i in (1..2) -%}
+          <div class="mix-it-scent-block" data-scent-index="{{ i }}">
+            <div class="mix-it-scent-label">Scent {{ i }}</div>
+
+            <div class="mix-it-row">
+              <div class="mix-it-dropdown" data-type="brand" data-index="{{ i }}">
+                <button type="button" class="mix-it-dd-trigger">
+                  <span class="mix-it-dd-text">Select Brand</span>
+                  <svg width="10" height="7" viewBox="0 0 10 7"><path d="m1 1 4 4 4-4" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
+                </button>
+                <div class="mix-it-dd-panel">
+                  <input type="search" class="mix-it-dd-search" placeholder="Search brand">
+                  <ul class="mix-it-dd-list" data-brand-list></ul>
+                </div>
+                <input type="hidden" class="mix-it-brand-value" name="properties[Brand {{ i }}]">
+              </div>
+
+              <div class="mix-it-dropdown" data-type="fragrance" data-index="{{ i }}">
+                <button type="button" class="mix-it-dd-trigger" disabled>
+                  <span class="mix-it-dd-text">Select Fragrance</span>
+                  <svg width="10" height="7" viewBox="0 0 10 7"><path d="m1 1 4 4 4-4" fill="none" stroke="currentColor" stroke-width="2"></path></svg>
+                </button>
+                <div class="mix-it-dd-panel">
+                  <ul class="mix-it-dd-list" data-fragrance-list></ul>
+                </div>
+                <input type="hidden" class="mix-it-fragrance-value" name="properties[Scent {{ i }}]">
+                <input type="hidden" class="mix-it-fragrance-image" name="properties[_Scent {{ i }} Image]">
+              </div>
+            </div>
+
+            <div class="mix-it-percent-row">
+              <span class="mix-it-percent-display">0%</span>
+              <input type="range" class="mix-it-range" data-index="{{ i }}" min="0" max="100" value="50">
+              <input type="hidden" class="mix-it-percent-value" name="properties[Percent {{ i }}]" value="50%">
+            </div>
+          </div>
+          {%- endfor -%}
+
+          <div class="mix-it-split-warning" id="mix-it-split-warning" style="display:none;">
+            Blend must total 100%
+          </div>
+
+          <div class="mix-it-name-row">
+            <label for="mix-it-name">Name your scent</label>
+            <input type="text" id="mix-it-name" name="properties[Name Your Scent]" maxlength="50" placeholder="e.g. Midnight Oud">
+          </div>
+
+          <button type="submit" class="mix-it-submit" id="mix-it-submit" disabled>
+            <span id="mix-it-submit-text">Add to Cart • {{ mix_product.price | money }}</span>
+          </button>
+
+        </div>
+      </div>
+    </form>
+
+    {%- endif -%}
+  </div>
+</section>
+
+{%- comment -%} Product data for client-side brand/fragrance filtering {%- endcomment -%}
+<script type="application/json" id="mix-it-product-data-{{ section.id }}">
+  [
+    {%- if source_collection -%}
+      {%- for product in source_collection.products -%}
+        {
+          "id": {{ product.id | json }},
+          "title": {{ product.title | json }},
+          "vendor": {{ product.vendor | json }},
+          "image": {%- if product.featured_image -%}{{ product.featured_image | image_url: width: 200 | json }}{%- else -%}null{%- endif -%},
+          "handle": {{ product.handle | json }}
+        }{%- unless forloop.last -%},{%- endunless -%}
+      {%- endfor -%}
+    {%- endif -%}
+  ]
+</script>
+
+<script>
+  window.mixItSectionId = {{ section.id | json }};
+  window.mixItMaxPercentBlocks = 2;
+  window.mixItBrandMapUrl = {{ 'mix-it-brand-map.json' | asset_url | json }};
+
+  /* Load the FULL source collection (Liquid above only outputs the first 50).
+     mix-it.js and mix-it-presets.js wait for this before starting. */
+  window.mixItReady = (function () {
+    var handle = {{ source_collection.handle | json }};
+    var dataEl = document.getElementById('mix-it-product-data-' + window.mixItSectionId);
+
+    function domReady() {
+      return new Promise(function (resolve) {
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', resolve);
+        else resolve();
+      });
+    }
+    if (!handle || !dataEl || !window.fetch) return domReady();
+
+    function page(n) {
+      return fetch('/collections/' + handle + '?view=mix-data&page=' + n, { credentials: 'same-origin' })
+        .then(function (r) { return r.text(); })
+        .then(function (t) { return JSON.parse(t); })
+        .catch(function (e) {
+          console.warn('Mix It: catalog page ' + n + ' failed to load', e);
+          return { pages: 1, products: [] };
+        });
+    }
+
+    var load = page(1).then(function (first) {
+      var requests = [];
+      for (var i = 2; i <= first.pages; i++) requests.push(page(i));
+      return Promise.all(requests).then(function (rest) {
+        var all = first.products || [];
+        rest.forEach(function (r) { all = all.concat(r.products || []); });
+        if (all.length) dataEl.textContent = JSON.stringify(all);
+      });
+    }).catch(function (e) {
+      console.warn('Mix It: full catalog load failed, using first 50 products', e);
+    });
+
+    // Never block the builder for more than 8 seconds
+    var timeout = new Promise(function (resolve) { setTimeout(resolve, 8000); });
+    return Promise.all([Promise.race([load, timeout]), domReady()]);
+  })();
+</script>
+{{ 'mix-it.js' | asset_url | script_tag }}
+{{ 'mix-it-presets.js' | asset_url | script_tag }}
+
+{% schema %}
+{
+  "name": "Mix It (RAVA)",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Setup"
+    },
+    {
+      "type": "product",
+      "id": "mix_product",
+      "label": "Custom Mix Product",
+      "info": "The product added to cart (fixed price, no variants needed beyond Default Title)."
+    },
+    {
+      "type": "collection",
+      "id": "source_collection",
+      "label": "Fragrance source collection",
+      "info": "Collection containing all sellable scents customers can blend from."
+    },
+    {
+      "type": "header",
+      "content": "Text"
+    },
+    {
+      "type": "text",
+      "id": "trust_badge",
+      "label": "Trust badge text",
+      "default": "120,000+ Happy Customers"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Mix Your Own Perfume"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Pick two fragrances, set the blend, and name it yours. We bottle it just for you."
+    },
+    {
+      "type": "header",
+      "content": "Popular Mixes"
+    },
+    {
+      "type": "checkbox",
+      "id": "presets_enabled",
+      "label": "Show popular mixes",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "presets_heading",
+      "label": "Heading",
+      "default": "Popular Mixes"
+    },
+    {
+      "type": "text",
+      "id": "presets_hint",
+      "label": "Helper text",
+      "default": "Pick a favorite blend, name it, and add to cart."
+    },
+    {
+      "type": "text",
+      "id": "presets_tag",
+      "label": "Tag on first mix",
+      "default": "Most Popular",
+      "info": "Leave blank to hide."
+    },
+    {
+      "type": "select",
+      "id": "presets_default_gender",
+      "label": "Tab shown first",
+      "options": [
+        { "value": "him", "label": "For Him" },
+        { "value": "her", "label": "For Her" }
+      ],
+      "default": "him"
+    },
+    {
+      "type": "text",
+      "id": "presets_divider",
+      "label": "Divider text",
+      "default": "Or build your own"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Mix It (RAVA)"
+    }
+  ]
+}
+{% endschema %}

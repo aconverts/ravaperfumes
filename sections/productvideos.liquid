@@ -1,0 +1,1134 @@
+{% comment %}
+---------------------------------------------------------
+Copyright © 2023 Section Store. All rights reserved.
+Unauthorized copying, modification, distribution, or use
+of this code or any portion of it, is strictly prohibited.
+Violators will be prosecuted to the fullest extent of the law.
+For inquiries or permissions, contact daniel@section.store
+---------------------------------------------------------
+{% endcomment %}
+
+{%- liquid
+  assign padding_top = section.settings.padding_top
+  assign padding_bottom = section.settings.padding_bottom
+  assign border_color = section.settings.border_color
+  assign border_thickness = section.settings.border_thickness
+  assign margin_top = section.settings.margin_top
+  assign margin_bottom = section.settings.margin_bottom
+  assign margin_horizontal_mobile = section.settings.margin_horizontal_mobile
+  assign margin_horizontal = section.settings.margin_horizontal
+  assign background_color = section.settings.background_color
+  assign background_gradient = section.settings.background_gradient
+  assign lazy = section.settings.lazy
+  assign section_radius = section.settings.section_radius
+
+  assign scrolling_velocity = section.settings.scrolling_velocity
+  assign scrolling_velocity_mobile = section.settings.scrolling_velocity_mobile
+  assign reverse_direction = section.settings.reverse_direction
+  assign pause_hover = section.settings.pause_hover
+
+  assign item_radius = section.settings.item_radius
+  assign item_border_thickness = section.settings.item_border_thickness
+  assign item_border_color = section.settings.item_border_color
+  assign item_border_gradient = section.settings.item_border_gradient
+  assign item_width = section.settings.item_width
+  assign item_width_mobile = section.settings.item_width_mobile
+  assign item_gap = section.settings.item_gap
+  assign item_gap_mobile = section.settings.item_gap_mobile
+
+  assign image_ratio = section.settings.image_ratio
+  assign image_ratio_mobile = section.settings.image_ratio_mobile
+
+  assign player_size = section.settings.player_size
+  assign player_size_mobile = section.settings.player_size_mobile
+  assign player_color = section.settings.player_color
+
+  assign modal_width = section.settings.modal_width
+  assign modal_width_mobile = section.settings.modal_width_mobile
+  assign modal_radius = section.settings.modal_radius
+  assign modal_border_thickness = section.settings.modal_border_thickness
+  assign modal_border_color = section.settings.modal_border_color
+  assign modal_ratio = section.settings.modal_ratio
+  assign modal_ratio_mobile = section.settings.modal_ratio_mobile
+  assign modal_controls = section.settings.modal_controls
+
+  assign close_bg_color = section.settings.close_bg_color
+  assign close_icon_color = section.settings.close_icon_color
+  
+-%}
+
+{%- style -%}
+  
+  .section-{{ section.id }} {
+    border-top: solid {{ border_color }} {{ border_thickness }}px;
+    border-bottom: solid {{ border_color }} {{ border_thickness }}px;
+    margin-top: {{ margin_top | times: 0.75 | round: 0 }}px;
+    margin-bottom: {{ margin_bottom | times: 0.75 | round: 0 }}px;
+    margin-left: {{ margin_horizontal_mobile }}rem;
+    margin-right: {{ margin_horizontal_mobile }}rem;
+    border-radius: {{ section_radius | times: 0.6 | round: 0 }}px;
+    overflow: hidden;
+  }
+
+  .section-{{ section.id }}-settings {
+    width: 100%;
+    margin: 0 auto;
+    padding-top: {{ padding_top | times: 0.75 | round: 0 }}px;
+    padding-bottom: {{ padding_bottom | times: 0.75 | round: 0 }}px;
+  }
+
+  .scrolling-videos-wrap-{{ section.id }} {
+    position: relative;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-wrap: nowrap;
+    flex-wrap: nowrap;
+    background-attachment: scroll !important;
+    transform-origin: center;
+    gap: {{ item_gap_mobile }}px;
+  }
+
+  .scrolling-videos-list-{{ section.id }} {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    align-items: center;
+    white-space: nowrap;
+    background-attachment: scroll !important;
+    -webkit-animation: ticker{{ section.id | replace: '-', '' }} {{ scrolling_velocity_mobile }}s infinite linear;
+    animation: ticker{{ section.id | replace: '-', '' }} {{ scrolling_velocity_mobile }}s infinite linear;
+    flex-shrink: 0;
+    gap: {{ item_gap_mobile }}px;
+  }
+
+  .scrolling-videos-item-{{ section.id }} {
+    background-attachment: scroll !important;
+    position: relative;
+    flex-shrink: 0;
+    text-decoration: none;
+    cursor: pointer;
+    width: {{ item_width_mobile }}px;
+    height: 100%;
+    padding: {{ item_border_thickness }}px;
+    background: {{ item_border_color }};
+    background-image: {{ item_border_gradient }};
+    border-radius: {{ item_radius }}px;
+    overflow: hidden;
+    transition: transform 0.3s ease;
+  }
+
+  .scrolling-videos-item-{{ section.id }}:hover {
+    transform: translateY(-10px);
+  }
+
+  .scrolling-videos-images-{{ section.id }} {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border-radius: {{ item_radius }}px;
+  }
+
+  .scrolling-videos-images-{{ section.id }} img,
+  .scrolling-videos-images-{{ section.id }} svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    margin: 0;
+  }
+
+  .scrolling-videos-images-{{ section.id }} svg {
+    background-color: #ababab
+  }
+
+  .scrolling-videos-player-{{ section.id }} {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2;
+    width: {{ player_size_mobile }}px;
+    height: {{ player_size_mobile }}px;
+  }
+
+  .scrolling-videos-player-{{ section.id }} svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .scrolling-videos-modal-{{ section.id }} {
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    padding: 10px;
+    transition: opacity 0.3s ease;
+  }
+
+  .scrolling-videos-modal-{{ section.id }}.active {
+    opacity: 1;
+    z-index: 100;
+    pointer-events: all;
+    transition: all 250ms ease-in 0s;
+  }
+
+  .scrolling-videos-modal-inner-{{ section.id }} {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    max-height: 70vh;
+    width: {{ modal_width_mobile }}%;
+  }
+
+  .scrolling-videos-modal-inner-{{ section.id }} video,
+  .scrolling-videos-modal-inner-{{ section.id }} iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    box-shadow: none;
+    border: 0px;
+    border-radius: {{ modal_radius }}px;
+    border: {{ modal_border_thickness }}px solid {{ modal_border_color }};
+  }
+
+  .scrolling-videos-close-{{ section.id }} {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 12px;
+    box-shadow: none;
+    background-color: transparent;
+    background-color: {{ close_bg_color }};
+    border: 0px;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+    cursor: pointer;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .scrolling-videos-close-{{ section.id }} svg {
+    display: block;
+    width: 24px;
+    height: 24px;
+  }
+
+  .scrolling-videos-close-{{ section.id }} svg path {
+    fill: {{ close_icon_color }};
+  }
+
+
+  @media(min-width: 1024px) {
+    .section-{{ section.id }} {
+      margin-top: {{ margin_top }}px;
+      margin-bottom: {{ margin_bottom }}px;
+      margin-left: {{ margin_horizontal }}rem;
+      margin-right: {{ margin_horizontal }}rem;
+    }
+
+    .section-{{ section.id }}-settings {
+      padding: 0 5rem;
+      padding-top: {{ padding_top }}px;
+      padding-bottom: {{ padding_bottom }}px;
+    }
+
+    .scrolling-videos-list-{{ section.id }} {
+      animation-duration: {{ scrolling_velocity }}s;
+    }
+    
+    .scrolling-videos-item-{{ section.id }} {
+      width: {{ item_width }}px;
+    }
+    
+    .scrolling-videos-player-{{ section.id }} {
+      width: {{ player_size }}px;
+      height: {{ player_size }}px;
+    }
+
+    .scrolling-videos-modal-inner-{{ section.id }} {
+      width: {{ modal_width }}%;
+    }
+    
+    .scrolling-videos-wrap-{{ section.id }},
+    .scrolling-videos-list-{{ section.id }} {
+      gap: {{ item_gap }}px;
+    }
+
+    .scrolling-videos-close-{{ section.id }} {
+      position: absolute;
+      margin: 0px;
+      top: 12px;
+      right: -12px;
+      left: unset;
+      transform: translateX(-50%);
+    }
+  }
+
+{%- endstyle -%}
+
+{% if reverse_direction %}
+  <style>
+    @keyframes ticker{{ section.id | replace: '-', '' }} {
+      0% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(0%);
+      }
+    }
+  </style>
+{% else %}
+  <style>
+    @keyframes ticker{{ section.id | replace: '-', '' }} {
+      0% {
+        transform: translateX(0%);
+      }
+      100% {
+        transform: translateX(-100%);
+      }
+    }
+  </style>
+{% endif %}
+
+{% if pause_hover %}
+  <style>
+    .scrolling-videos-wrap-{{ section.id }}:hover .scrolling-videos-list-{{ section.id }} {
+      animation-play-state: paused
+    }
+  </style>
+{% endif %}
+
+{% if image_ratio_mobile == "portrait" %}
+  <style>
+    .scrolling-videos-item-{{ section.id }} {
+      aspect-ratio: 9.6/16;
+    }
+  </style>
+{% elsif image_ratio_mobile == "landscape" %}
+  <style>
+    .scrolling-videos-item-{{ section.id }} {
+      aspect-ratio: 12/6;
+    }
+  </style>
+{% elsif image_ratio_mobile == "square" %}
+  <style>
+    .scrolling-videos-item-{{ section.id }} {
+      aspect-ratio: 12/12;
+    }
+  </style>
+{% else %}
+  <style>
+    .scrolling-videos-item-{{ section.id }} {
+      aspect-ratio: auto;
+    }
+  </style>
+{% endif %}
+
+{% if image_ratio == "portrait" %}
+  <style>
+    @media (min-width: 1024px) {
+      .scrolling-videos-item-{{ section.id }} {
+        aspect-ratio: 9.6/16;
+      }
+    }
+  </style>
+{% elsif image_ratio == "landscape" %}
+  <style>
+    @media (min-width: 1024px) {
+      .scrolling-videos-item-{{ section.id }} {
+        aspect-ratio: 12/6;
+      }
+    }
+  </style>
+{% elsif image_ratio == "square" %}
+  <style>
+    @media (min-width: 1024px) {
+      .scrolling-videos-item-{{ section.id }} {
+        aspect-ratio: 12/12;
+      }
+    }
+  </style>
+{% else %}
+  <style>
+    @media (min-width: 1024px) {
+      .scrolling-videos-item-{{ section.id }} {
+        aspect-ratio: auto;
+      }
+    }
+  </style>
+{% endif %}
+
+{% if modal_ratio_mobile == "portrait" %}
+  <style>
+    .scrolling-videos-modal-inner-{{ section.id }} {
+      aspect-ratio: 9.6/16;
+    }
+  </style>
+{% elsif modal_ratio_mobile == "landscape" %}
+  <style>
+    .scrolling-videos-modal-inner-{{ section.id }} {
+      aspect-ratio: 12/6;
+    }
+  </style>
+{% elsif modal_ratio_mobile == "square" %}
+  <style>
+    .scrolling-videos-modal-inner-{{ section.id }} {
+      aspect-ratio: 12/12;
+    }
+  </style>
+{% else %}
+  <style>
+    .scrolling-videos-modal-inner-{{ section.id }} {
+      aspect-ratio: auto;
+    }
+  </style>
+{% endif %}
+
+{% if modal_ratio == "portrait" %}
+  <style>
+    @media (min-width: 1024px) {
+      .scrolling-videos-modal-inner-{{ section.id }} {
+        aspect-ratio: 9.6/16;
+      }
+    }
+  </style>
+{% elsif modal_ratio == "landscape" %}
+  <style>
+    @media (min-width: 1024px) {
+      .scrolling-videos-modal-inner-{{ section.id }} {
+        aspect-ratio: 12/6;
+      }
+    }
+  </style>
+{% elsif modal_ratio == "square" %}
+  <style>
+    @media (min-width: 1024px) {
+      .scrolling-videos-modal-inner-{{ section.id }} {
+        aspect-ratio: 12/12;
+      }
+    }
+  </style>
+{% else %}
+  <style>
+    @media (min-width: 1024px) {
+      .scrolling-videos-modal-inner-{{ section.id }} {
+        aspect-ratio: auto;
+      }
+    }
+  </style>
+{% endif %}
+
+{% unless modal_controls %}
+  <style>
+    .scrolling-videos-modal-inner-{{ section.id }}:after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+  </style>
+{% endunless %}
+
+<div class="section-{{ section.id }} scrolling-{{ section.id }}"
+  style="background-color:{{ background_color }}; background-image: {{ background_gradient }};">
+	<div class="section-{{ section.id }}-settings">
+	  <div class="scrolling-videos-wrap-{{ section.id }}">
+	    <div class="scrolling-videos-list-{{ section.id }}">
+		  {% for item in (1..5) %}
+		    {% for block in section.blocks %}
+			  <div class="scrolling-videos-item-{{ section.id }} scrolling-videos-item-{{ block.id }}">
+			    <div class="scrolling-videos-images-{{ section.id }}">
+				  {% if block.settings.image != blank %}
+				    <img src="{{ block.settings.image | image_url }}" alt="{{ block.settings.image.alt }}" {% if lazy %}loading="lazy"{% endif %}>
+				  {% else %}
+					{{ 'image' | placeholder_svg_tag }}
+				  {% endif %}
+				</div>
+				<div class="scrolling-videos-player-{{ section.id }}">
+				  <svg xmlns="http://www.w3.org/2000/svg" width="67" height="68" viewBox="0 0 67 68" fill="none"><circle cx="33.4857" cy="33.9598" r="31.6009" stroke="{{ player_color }}" stroke-width="3"/><path d="M47.0352 33.9592L26.7102 45.6938L26.7102 22.2245L47.0352 33.9592Z" fill="{{ player_color }}"/></svg>
+				</div>
+			  </div>
+			{% endfor %}
+		  {% endfor %}
+		  </div>
+		  <div class="scrolling-videos-list-{{ section.id }}">
+            {% for item in (1..5) %}
+              {% for block in section.blocks %}
+                <div class="scrolling-videos-item-{{ section.id }} scrolling-videos-item-{{ block.id }}">
+                  <div class="scrolling-videos-images-{{ section.id }}">
+                    {% if block.settings.image != blank %}
+                        <img src="{{ block.settings.image | image_url }}" alt="{{ block.settings.image.alt }}" {% if lazy %}loading="lazy"{% endif %}>
+                    {% else %}
+                        {{ 'image' | placeholder_svg_tag }}
+                    {% endif %}
+                  </div>
+                  <div class="scrolling-videos-player-{{ section.id }}">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="67" height="68" viewBox="0 0 67 68" fill="none"><circle cx="33.4857" cy="33.9598" r="31.6009" stroke="{{ player_color }}" stroke-width="3"/><path d="M47.0352 33.9592L26.7102 45.6938L26.7102 22.2245L47.0352 33.9592Z" fill="{{ player_color }}"/></svg>
+                  </div>
+                </div>
+              {% endfor %}
+            {% endfor %}
+    	  </div>
+	   </div>
+	</div>
+</div>
+
+{% for block in section.blocks %}
+  <div class="scrolling-videos-modal-{{ section.id }}" data-id="{{ block.id }}">
+	<div class="scrolling-videos-modal-inner-{{ section.id }}">
+	  {% assign video_id = block.settings.video.id | default: block.settings.video_url.id %}
+	  {% assign loop = '&loop=1&playlist=' | append: video_id %}
+	  {%- if block.settings.video == null and block.settings.video_url != null -%}
+	  {%- if block.settings.video_url.type == 'youtube' -%}
+		<iframe
+		  src="https://www.youtube.com/embed/{{ video_id }}?enablejsapi=1&autoplay=0&controls={% if modal_controls %}1{% else %}0{% endif %}&showinfo=0{{ loop }}"
+		  data-src1="https://www.youtube.com/embed/{{ video_id }}?enablejsapi=1&autoplay=1&controls={% if modal_controls %}1{% else %}0{% endif %}&showinfo=0{{ loop }}"
+		  data-src2="https://www.youtube.com/embed/{{ video_id }}?enablejsapi=1&autoplay=0&controls={% if modal_controls %}1{% else %}0{% endif %}&showinfo=0{{ loop }}"
+		  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+		  allowfullscreen
+		  class="lazy"
+		></iframe>
+	  {%- else -%}
+		<iframe
+		  data-src="https://player.vimeo.com/video/{{ video_id }}?enablejsapi=1&autoplay=0&controls={% if modal_controls %}1{% else %}0{% endif %}&showinfo=0{{ loop }}"
+		  data-src1="https://player.vimeo.com/video/{{ video_id }}?enablejsapi=1&autoplay=1&controls={% if modal_controls %}1{% else %}0{% endif %}&showinfo=0{{ loop }}"
+		  data-src2="https://player.vimeo.com/video/{{ video_id }}?enablejsapi=1&autoplay=0&controls={% if modal_controls %}1{% else %}0{% endif %}&showinfo=0{{ loop }}"
+		  allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture"
+		  allowfullscreen
+		  class="lazy"
+		></iframe>
+	  {% endif %}
+	  {% else %}
+		  <video data-src="{{ block.settings.video.sources[1].url }}" {% if modal_controls %}controls{% endif %} playsinline preload="none" loop class="lazy"></video>
+	  {% endif %}
+      <button class="scrolling-videos-close-{{ section.id }}">
+	    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" aria-hidden="true" role="img" width="100%" height="100%" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="currentColor" d="M18.3 5.71a.996.996 0 0 0-1.41 0L12 10.59L7.11 5.7A.996.996 0 1 0 5.7 7.11L10.59 12L5.7 16.89a.996.996 0 1 0 1.41 1.41L12 13.41l4.89 4.89a.996.996 0 1 0 1.41-1.41L13.41 12l4.89-4.89c.38-.38.38-1.02 0-1.4z"></path></svg>
+	  </button>
+	</div>
+  </div>
+{% endfor %}
+
+<script src="https://cdn.jsdelivr.net/npm/vanilla-lazyload@19.1.3/dist/lazyload.min.js"></script>
+
+<script>
+  function scrollingVideos() {
+    
+    let lazyLoadInstance = new LazyLoad();
+
+    window.addEventListener(
+      "LazyLoad::Initialized",
+      function (event) {
+        window.lazyLoadInstance = event.detail.instance;
+      },
+      false
+    );
+
+    document.querySelectorAll('.scrolling-videos-item-{{ section.id }}').forEach(item => {
+      item.addEventListener('click', () => {
+		const modalId = item.classList.contains('scrolling-videos-item-{{ section.id }}') ? item.classList[1].split('-')[3] : null;
+		if (modalId) {
+		  const modal = document.querySelector(`.scrolling-videos-modal-{{ section.id }}[data-id="${modalId}"]`);
+          if (modal) {
+		  	modal.classList.add('active');
+			document.body.style.overflow = 'hidden';
+
+			const video = modal.querySelector('video');
+			const frame = modal.querySelector('iframe');
+
+			if (video) {
+			  video.play();
+			}
+
+			if (frame) {
+			  let dataSrc1 = frame.getAttribute('data-src1');
+			  frame.src = dataSrc1;
+			}
+		  }
+		}
+      });
+    });
+
+    document.querySelectorAll('.scrolling-videos-close-{{ section.id }}').forEach(closeButton => {
+	  closeButton.addEventListener('click', (e) => {
+		const modal = e.target.closest('.scrolling-videos-modal-{{ section.id }}');
+		if (modal) {
+		  document.body.style.overflow = '';
+			modal.classList.remove('active');
+			const video = modal.querySelector('video');
+			const frame = modal.querySelector('iframe');
+
+			if (video) {
+			  video.pause();
+			}
+
+			if (frame) {
+			  const dataSrc2 = frame.getAttribute('data-src2');
+			  frame.src = dataSrc2;
+			}
+		}
+	  });
+    });
+
+    document.addEventListener('click', (e) => {
+      document.querySelectorAll('.scrolling-videos-modal-{{ section.id }}.active').forEach(modal => {
+        if (e.target === modal) {
+          document.body.style.overflow = '';
+			modal.classList.remove('active');
+			const video = modal.querySelector('video');
+			const frame = modal.querySelector('iframe');
+
+			if (video) {
+			  video.pause();
+			}
+
+			if (frame) {
+			  const dataSrc2 = frame.getAttribute('data-src2');
+			  frame.src = dataSrc2;
+			}
+		}
+        });
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', scrollingVideos);
+  
+  if (Shopify.designMode) {
+     document.addEventListener('shopify:section:unload', scrollingVideos);
+     document.addEventListener('shopify:section:load', scrollingVideos);
+  }
+</script>
+
+
+{% schema %}
+{
+  "name": "SS - Scrolling videos",
+  "settings": [
+    {
+      "type": "paragraph",
+      "content": "Save to display section correctly."
+    },
+    {
+      "type": "header",
+      "content": "Scrolling settings",
+      "info": "The theme editor may display incorrect scrolling speed; please verify on the live site."
+    },
+    {
+      "type": "range",
+      "id": "scrolling_velocity",
+      "min": 10,
+      "max": 150,
+      "step": 2,
+      "label": "Speed",
+      "info": "⚡ <----------------> 🐌",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "scrolling_velocity_mobile",
+      "min": 10,
+      "max": 150,
+      "step": 2,
+      "label": "Speed mobile",
+      "info": "⚡ <----------------> 🐌",
+      "default": 100
+    },
+    {
+      "type": "checkbox",
+      "id": "reverse_direction",
+      "label": "Reverse scrolling direction"
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_hover",
+      "label": "Pause on hover",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Media settings"
+    },
+    {
+      "type": "range",
+      "id": "item_width",
+      "min": 100,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "label": "Width",
+      "default": 270
+    },
+    {
+      "type": "range",
+      "id": "item_width_mobile",
+      "min": 100,
+      "max": 600,
+      "step": 10,
+      "unit": "px",
+      "label": "Width - mobile",
+      "default": 240
+    },
+    {
+      "type": "range",
+      "id": "item_gap",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "item_gap_mobile",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Gap - mobile",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "item_radius",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "label": "Roundness",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "item_border_thickness",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Border thickness",
+      "default": 4
+    },
+    {
+      "type": "select",
+      "id": "image_ratio",
+      "label": "Aspect ratio",
+      "default": "portrait",
+      "options": [
+        {
+          "label": "Portrait",
+          "value": "portrait"
+        },
+        {
+          "label": "Square",
+          "value": "square"
+        },
+        {
+          "label": "Landscape",
+          "value": "landscape"
+        },
+        {
+          "label": "Original",
+          "value": "original"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "image_ratio_mobile",
+      "label": "Aspect ratio - mobile",
+      "default": "portrait",
+      "options": [
+        {
+          "label": "Portrait",
+          "value": "portrait"
+        },
+        {
+          "label": "Square",
+          "value": "square"
+        },
+        {
+          "label": "Landscape",
+          "value": "landscape"
+        },
+        {
+          "label": "Original",
+          "value": "original"
+        }
+      ]
+    },
+    {
+      "type": "header",
+      "content": "Play button settings"
+    },
+    {
+      "type": "range",
+      "id": "player_size",
+      "min": 20,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "label": "Size",
+      "default": 56
+    },
+    {
+      "type": "range",
+      "id": "player_size_mobile",
+      "min": 20,
+      "max": 150,
+      "step": 2,
+      "unit": "px",
+      "label": "Size - mobile",
+      "default": 52
+    },
+    {
+      "type": "header",
+      "content": "Modal settings"
+    },
+    {
+      "type": "range",
+      "id": "modal_width",
+      "min": 10,
+      "max": 100,
+      "step": 2,
+      "unit": "%",
+      "label": "Width",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "modal_width_mobile",
+      "min": 10,
+      "max": 100,
+      "step": 2,
+      "unit": "%",
+      "label": "Width - mobile",
+      "default": 70
+    },
+    {
+      "type": "range",
+      "id": "modal_radius",
+      "min": 0,
+      "max": 200,
+      "step": 2,
+      "unit": "px",
+      "label": "Roundness",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "modal_border_thickness",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "label": "Border thickness",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "modal_ratio",
+      "label": "Aspect ratio",
+      "default": "portrait",
+      "options": [
+        {
+          "label": "Portrait",
+          "value": "portrait"
+        },
+        {
+          "label": "Square",
+          "value": "square"
+        },
+        {
+          "label": "Landscape",
+          "value": "landscape"
+        },
+        {
+          "label": "Original",
+          "value": "original"
+        }
+      ]
+    },
+    {
+      "type": "select",
+      "id": "modal_ratio_mobile",
+      "label": "Aspect ratio - mobile",
+      "default": "portrait",
+      "options": [
+        {
+          "label": "Portrait",
+          "value": "portrait"
+        },
+        {
+          "label": "Square",
+          "value": "square"
+        },
+        {
+          "label": "Landscape",
+          "value": "landscape"
+        },
+        {
+          "label": "Original",
+          "value": "original"
+        }
+      ]
+    },
+    {
+      "type": "checkbox",
+      "id": "modal_controls",
+      "label": "Use video controls"
+    },
+    {
+      "type": "header",
+      "content": "Media colors"
+    },   
+    {
+      "type": "color",
+      "id": "player_color",
+      "label": "Play button",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "label": "Border",
+      "id": "item_border_color",
+      "info": "Solid color is applied when no gradient is selected.",
+      "default": "#000000"
+    },
+    {
+      "type": "color_background",
+      "label": "Border gradient",
+      "id": "item_border_gradient",
+      "default": "linear-gradient(90deg, rgba(232, 173, 35, 1), rgba(248, 226, 51, 1) 100%)"
+    },
+    {
+      "type": "header",
+      "content": "Modal colors"
+    },
+    {
+      "type": "color",
+      "label": "Modal border",
+      "id": "modal_border_color",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "label": "Button close background",
+      "id": "close_bg_color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "label": "Button close icon",
+      "id": "close_icon_color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Section colors"
+    },
+    {
+      "type": "color",
+      "label": "Section background",
+      "id": "background_color",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Section background gradient"
+    },
+    {
+      "type": "color",
+      "label": "Border",
+      "id": "border_color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Section margin (outside)"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin top",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Margin bottom",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_horizontal",
+      "min": 0,
+      "max": 30,
+      "step": 1,
+      "unit": "rem",
+      "label": "Margin sides",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_horizontal_mobile",
+      "min": 0,
+      "max": 15,
+      "step": 0.5,
+      "unit": "rem",
+      "label": "Margin sides mobile",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Section padding (inside)"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding top",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding bottom",
+      "default": 52
+    },
+    {
+      "type": "header",
+      "content": "Section settings"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "min": 0,
+      "max": 400,
+      "step": 10,
+      "unit": "rem",
+      "label": "Section content width",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "border_thickness",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "label": "Border thickness",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "section_radius",
+      "min": 0,
+      "max": 100,
+      "step": 2,
+      "unit": "px",
+      "label": "Section roundness",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "lazy",
+      "label": "Lazy load",
+      "info": "Lazy load images for speed optimisation",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Thumbnail"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video from Shopify"
+        },
+        {
+          "type": "video_url",
+          "id": "video_url",
+          "label": "Video embed from URL",
+          "accept": ["youtube","vimeo"],
+          "default": "https://www.youtube.com/watch?v=_9VUPq3SxOc",
+          "info": "Shows when no Shopify-hosted video is selected."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "SS - Scrolling videos",
+      "blocks": [
+        {
+          "type": "item"
+        },
+        {
+          "type": "item"
+        },
+        {
+          "type": "item"
+        },
+        {
+          "type": "item"
+        },
+        {
+          "type": "item"
+        },
+        {
+          "type": "item"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

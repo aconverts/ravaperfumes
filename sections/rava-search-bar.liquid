@@ -1,0 +1,329 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  RAVA SEARCH BAR
+  ----------------------------------------------------------------------------------------------------------------------
+
+  A full-width search field shown right under the header at the top of the page. It is NOT sticky: it scrolls away
+  with the page. While it is on screen, the header search icon is hidden. Once it scrolls under the header, the icon
+  comes back, so search is always one tap away.
+
+  The placeholder types out rotating examples ("e.g. Sauvage", "e.g. Baccarat Rouge 540"...). The animation pauses
+  when the bar is off screen or the tab is hidden, and is replaced by a static example for visitors who turned on
+  "reduce motion" on their phone.
+
+  Tapping the field opens the theme's native predictive search (same dialog as the header icon, including the
+  "Jump to" links). No separate search logic.
+
+  Add it from Customize > Header > Add section > "RAVA search bar", and drag it under "Header".
+{%- endcomment -%}
+
+{%- liquid
+  assign show_bar = true
+  if section.settings.show_on == 'home' and template.name != 'index'
+    assign show_bar = false
+  endif
+if template.name == 'search' or template.name == 'cart' or template.name == 'product'
+    assign show_bar = false
+  endif
+
+  assign examples = section.settings.examples | split: ','
+  assign first_example = examples.first | strip
+-%}
+
+{%- if show_bar -%}
+  <style>
+    #shopify-section-{{ section.id }} {
+      position: relative;
+      z-index: 2; /* stays under the sticky header (z-index 4) so it slides beneath it on scroll */
+    }
+
+    .rava-sb {
+      display: block;
+      padding-block: {{ section.settings.spacing_top }}px {{ section.settings.spacing_bottom }}px;
+    }
+
+    .rava-sb__field {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      column-gap: 0.625rem;
+      width: 100%;
+      height: 46px;
+      padding-inline: 0.875rem;
+      border: 1px solid #D9D9D9;
+      border-radius: 12px;
+      background: #FFFFFF;
+      color: #000000;
+      text-align: start;
+      transition: border-color 0.2s ease;
+    }
+
+    .rava-sb__field:hover {
+      border-color: #000000;
+    }
+
+    .rava-sb__placeholder {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      font-size: 14px;
+      color: rgb(0 0 0 / 0.55);
+    }
+
+    .rava-sb__typed {
+      color: #000000;
+    }
+
+    .rava-sb__caret {
+      display: inline-block;
+      width: 1px;
+      height: 1em;
+      margin-inline-start: 1px;
+      vertical-align: -0.15em;
+      background: currentColor;
+      animation: rava-sb-blink 1s steps(1) infinite;
+    }
+
+    @keyframes rava-sb-blink {
+      50% { opacity: 0; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .rava-sb__caret { display: none; }
+    }
+
+    /* The header icon is hidden only while the bar is visible */
+    .shopify-section--header .header__search-link {
+      transition: opacity 0.2s ease, visibility 0.2s ease;
+    }
+
+    {%- unless section.settings.show_on_desktop -%}
+      @media screen and (min-width: 1000px) {
+        #shopify-section-{{ section.id }} { display: none; }
+      }
+      @media screen and (max-width: 999px) {
+    {%- endunless -%}
+        html.rava-sb-visible .shopify-section--header .header__search-link {
+          opacity: 0;
+          visibility: hidden;
+          pointer-events: none;
+        }
+    {%- unless section.settings.show_on_desktop -%}
+      }
+    {%- endunless -%}
+
+    @media screen and (min-width: 1000px) {
+      .rava-sb {
+        padding-block: {{ section.settings.spacing_top | plus: 4 }}px {{ section.settings.spacing_bottom | plus: 4 }}px;
+      }
+
+      .rava-sb__field {
+        max-width: {{ section.settings.desktop_max_width }}px;
+        height: 50px;
+        margin-inline: auto;
+        padding-inline: 1.125rem;
+      }
+
+      .rava-sb__placeholder {
+        font-size: 15px;
+      }
+    }
+  </style>
+
+  <rava-search-bar
+    class="rava-sb color-scheme color-scheme--{{ section.settings.color_scheme.id }}"
+    data-examples="{{ section.settings.examples | escape }}"
+  >
+    <div class="container">
+      <a
+        href="{{ routes.search_url }}"
+        class="rava-sb__field"
+        aria-expanded="false"
+        aria-label="{{ section.settings.placeholder_prefix | escape }} {{ first_example | escape }}"
+        data-rava-sb-trigger
+      >
+        {%- render 'icon' with 'search', width: 18 -%}
+        <span class="rava-sb__placeholder" aria-hidden="true">
+          {{- section.settings.placeholder_prefix | escape }} <span class="rava-sb__typed" data-rava-sb-typed>{{ first_example | escape }}</span><span class="rava-sb__caret"></span>
+        </span>
+      </a>
+    </div>
+  </rava-search-bar>
+
+  <script>
+    if (!window.customElements.get('rava-search-bar')) {
+      class RavaSearchBar extends HTMLElement {
+        connectedCallback() {
+          this.trigger = this.querySelector('[data-rava-sb-trigger]');
+          this.typedEl = this.querySelector('[data-rava-sb-typed]');
+          this.examples = (this.dataset.examples || '').split(',').map((s) => s.trim()).filter(Boolean);
+          this.isVisible = true;
+
+          // Point the field at the native header search dialog, so it opens exactly like the header icon
+          const dialog = document.querySelector('header-search');
+          if (dialog && dialog.id) {
+            this.trigger.setAttribute('aria-controls', dialog.id);
+          }
+
+          this.ticking = false;
+          this.onScroll = () => {
+            if (this.ticking) return;
+            this.ticking = true;
+            requestAnimationFrame(() => { this.update(); this.ticking = false; });
+          };
+
+          window.addEventListener('scroll', this.onScroll, { passive: true });
+          window.addEventListener('resize', this.onScroll, { passive: true });
+          this.update();
+          this.startTyping();
+        }
+
+        disconnectedCallback() {
+          window.removeEventListener('scroll', this.onScroll);
+          window.removeEventListener('resize', this.onScroll);
+          clearTimeout(this.typeTimer);
+          document.documentElement.classList.remove('rava-sb-visible');
+        }
+
+        update() {
+          // Visible = the bottom of the bar is still below the bottom of the sticky header
+          const header = document.querySelector('.shopify-section--header');
+          const headerBottom = header ? header.getBoundingClientRect().bottom : 0;
+          const bar = this.getBoundingClientRect();
+          this.isVisible = bar.height > 0 && bar.bottom > headerBottom + 8;
+          document.documentElement.classList.toggle('rava-sb-visible', this.isVisible);
+        }
+
+        startTyping() {
+          const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+          if (reduceMotion || this.examples.length < 2 || !this.typedEl) return;
+
+          const TYPE_MS = 75, DELETE_MS = 35, HOLD_MS = 1800, GAP_MS = 350;
+          let index = 0, chars = this.examples[0].length, deleting = true;
+
+          const tick = () => {
+            // Pause while the bar is scrolled away or the tab is in the background
+            if (!this.isVisible || document.hidden) {
+              this.typeTimer = setTimeout(tick, 500);
+              return;
+            }
+
+            const word = this.examples[index];
+
+            if (deleting) {
+              chars--;
+              this.typedEl.textContent = word.slice(0, chars);
+              if (chars <= 0) {
+                deleting = false;
+                index = (index + 1) % this.examples.length;
+                this.trigger.setAttribute('aria-label', this.trigger.getAttribute('aria-label').replace(word, this.examples[index]));
+                this.typeTimer = setTimeout(tick, GAP_MS);
+                return;
+              }
+              this.typeTimer = setTimeout(tick, DELETE_MS);
+            } else {
+              chars++;
+              this.typedEl.textContent = word.slice(0, chars);
+              if (chars >= word.length) {
+                deleting = true;
+                this.typeTimer = setTimeout(tick, HOLD_MS);
+                return;
+              }
+              this.typeTimer = setTimeout(tick, TYPE_MS);
+            }
+          };
+
+          // Let the first example sit for a moment before the animation starts
+          this.typeTimer = setTimeout(tick, HOLD_MS);
+        }
+      }
+
+      window.customElements.define('rava-search-bar', RavaSearchBar);
+    }
+  </script>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "RAVA search bar",
+  "class": "shopify-section--rava-search-bar",
+  "tag": "section",
+  "enabled_on": {
+    "groups": ["header"]
+  },
+  "settings": [
+    {
+      "type": "text",
+      "id": "placeholder_prefix",
+      "label": "Placeholder text",
+      "default": "Search 1,500+ scents, e.g."
+    },
+    {
+      "type": "text",
+      "id": "examples",
+      "label": "Typing examples",
+      "info": "Comma separated. They type out one after another after the placeholder text.",
+      "default": "Sauvage, Baccarat Rouge 540, Kayali Vanilla 28, Bleu de Chanel, Good Girl, Black Opium"
+    },
+    {
+      "type": "select",
+      "id": "show_on",
+      "label": "Show on",
+      "options": [
+        { "value": "all", "label": "All pages" },
+        { "value": "home", "label": "Homepage only" }
+      ],
+      "default": "all"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_on_desktop",
+      "label": "Show on desktop",
+      "info": "Off = phones and tablets only. Desktop keeps the normal header search.",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "desktop_max_width",
+      "label": "Desktop width",
+      "min": 600,
+      "max": 1400,
+      "step": 50,
+      "unit": "px",
+      "default": 1000
+    },
+    {
+      "type": "range",
+      "id": "spacing_top",
+      "label": "Space above",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "range",
+      "id": "spacing_bottom",
+      "label": "Space below",
+      "min": 0,
+      "max": 32,
+      "step": 2,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    }
+  ]
+  ,
+  "presets": [
+    {
+      "name": "RAVA search bar"
+    }
+  ]
+}
+{% endschema %}

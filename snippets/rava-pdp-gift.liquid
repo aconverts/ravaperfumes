@@ -1,0 +1,135 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  RAVA PDP GIFT (perfumes only)
+  ----------------------------------------------------------------------------------------------------------------------
+
+  Two pieces of the "Buy 1 perfume, get Roll On + Hair Mist free" offer on the product page:
+
+  * part: 'badge' -> black badge above the title (replaces the free delivery badge block on perfumes)
+  * part: 'image' -> same badge pinned on the top left of the product images (not used right now)
+  * part: 'price' -> chip under the price: "+2 FREE GIFTS $26.98 (struck) FREE"
+                     (value = compare-at price of this scent's Roll On + Hair Mist, from the matching metafields)
+  * part: 'offer' -> "No limit" offer box: Buy 1 / 2 / 3 / 5 / 10 perfumes -> 2 / 4 / 6 / 10 / 20 free gifts,
+                     then follows the quantity selector once the customer changes it
+
+  To turn everything off when the offer ends: set rava_pdp_gift_enabled to false below.
+
+  ********************************************
+  Supported variables
+  ********************************************
+
+  * product: the product
+  * part: 'badge', 'image', 'price' or 'offer'
+{%- endcomment -%}
+
+{%- liquid
+  assign rava_pdp_gift_enabled = true
+  assign rava_pdp_gift_image_text = 'Free Roll On + Hair Mist'
+  assign rava_pdp_gift_price_text = '+2 free gifts'
+  assign rava_pdp_gift_free_text = 'Free'
+  assign rava_pdp_gift_included_text = 'included'
+  assign rava_pdp_offer_tag = 'No limit'
+-%}
+
+{%- if rava_pdp_gift_enabled == false or product.type != 'Perfume' -%}
+  {%- comment -%}Nothing to show{%- endcomment -%}
+{%- elsif part == 'image' or part == 'badge' -%}
+  <span class="rava-pdp-gift-tag{% if part == 'badge' %} rava-pdp-gift-tag--inline{% endif %}">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="4"></rect><path d="M5 12v9h14v-9M12 8v13M12 8c-1.5-3.5-6-4-6-1.2C6 8.5 12 8 12 8zM12 8c1.5-3.5 6-4 6-1.2C18 8.5 12 8 12 8z"></path></svg>
+    {{- rava_pdp_gift_image_text -}}
+  </span>
+
+{%- elsif part == 'price' or part == 'offer' -%}
+  {%- liquid
+    assign gift_value = 0
+    assign gift_count = 0
+    assign gift_refs = 'matching_roll_on,matching_hair_mist' | split: ','
+
+    for ref in gift_refs
+      assign gift = product.metafields.custom[ref].value
+      if gift != blank
+        assign gv = gift.selected_or_first_available_variant
+        if gv.compare_at_price > gv.price
+          assign gift_value = gift_value | plus: gv.compare_at_price
+        else
+          assign gift_value = gift_value | plus: gv.price
+        endif
+        assign gift_count = gift_count | plus: 1
+      endif
+    endfor
+
+    assign show_value = false
+    if gift_count == 2 and gift_value > 0
+      assign show_value = true
+    endif
+  -%}
+
+  {%- if part == 'price' -%}
+    {%- comment -%} Struck value + FREE, so nobody reads it as an extra cost {%- endcomment -%}
+    <span class="rava-pdp-gift-chip">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="4"></rect><path d="M5 12v9h14v-9M12 8v13M12 8c-1.5-3.5-6-4-6-1.2C6 8.5 12 8 12 8zM12 8c1.5-3.5 6-4 6-1.2C18 8.5 12 8 12 8z"></path></svg>
+      <span>
+        <strong>{{ rava_pdp_gift_price_text }}</strong>
+        {%- if show_value %} <s class="rava-pdp-gift-chip__was">{{ gift_value | money }}</s> <strong class="rava-pdp-gift-chip__free">{{ rava_pdp_gift_free_text }}</strong>{%- else %} {{ rava_pdp_gift_included_text }}{%- endif -%}
+      </span>
+    </span>
+
+  {%- else -%}
+    {%- comment -%} "No limit" offer widget, follows the quantity selector {%- endcomment -%}
+    <div class="rava-offer" data-rava-offer data-gift-value="{{ gift_value }}" data-show-value="{{ show_value }}">
+      <p class="rava-offer__line" aria-live="polite">
+        <span class="rava-offer__tag">{{ rava_pdp_offer_tag }}</span>
+        <span>Buy <span class="rava-offer__n" data-n>1</span> <span data-perfume-word>perfume</span></span>
+        <span aria-hidden="true">&rarr;</span>
+        <strong>Get <span class="rava-offer__n" data-g>2</span> FREE gifts</strong>
+      </p>
+      <p class="rava-offer__detail">
+        <span data-n>1</span> <span data-ro>Roll On</span> + <span data-n>1</span> <span data-hm>Hair Mist</span>
+        {%- if show_value %}, worth <s data-v>{{ gift_value | money }}</s> <strong>FREE</strong>{%- endif -%}
+      </p>
+    </div>
+
+    <script>
+      (() => {
+        const box = document.currentScript.previousElementSibling;
+        if (!box || box.dataset.ready) return;
+        box.dataset.ready = '1';
+
+        const giftValue = Number(box.dataset.giftValue) || 0;
+        const showValue = box.dataset.showValue === 'true';
+        const fmt = (cents) => '$' + (cents / 100).toFixed(2);
+        const cycle = [1, 2, 3, 5, 10];
+        let i = 0, locked = false;
+
+        const set = (n) => {
+          box.querySelectorAll('[data-n]').forEach((el) => el.textContent = n);
+          box.querySelector('[data-g]').textContent = n * 2;
+          box.querySelector('[data-perfume-word]').textContent = n === 1 ? 'perfume' : 'perfumes';
+          box.querySelector('[data-ro]').textContent = n === 1 ? 'Roll On' : 'Roll Ons';
+          box.querySelector('[data-hm]').textContent = n === 1 ? 'Hair Mist' : 'Hair Mists';
+          const v = box.querySelector('[data-v]');
+          if (v && showValue) v.textContent = fmt(giftValue * n);
+          box.classList.remove('is-tick'); void box.offsetWidth; box.classList.add('is-tick');
+        };
+
+        /* Until the customer touches the quantity, show that there is no limit: 1, 2, 3, 5, 10 */
+        const timer = setInterval(() => {
+          if (locked) return clearInterval(timer);
+          i = (i + 1) % cycle.length;
+          set(cycle[i]);
+        }, 2000);
+
+        /* Then follow the quantity they pick */
+        const readQty = () => {
+          const input = document.querySelector('.product-info input[name="quantity"]');
+          const n = Math.max(1, parseInt(input && input.value, 10) || 1);
+          locked = true;
+          set(n);
+        };
+        document.addEventListener('change', (e) => { if (e.target.name === 'quantity') readQty(); });
+        document.addEventListener('input', (e) => { if (e.target.name === 'quantity') readQty(); });
+        document.addEventListener('click', (e) => { if (e.target.closest('.quantity-selector__button')) setTimeout(readQty, 50); });
+      })();
+    </script>
+  {%- endif -%}
+{%- endif -%}

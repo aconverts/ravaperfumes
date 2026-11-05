@@ -1,0 +1,514 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  RAVA QUICK FILTERS (v2)
+  ----------------------------------------------------------------------------------------------------------------------
+
+  One-tap filter chips above the product grid, built on Shopify tag filtering (/collections/<handle>/<tag>).
+
+  Groups (one choice per group, groups combine with each other):
+  - Gender: "For him" / "For her" (tags men / women)
+  - Brand: every tag that starts with "Brand: " (for example "Brand: Dior"), pinned brands first, then A to Z
+  - More: any "Label|tag" line (scent families, occasions, best sellers...)
+
+  Selected chips jump to the start of the first row with an X so they are easy to remove.
+  Chips load through the theme's own AJAX facet engine (<facet-link>) and are prefetched on mouse hover / touch
+  (For him / For her are preloaded when the page is idle),
+  so the grid updates without a full page reload.
+
+  A chip only shows if products in this collection have that tag. When another group is already selected, chips are
+  limited to the ones that still return products.
+
+  ********************************************
+  Supported variables
+  ********************************************
+
+  * s: section.settings of the main collection section
+{%- endcomment -%}
+
+{%- liquid
+  assign brand_prefix = s.quick_filters_brand_prefix | default: 'Brand: '
+  assign brand_prefix_size = brand_prefix | size
+  assign brand_prefix_handle = brand_prefix | handleize | append: '-'
+  assign brand_prefix_handle_size = brand_prefix_handle | size
+
+  assign sort_param = ''
+  if collection.sort_by != blank and collection.sort_by != collection.default_sort_by
+    assign sort_param = '?sort_by=' | append: collection.sort_by
+  endif
+
+  assign gender_lines = s.quick_filters_gender | newline_to_br | split: '<br />'
+  assign other_lines = s.quick_filters | newline_to_br | split: '<br />'
+
+  comment
+    Gender handles, used to know which group an active tag belongs to
+  endcomment
+  assign gender_set = ','
+  for line in gender_lines
+    assign parts = line | strip | split: '|'
+    if parts.size > 1
+      assign h = parts[1] | strip | handleize
+      assign gender_set = gender_set | append: h | append: ','
+    endif
+  endfor
+
+  comment
+    Active tags per group
+  endcomment
+  assign act_gender = ''
+  assign act_brand = ''
+  assign act_other = ''
+  for t in current_tags
+    assign th = t | handleize
+    assign th_start = th | slice: 0, brand_prefix_handle_size
+    assign th_key = ',' | append: th | append: ','
+    if th_start == brand_prefix_handle
+      assign act_brand = th
+    elsif gender_set contains th_key
+      assign act_gender = th
+    else
+      if act_other == ''
+        assign act_other = th
+      else
+        assign act_other = act_other | append: '+' | append: th
+      endif
+    endif
+  endfor
+
+  assign active_count = current_tags.size
+
+  comment
+    Tag paths without each group (used to replace / remove one group and keep the others)
+  endcomment
+  assign base_no_gender = act_brand
+  if act_other != ''
+    if base_no_gender == ''
+      assign base_no_gender = act_other
+    else
+      assign base_no_gender = base_no_gender | append: '+' | append: act_other
+    endif
+  endif
+
+  assign base_no_brand = act_gender
+  if act_other != ''
+    if base_no_brand == ''
+      assign base_no_brand = act_other
+    else
+      assign base_no_brand = base_no_brand | append: '+' | append: act_other
+    endif
+  endif
+
+  assign base_no_other = act_gender
+  if act_brand != ''
+    if base_no_other == ''
+      assign base_no_other = act_brand
+    else
+      assign base_no_other = base_no_other | append: '+' | append: act_brand
+    endif
+  endif
+
+  comment
+    Which tag list to check availability against, per group (see header comment)
+  endcomment
+  assign gender_tags = collection.all_tags
+  if act_gender == '' and active_count > 0
+    assign gender_tags = collection.tags
+  endif
+
+  assign brand_tags = collection.all_tags
+  if act_brand == '' and active_count > 0
+    assign brand_tags = collection.tags
+  endif
+
+  assign other_tags = collection.all_tags
+  if act_other == '' and active_count > 0
+    assign other_tags = collection.tags
+  endif
+
+  comment
+    Brand list: pinned brands first, then every other brand tag A to Z
+  endcomment
+  assign brand_list = ''
+  assign pinned = s.quick_filters_pinned_brands | split: ','
+  for p in pinned
+    assign p_clean = p | strip
+    assign p_tag = brand_prefix | append: p_clean
+    if brand_tags contains p_tag
+      assign brand_list = brand_list | append: p_tag | append: '@@'
+    endif
+  endfor
+
+  for t in brand_tags
+    assign t_start = t | slice: 0, brand_prefix_size
+    if t_start == brand_prefix
+      assign t_key = t | append: '@@'
+      unless brand_list contains t_key
+        assign brand_list = brand_list | append: t_key
+      endunless
+    endif
+  endfor
+
+  assign brand_items = brand_list | split: '@@'
+  assign rendered_chips = 0
+  assign layout = s.quick_filters_layout | default: 'two_rows'
+-%}
+
+{%- comment -%} Selected chips (first, with X) {%- endcomment -%}
+{%- capture selected_chips -%}
+  {%- for t in current_tags -%}
+    {%- liquid
+      assign th = t | handleize
+      assign th_key = ',' | append: th | append: ','
+      assign th_start = th | slice: 0, brand_prefix_handle_size
+      assign chip_label = t
+
+      if th_start == brand_prefix_handle
+        assign remove_tags = base_no_brand
+        for at in collection.all_tags
+          assign at_h = at | handleize
+          if at_h == th
+            assign chip_label = at | remove_first: brand_prefix
+            break
+          endif
+        endfor
+      elsif gender_set contains th_key
+        assign remove_tags = base_no_gender
+        for line in gender_lines
+          assign parts = line | strip | split: '|'
+          if parts.size > 1
+            assign lh = parts[1] | strip | handleize
+            if lh == th
+              assign chip_label = parts[0] | strip
+            endif
+          endif
+        endfor
+      else
+        assign remove_tags = base_no_other
+        assign other_parts = act_other | split: '+'
+        for op in other_parts
+          if op != th and op != ''
+            if remove_tags == ''
+              assign remove_tags = op
+            else
+              assign remove_tags = remove_tags | append: '+' | append: op
+            endif
+          endif
+        endfor
+        for line in other_lines
+          assign parts = line | strip | split: '|'
+          if parts.size > 1
+            assign lh = parts[1] | strip | handleize
+            if lh == th
+              assign chip_label = parts[0] | strip
+            endif
+          endif
+        endfor
+      endif
+
+      if remove_tags == blank
+        assign chip_url = collection.url | append: sort_param
+      else
+        assign chip_url = collection.url | append: '/' | append: remove_tags | append: sort_param
+      endif
+    -%}
+    <facet-link class="rqf__item"><a href="{{ chip_url }}" class="rqf__chip is-active" aria-label="{{ chip_label | escape }}, remove filter" data-rqf-chip>
+      {{- chip_label | escape -}}
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"></path></svg>
+    </a></facet-link>
+  {%- endfor -%}
+
+  {%- if active_count > 1 -%}
+    <facet-link class="rqf__item"><a href="{{ collection.url | append: sort_param }}" class="rqf__chip rqf__chip--clear" data-rqf-chip>{{ 'Clear all' }}</a></facet-link>
+  {%- elsif active_count == 0 -%}
+    <span class="rqf__item"><span class="rqf__chip rqf__chip--all" aria-current="true">{{- s.quick_filters_all_label | default: 'All' | escape -}}</span></span>
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- comment -%} Gender chips {%- endcomment -%}
+{%- capture gender_chips -%}
+  {%- for line in gender_lines -%}
+    {%- assign parts = line | strip | split: '|' -%}
+    {%- if parts.size < 2 -%}{%- continue -%}{%- endif -%}
+    {%- assign chip_tag = parts[1] | strip -%}
+    {%- assign chip_handle = chip_tag | handleize -%}
+    {%- if chip_handle == act_gender -%}{%- continue -%}{%- endif -%}
+    {%- unless gender_tags contains chip_tag -%}{%- continue -%}{%- endunless -%}
+    {%- if base_no_gender == '' -%}{%- assign tags_path = chip_handle -%}{%- else -%}{%- assign tags_path = base_no_gender | append: '+' | append: chip_handle -%}{%- endif -%}
+    <facet-link class="rqf__item"><a href="{{ collection.url }}/{{ tags_path }}{{ sort_param }}" class="rqf__chip rqf__chip--gender" data-rqf-chip>{{ parts[0] | strip | escape }}</a></facet-link>
+    {%- assign rendered_chips = rendered_chips | plus: 1 -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- comment -%} Brand chips {%- endcomment -%}
+{%- capture brand_chips -%}
+  {%- if s.quick_filters_show_brands -%}
+    {%- for chip_tag in brand_items -%}
+      {%- if chip_tag == blank -%}{%- continue -%}{%- endif -%}
+      {%- assign chip_handle = chip_tag | handleize -%}
+      {%- if chip_handle == act_brand -%}{%- continue -%}{%- endif -%}
+      {%- if base_no_brand == '' -%}{%- assign tags_path = chip_handle -%}{%- else -%}{%- assign tags_path = base_no_brand | append: '+' | append: chip_handle -%}{%- endif -%}
+      <facet-link class="rqf__item"><a href="{{ collection.url }}/{{ tags_path }}{{ sort_param }}" class="rqf__chip" data-rqf-chip>{{ chip_tag | remove_first: brand_prefix | escape }}</a></facet-link>
+      {%- assign rendered_chips = rendered_chips | plus: 1 -%}
+    {%- endfor -%}
+  {%- endif -%}
+{%- endcapture -%}
+
+{%- comment -%} Other chips (scent families, occasions, best sellers...) {%- endcomment -%}
+{%- capture other_chips -%}
+  {%- for line in other_lines -%}
+    {%- assign parts = line | strip | split: '|' -%}
+    {%- if parts.size < 2 -%}{%- continue -%}{%- endif -%}
+    {%- assign chip_tag = parts[1] | strip -%}
+    {%- assign chip_handle = chip_tag | handleize -%}
+    {%- assign chip_gkey = ',' | append: chip_handle | append: ',' -%}
+    {%- if gender_set contains chip_gkey -%}{%- continue -%}{%- endif -%}
+    {%- assign chip_key = '+' | append: chip_handle | append: '+' -%}
+    {%- assign act_other_key = '+' | append: act_other | append: '+' -%}
+    {%- if act_other_key contains chip_key -%}{%- continue -%}{%- endif -%}
+    {%- unless other_tags contains chip_tag -%}{%- continue -%}{%- endunless -%}
+    {%- if base_no_other == '' -%}{%- assign tags_path = chip_handle -%}{%- else -%}{%- assign tags_path = base_no_other | append: '+' | append: chip_handle -%}{%- endif -%}
+    <facet-link class="rqf__item"><a href="{{ collection.url }}/{{ tags_path }}{{ sort_param }}" class="rqf__chip rqf__chip--soft" data-rqf-chip>{{ parts[0] | strip | escape }}</a></facet-link>
+    {%- assign rendered_chips = rendered_chips | plus: 1 -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- if rendered_chips > 0 or active_count > 0 -%}
+  <style>
+    .rqf {
+      display: grid;
+      gap: 0.5rem;
+      grid-template-columns: minmax(0, 1fr);
+    }
+
+    .rqf__row-wrap {
+      position: relative;
+      min-width: 0;
+    }
+
+    .rqf__row {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      overscroll-behavior-x: contain;
+      scrollbar-width: none;
+      scroll-behavior: smooth;
+      margin-inline: calc(-1 * var(--container-gutter));
+      padding-inline: var(--container-gutter);
+      scroll-padding-inline: var(--container-gutter);
+      padding-block: 2px;
+    }
+
+    .rqf__row::-webkit-scrollbar { display: none; }
+
+    .rqf__item { flex: 0 0 auto; display: block; }
+
+    .rqf__chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      min-height: 38px;
+      padding: 0 0.9rem;
+      border: 1px solid #D9D9D9;
+      border-radius: 14px;
+      background: rgb(var(--background));
+      color: rgb(var(--text-color));
+      font-size: 13px;
+      line-height: 1;
+      white-space: nowrap;
+      text-decoration: none;
+      transition: border-color 0.15s ease, background 0.15s ease, opacity 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+      touch-action: manipulation; /* no double-tap zoom wait on phones */
+      user-select: none;
+    }
+
+    /* Hover only on real mouse devices: on iPhone a :hover change can swallow the first tap */
+    @media (hover: hover) and (pointer: fine) {
+      .rqf__chip:hover { border-color: rgb(var(--text-color)); }
+    }
+
+    .rqf__chip--gender { font-weight: 700; }
+
+    .rqf__chip--soft {
+      min-height: 34px;
+      font-size: 12px;
+      border-color: transparent;
+      background: rgb(var(--text-color) / 0.05);
+    }
+
+    .rqf__chip--all {
+      font-weight: 700;
+      border-color: rgb(var(--text-color));
+      cursor: default;
+    }
+
+    .rqf__chip.is-active {
+      background: #000;
+      border-color: #000;
+      color: #F3F4B5;
+      font-weight: 700;
+    }
+
+    .rqf__chip--clear {
+      border-style: dashed;
+      color: rgb(var(--text-color) / 0.7);
+    }
+
+    .rqf__chip.is-pending {
+      background: #000;
+      border-color: #000;
+      color: #F3F4B5;
+    }
+
+    .rqf__arrow { display: none; }
+
+    /* Instant feedback while the grid reloads */
+    .rqf-loading .product-list,
+    .rqf-loading .collection__results {
+      opacity: 0.4;
+      transition: opacity 0.15s ease;
+      pointer-events: none;
+    }
+
+    @media screen and (min-width: 1000px) {
+      .rqf__row {
+        margin-inline: 0;
+        padding-inline: 0;
+        scroll-padding-inline: 0;
+        mask-image: linear-gradient(to right, #000 calc(100% - 64px), transparent);
+      }
+
+      .rqf__row.is-end { mask-image: none; }
+
+      .rqf__arrow {
+        position: absolute;
+        inset-block: 2px;
+        inset-inline-end: 0;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        width: 38px;
+        border: 1px solid #D9D9D9;
+        border-radius: 14px;
+        background: rgb(var(--background));
+        cursor: pointer;
+      }
+
+      .rqf__arrow[hidden] { display: none; }
+      .rqf__arrow--prev { inset-inline-end: auto; inset-inline-start: 0; }
+    }
+  </style>
+
+  <nav class="rqf" aria-label="Quick filters" data-rqf>
+    {%- assign arrow_prev = '<button type="button" class="rqf__arrow rqf__arrow--prev" aria-label="Scroll back" hidden data-rqf-prev><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 6l-6 6 6 6"></path></svg></button>' -%}
+    {%- assign arrow_next = '<button type="button" class="rqf__arrow" aria-label="Scroll for more" hidden data-rqf-next><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M9 6l6 6-6 6"></path></svg></button>' -%}
+
+    <div class="rqf__row-wrap">
+      {{- arrow_prev -}}
+      <div class="rqf__row" data-rqf-row>
+        {{- selected_chips -}}
+        {{- gender_chips -}}
+        {{- brand_chips -}}
+        {%- if layout == 'one_row' -%}{{- other_chips -}}{%- endif -%}
+      </div>
+      {{- arrow_next -}}
+    </div>
+
+    {%- if layout != 'one_row' and other_chips != blank -%}
+      <div class="rqf__row-wrap">
+        {{- arrow_prev -}}
+        <div class="rqf__row" data-rqf-row>{{- other_chips -}}</div>
+        {{- arrow_next -}}
+      </div>
+    {%- endif -%}
+  </nav>
+
+  <script type="module">
+    import { cachedFetch } from 'theme';
+
+    if (!window.__rqfReady) {
+    window.__rqfReady = true;
+
+    const sectionUrl = (link) => {
+      const section = link.closest('.shopify-section');
+      if (!section) return null;
+      const url = new URL(link.href);
+      url.searchParams.set('section_id', section.id.replace('shopify-section-', ''));
+      return url.toString();
+    };
+
+    /* Prefetch on hover / touch so the click feels instant (the theme reuses the cached response) */
+    const prefetched = new Set();
+    const prefetch = (event) => {
+      if (event.type === 'pointerenter' && event.pointerType !== 'mouse') return; /* phones: touchstart only */
+      const link = event.target.closest && event.target.closest('[data-rqf-chip]');
+      if (!link) return;
+      const url = sectionUrl(link);
+      if (!url || prefetched.has(url)) return;
+      prefetched.add(url);
+      cachedFetch(url).catch(() => prefetched.delete(url));
+    };
+
+    document.addEventListener('pointerenter', prefetch, { capture: true, passive: true });
+    document.addEventListener('touchstart', prefetch, { capture: true, passive: true });
+    document.addEventListener('focusin', prefetch);
+
+    /* The two most used chips (For him / For her) are loaded in the background once the page is idle,
+       so they open instantly */
+    const warmUp = () => {
+      document.querySelectorAll('[data-rqf] .rqf__chip--gender').forEach((link) => {
+        if (!link.matches('[data-rqf-chip]')) return;
+        const url = sectionUrl(link);
+        if (url && !prefetched.has(url)) {
+          prefetched.add(url);
+          cachedFetch(url).catch(() => prefetched.delete(url));
+        }
+      });
+    };
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => setTimeout(warmUp, 1500), { timeout: 4000 });
+    } else {
+      setTimeout(warmUp, 3000);
+    }
+
+    /* Instant feedback on tap */
+    document.addEventListener('click', (event) => {
+      const link = event.target.closest('[data-rqf-chip]');
+      if (!link) return;
+      link.classList.add('is-pending');
+      link.closest('.shopify-section')?.classList.add('rqf-loading');
+    }, { capture: true });
+
+    document.addEventListener('theme:loading:end', () => {
+      document.querySelectorAll('.rqf-loading').forEach((el) => el.classList.remove('rqf-loading'));
+    });
+
+    /* Desktop arrows */
+    const initRows = (root) => {
+      root.querySelectorAll('[data-rqf-row]').forEach((row) => {
+        if (row.dataset.rqfReady) return;
+        row.dataset.rqfReady = '1';
+        const wrap = row.parentElement;
+        const prev = wrap.querySelector('[data-rqf-prev]');
+        const next = wrap.querySelector('[data-rqf-next]');
+        const update = () => {
+          const max = row.scrollWidth - row.clientWidth - 2;
+          prev.hidden = row.scrollLeft <= 2;
+          next.hidden = row.scrollLeft >= max;
+          row.classList.toggle('is-end', row.scrollLeft >= max);
+        };
+        prev.addEventListener('click', () => row.scrollBy({ left: -row.clientWidth * 0.8 }));
+        next.addEventListener('click', () => row.scrollBy({ left: row.clientWidth * 0.8 }));
+        row.addEventListener('scroll', update, { passive: true });
+        new ResizeObserver(update).observe(row);
+        update();
+      });
+    };
+
+    initRows(document);
+
+    /* The section is swapped after each filter: re-init the new rows */
+    const section = document.querySelector('[data-rqf]')?.closest('.shopify-section');
+    if (section) new MutationObserver(() => initRows(section)).observe(section, { childList: true });
+    }
+  </script>
+{%- endif -%}

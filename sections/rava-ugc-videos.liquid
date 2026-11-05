@@ -1,0 +1,640 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  RAVA UGC VIDEOS
+  ----------------------------------------------------------------------------------------------------------------------
+
+  Heading + animated views counter, then a horizontal row of vertical (9:16) customer / creator videos.
+
+  - Videos autoplay muted and loop, but ONLY while they are on screen (saves data and battery on phones).
+  - Tap a video (or its sound button) to unmute it. Unmuting one video mutes all the others.
+  - Each video can show the product it features, linking to the product page.
+  - Videos are Shopify-hosted (Settings > Files, or upload straight from the block), so there are no TikTok /
+    Instagram embeds slowing the page down.
+{%- endcomment -%}
+
+{%- liquid
+  assign color_scheme_hash = section.settings.color_scheme.settings.background_gradient | default: section.settings.color_scheme.settings.background | md5
+  assign heavy_font = settings.heading_font | font_modify: 'weight', '900'
+  if heavy_font == blank
+    assign heavy_font = settings.heading_font | font_modify: 'weight', '800'
+  endif
+  assign counter_target = section.settings.counter_number | remove: ',' | remove: ' ' | plus: 0
+-%}
+
+<style>
+  #shopify-section-{{ section.id }} .ugc {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr); /* keeps the scroll row inside the page width */
+    gap: 1.75rem;
+  }
+
+  /* ---------- Header ---------- */
+  #shopify-section-{{ section.id }} .ugc__header {
+    display: grid;
+    gap: 0.75rem;
+    justify-items: center;
+    text-align: center;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__header .h2 {
+    margin: 0;
+    max-width: 22ch;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__counter {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.375rem 0.75rem;
+    background: {{ section.settings.counter_background }};
+    color: {{ section.settings.counter_text_color }};
+  }
+
+  #shopify-section-{{ section.id }} .ugc__count {
+    font-family: var(--heading-font-family);
+    font-weight: {% if heavy_font != blank %}{{ heavy_font.weight }}{% else %}700{% endif %};
+    font-size: 28px;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__count-label {
+    font-family: var(--heading-font-family);
+    font-weight: 700;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__sub {
+    margin: 0;
+    font-size: 13px;
+    color: rgb(var(--text-color) / 0.7);
+  }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .ugc__count { font-size: 40px; }
+    #shopify-section-{{ section.id }} .ugc__count-label { font-size: 12px; }
+    #shopify-section-{{ section.id }} .ugc__sub { font-size: 14px; }
+  }
+
+  /* ---------- Row ---------- */
+  #shopify-section-{{ section.id }} .ugc__viewport {
+    position: relative;
+    min-width: 0;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__row {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 58vw;
+    gap: 0.75rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    margin-inline: calc(-1 * var(--container-gutter));
+    padding-inline: var(--container-gutter);
+    scroll-padding-inline: var(--container-gutter);
+  }
+
+  #shopify-section-{{ section.id }} .ugc__row::-webkit-scrollbar { display: none; }
+
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .ugc__row {
+      grid-auto-columns: calc((100% - 3 * 1rem) / 3.4);
+      gap: 1rem;
+    }
+  }
+
+  @media screen and (min-width: 1150px) {
+    #shopify-section-{{ section.id }} .ugc__row {
+      grid-auto-columns: calc((100% - {{ section.settings.videos_per_row_desktop | minus: 1 }} * 1.25rem) / {{ section.settings.videos_per_row_desktop }});
+      gap: 1.25rem;
+      margin-inline: 0;
+      padding-inline: 0;
+      scroll-padding-inline: 0;
+    }
+  }
+
+  /* ---------- Card ---------- */
+  #shopify-section-{{ section.id }} .ugc__card {
+    display: grid;
+    gap: 0.625rem;
+    align-content: start;
+    scroll-snap-align: start;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__media {
+    position: relative;
+    aspect-ratio: 9 / 16;
+    overflow: hidden;
+    border-radius: 12px;
+    background: rgb(var(--text-color) / 0.08);
+    cursor: pointer;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__media video,
+  #shopify-section-{{ section.id }} .ugc__media img,
+  #shopify-section-{{ section.id }} .ugc__media svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__creator {
+    position: absolute;
+    z-index: 1;
+    inset-block-end: 0.625rem;
+    inset-inline-start: 0.625rem;
+    max-width: calc(100% - 4rem);
+    padding: 0.25rem 0.5rem;
+    border-radius: 999px;
+    background: rgb(0 0 0 / 0.45);
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__sound {
+    position: absolute;
+    z-index: 2;
+    inset-block-end: 0.5rem;
+    inset-inline-end: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 9999px;
+    border: 1px solid #D9D9D9;
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+  }
+
+  /* Bigger invisible tap area, same small visual */
+  #shopify-section-{{ section.id }} .ugc__sound::after {
+    content: "";
+    position: absolute;
+    inset: -6px;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__sound .ugc__icon-on { display: none; }
+  #shopify-section-{{ section.id }} .ugc__card.is-unmuted .ugc__sound .ugc__icon-on { display: block; }
+  #shopify-section-{{ section.id }} .ugc__card.is-unmuted .ugc__sound .ugc__icon-off { display: none; }
+
+  /* Product under the video */
+  #shopify-section-{{ section.id }} .ugc__product {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    align-items: center;
+    gap: 0.625rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__product-media {
+    width: 44px;
+    height: 44px;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgb(var(--text-color) / 0.05);
+  }
+
+  #shopify-section-{{ section.id }} .ugc__product-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__product-title {
+    display: block;
+    font-size: 13px;
+    line-height: 1.3;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__product-price {
+    display: block;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__product-price s {
+    font-weight: 400;
+    font-size: 12px;
+    opacity: 0.6;
+    margin-inline-start: 0.25rem;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__product-price .ugc__sale {
+    color: rgb(var(--on-sale-text, 203 43 43));
+  }
+
+  /* Desktop arrows */
+  #shopify-section-{{ section.id }} .ugc__arrows {
+    display: none;
+  }
+
+  @media screen and (min-width: 1150px) and (pointer: fine) {
+    #shopify-section-{{ section.id }} .ugc__arrows {
+      display: flex;
+      justify-content: center;
+      gap: 0.5rem;
+    }
+  }
+
+  #shopify-section-{{ section.id }} .ugc__arrow {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 9999px;
+    border: 1px solid #D9D9D9;
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+  }
+
+  #shopify-section-{{ section.id }} .ugc__arrow[disabled] {
+    opacity: 0.35;
+    cursor: default;
+  }
+</style>
+
+<div class="section-spacing color-scheme color-scheme--{{ section.settings.color_scheme.id }} color-scheme--bg-{{ color_scheme_hash }} {% if section.settings.separate_section_with_border %}bordered-section{% endif %}">
+  <div class="container">
+    <rava-ugc class="ugc" data-counter-target="{{ counter_target }}">
+      <div class="ugc__header">
+        {%- if section.settings.subheading != blank -%}
+          <p class="h6">{{ section.settings.subheading }}</p>
+        {%- endif -%}
+
+        {%- if section.settings.heading != blank -%}
+          <h2 class="h2">{{ section.settings.heading }}</h2>
+        {%- endif -%}
+
+        {%- if counter_target > 0 -%}
+          <p class="ugc__counter">
+            <span class="ugc__count" data-ugc-count>{{ section.settings.counter_number | escape }}{{ section.settings.counter_suffix | escape }}</span>
+            <span class="ugc__count-label">{{ section.settings.counter_label }}</span>
+          </p>
+        {%- endif -%}
+
+        {%- if section.settings.text != blank -%}
+          <p class="ugc__sub">{{ section.settings.text }}</p>
+        {%- endif -%}
+      </div>
+
+      {%- if section.blocks.size > 0 -%}
+        <div class="ugc__viewport">
+          <div class="ugc__row" data-ugc-row>
+            {%- for block in section.blocks -%}
+              {%- assign product = block.settings.product -%}
+
+              <div class="ugc__card" {{ block.shopify_attributes }}>
+                <div class="ugc__media" data-ugc-media>
+                  {%- if block.settings.video != blank -%}
+                    {{- block.settings.video | video_tag:
+                      autoplay: false,
+                      loop: true,
+                      muted: true,
+                      playsinline: true,
+                      controls: false,
+                      preload: 'none',
+                      image_size: '600x'
+                    -}}
+                  {%- elsif block.settings.poster != blank -%}
+                    {{- block.settings.poster | image_url: width: 600 | image_tag: loading: 'lazy' -}}
+                  {%- else -%}
+                    {{- 'lifestyle-1' | placeholder_svg_tag -}}
+                  {%- endif -%}
+
+                  {%- if block.settings.creator != blank -%}
+                    <span class="ugc__creator">{{ block.settings.creator | escape }}</span>
+                  {%- endif -%}
+
+                  {%- if block.settings.video != blank -%}
+                    <button type="button" class="ugc__sound" data-ugc-sound aria-label="Turn sound on" aria-pressed="false">
+                      <svg class="ugc__icon-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"></path><path d="m16 9 5 6M21 9l-5 6"></path></svg>
+                      <svg class="ugc__icon-on" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4z"></path><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"></path></svg>
+                    </button>
+                  {%- endif -%}
+                </div>
+
+                {%- if product != blank -%}
+                  <a href="{{ product.url }}" class="ugc__product">
+                    <span class="ugc__product-media">
+                      {%- if product.featured_media != blank -%}
+                        {{- product.featured_media | image_url: width: 120 | image_tag: loading: 'lazy', widths: '88,120', sizes: '44px', alt: '' -}}
+                      {%- endif -%}
+                    </span>
+                    <span style="min-width: 0">
+                      <span class="ugc__product-title">{{ product.title | escape }}</span>
+                      <span class="ugc__product-price">
+                        {%- if product.compare_at_price > product.price -%}
+                          <span class="ugc__sale">{% if product.price_varies %}From {% endif %}{{ product.price | money }}</span><s>{{ product.compare_at_price | money }}</s>
+                        {%- else -%}
+                          {% if product.price_varies %}From {% endif %}{{ product.price | money }}
+                        {%- endif -%}
+                      </span>
+                    </span>
+                  </a>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          </div>
+
+          <div class="ugc__arrows">
+            <button type="button" class="ugc__arrow" data-ugc-prev aria-label="{{ 'general.accessibility.previous' | t }}" disabled>
+              {%- render 'icon' with 'arrow-left', direction_aware: true -%}
+            </button>
+            <button type="button" class="ugc__arrow" data-ugc-next aria-label="{{ 'general.accessibility.next' | t }}">
+              {%- render 'icon' with 'arrow-right', direction_aware: true -%}
+            </button>
+          </div>
+        </div>
+      {%- endif -%}
+    </rava-ugc>
+  </div>
+</div>
+
+<script>
+  if (!window.customElements.get('rava-ugc')) {
+    class RavaUgc extends HTMLElement {
+      connectedCallback() {
+        this.row = this.querySelector('[data-ugc-row]');
+        this.cards = Array.from(this.querySelectorAll('.ugc__card'));
+        this.reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        this.setupVideos();
+        this.setupArrows();
+        this.setupCounter();
+      }
+
+      disconnectedCallback() {
+        if (this.videoObserver) this.videoObserver.disconnect();
+        if (this.counterObserver) this.counterObserver.disconnect();
+      }
+
+      /* ---------- Videos: autoplay muted while visible, tap to unmute ---------- */
+      setupVideos() {
+        this.cards.forEach((card) => {
+          const video = card.querySelector('video');
+          if (!video) return;
+
+          video.muted = true;
+          video.setAttribute('muted', '');
+          video.setAttribute('playsinline', '');
+          video.setAttribute('loop', '');
+
+          const toggle = (event) => {
+            event.preventDefault();
+            this.setSound(card, video.muted);
+          };
+
+          card.querySelector('[data-ugc-media]').addEventListener('click', toggle);
+        });
+
+        this.videoObserver = new IntersectionObserver((entries) => {
+          entries.forEach((entry) => {
+            const card = entry.target;
+            const video = card.querySelector('video');
+            if (!video) return;
+
+            if (entry.isIntersecting && !this.reduceMotion) {
+              if (video.preload === 'none') video.preload = 'auto';
+              const p = video.play();
+              if (p && p.catch) p.catch(() => {});
+            } else {
+              video.pause();
+              if (!video.muted) this.setSound(card, false);
+            }
+          });
+        }, { threshold: 0.6 });
+
+        this.cards.forEach((card) => this.videoObserver.observe(card));
+      }
+
+      setSound(card, on) {
+        // Only one video with sound at a time
+        this.cards.forEach((other) => {
+          const v = other.querySelector('video');
+          if (!v) return;
+          const isThis = other === card;
+          const sound = isThis && on;
+          v.muted = !sound;
+          other.classList.toggle('is-unmuted', sound);
+          const btn = other.querySelector('[data-ugc-sound]');
+          if (btn) {
+            btn.setAttribute('aria-pressed', sound ? 'true' : 'false');
+            btn.setAttribute('aria-label', sound ? 'Turn sound off' : 'Turn sound on');
+          }
+          if (isThis && on) {
+            const p = v.play();
+            if (p && p.catch) p.catch(() => {});
+          }
+        });
+      }
+
+      /* ---------- Desktop arrows ---------- */
+      setupArrows() {
+        const prev = this.querySelector('[data-ugc-prev]');
+        const next = this.querySelector('[data-ugc-next]');
+        if (!prev || !next || !this.row) return;
+
+        const step = () => {
+          const card = this.cards[0];
+          const gap = parseFloat(getComputedStyle(this.row).columnGap) || 0;
+          return card ? card.offsetWidth + gap : this.row.clientWidth;
+        };
+
+        const update = () => {
+          const max = this.row.scrollWidth - this.row.clientWidth - 2;
+          prev.disabled = this.row.scrollLeft <= 2;
+          next.disabled = this.row.scrollLeft >= max;
+        };
+
+        prev.addEventListener('click', () => this.row.scrollBy({ left: -step(), behavior: 'smooth' }));
+        next.addEventListener('click', () => this.row.scrollBy({ left: step(), behavior: 'smooth' }));
+        this.row.addEventListener('scroll', update, { passive: true });
+        window.addEventListener('resize', update, { passive: true });
+        update();
+      }
+
+      /* ---------- Views counter: counts up once when it comes on screen ---------- */
+      setupCounter() {
+        const el = this.querySelector('[data-ugc-count]');
+        const target = parseInt(this.dataset.counterTarget, 10);
+        if (!el || !target || this.reduceMotion) return;
+
+        const suffix = el.textContent.replace(/^[0-9,\s]+/, '');
+        const format = (n) => n.toLocaleString('en-US') + suffix;
+        el.textContent = format(0);
+
+        this.counterObserver = new IntersectionObserver((entries) => {
+          if (!entries[0].isIntersecting) return;
+          this.counterObserver.disconnect();
+
+          const duration = 1800;
+          const start = performance.now();
+          const tick = (now) => {
+            const t = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - t, 3);
+            el.textContent = format(Math.round(target * eased));
+            if (t < 1) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }, { threshold: 0.6 });
+
+        this.counterObserver.observe(el);
+      }
+    }
+
+    window.customElements.define('rava-ugc', RavaUgc);
+  }
+</script>
+
+{% schema %}
+{
+  "name": "RAVA UGC videos",
+  "class": "shopify-section--rava-ugc",
+  "tag": "section",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "color_scheme",
+      "id": "color_scheme",
+      "label": "t:global.colors.scheme",
+      "default": "scheme-1"
+    },
+    {
+      "type": "checkbox",
+      "id": "separate_section_with_border",
+      "label": "t:global.section.separate_section_with_border",
+      "default": false
+    },
+    {
+      "type": "inline_richtext",
+      "id": "subheading",
+      "label": "Subheading"
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "The Perfume Brand That's Been Going Viral"
+    },
+    {
+      "type": "header",
+      "content": "Views counter"
+    },
+    {
+      "type": "text",
+      "id": "counter_number",
+      "label": "Number",
+      "info": "For example 10,000,000. It counts up from 0 when it comes on screen.",
+      "default": "10,000,000"
+    },
+    {
+      "type": "text",
+      "id": "counter_suffix",
+      "label": "After the number",
+      "default": "+"
+    },
+    {
+      "type": "text",
+      "id": "counter_label",
+      "label": "Label",
+      "default": "Views"
+    },
+    {
+      "type": "color",
+      "id": "counter_background",
+      "label": "Counter background",
+      "default": "#F3F4B5"
+    },
+    {
+      "type": "color",
+      "id": "counter_text_color",
+      "label": "Counter text",
+      "default": "#000000"
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text under the counter",
+      "info": "Optional. For example: Across TikTok and Instagram."
+    },
+    {
+      "type": "header",
+      "content": "Videos"
+    },
+    {
+      "type": "range",
+      "id": "videos_per_row_desktop",
+      "label": "Videos visible on desktop",
+      "min": 3,
+      "max": 6,
+      "step": 1,
+      "default": 5
+    }
+  ],
+  "blocks": [
+    {
+      "type": "video",
+      "name": "Video",
+      "settings": [
+        {
+          "type": "video",
+          "id": "video",
+          "label": "Video",
+          "info": "Vertical 9:16 MP4. Keep it under about 20 MB and 30 seconds so it loads fast on phones."
+        },
+        {
+          "type": "image_picker",
+          "id": "poster",
+          "label": "Fallback image",
+          "info": "Only used if no video is uploaded."
+        },
+        {
+          "type": "text",
+          "id": "creator",
+          "label": "Creator handle",
+          "info": "Optional, for example @username"
+        },
+        {
+          "type": "product",
+          "id": "product",
+          "label": "Product in the video",
+          "info": "Optional. Shows under the video and links to the product."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "RAVA UGC videos",
+      "blocks": [
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" },
+        { "type": "video" }
+      ]
+    }
+  ]
+}
+{% endschema %}

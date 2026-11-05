@@ -1,0 +1,188 @@
+<div class="mobile-category-blocks">
+  <h2 class="mobile-category-title">Categories</h2>
+
+  <div class="mobile-category-grid">
+
+    <a href="/collections/all-perfumes" class="mobile-category-card">
+      <div>
+        <h3>Perfumes</h3>
+        <span>SHOP NOW</span>
+      </div>
+      <img src="https://cdn.shopify.com/s/files/1/0762/5755/8776/files/BlueDeChanel_46b35c3c-ed97-4c27-8fc6-6368c5e098ae.jpg?v=1763675514">
+    </a>
+
+    <a href="/collections/tanning-oils" class="mobile-category-card">
+      <div>
+        <h3>Tanning Oils</h3>
+        <span>SHOP NOW</span>
+      </div>
+      <img src="https://cdn.shopify.com/s/files/1/0762/5755/8776/files/UtopiaVanillaCocoo_jpg.jpg?v=1779610442">
+    </a>
+
+    <a href="/collections/home-sprays" class="mobile-category-card">
+      <div>
+        <h3>Home Sprays</h3>
+        <span>SHOP NOW</span>
+      </div>
+      <img src="https://cdn.shopify.com/s/files/1/0762/5755/8776/files/OudMaracuja_jpg.jpg?v=1775392764">
+    </a>
+
+    <a href="/collections/roll-on" class="mobile-category-card">
+      <div>
+        <h3>Roll On</h3>
+        <div class="new-badge">NEW</div>
+        <span>SHOP NOW</span>
+      </div>
+      <img src="https://cdn.shopify.com/s/files/1/0762/5755/8776/files/White_Patchouli_Roll_On_0b1916fd-650a-4818-901c-b39ca9c5163d.jpg?v=1782813559">
+    </a>
+
+    <a href="/collections/hair-mist" class="mobile-category-card">
+      <div>
+        <h3>Hair Mist</h3>
+        <div class="new-badge">NEW</div>
+        <span>SHOP NOW</span>
+      </div>
+      <img src="https://cdn.shopify.com/s/files/1/0762/5755/8776/files/Reveal_Calvin_Klein_Body_Splash.jpg?v=1782237645">
+    </a>
+
+    <a href="/collections/body-splash" class="mobile-category-card">
+      <div>
+        <h3>Body Splash</h3>
+        <div class="new-badge">NEW</div>
+        <span>SHOP NOW</span>
+      </div>
+      <img src="https://cdn.shopify.com/s/files/1/0762/5755/8776/files/Tru_Oud_Body_Splash_6bd2ca6f-672f-4891-b812-fe2df86722b5.jpg?v=1782813636">
+    </a>
+
+    <a href="/products/mix-it" class="mobile-category-card">
+      <div>
+        <h3>Mix Your Perfume</h3>
+        <div class="new-badge">NEW</div>
+        <span>SHOP NOW</span>
+      </div>
+      <img src="https://cdn.shopify.com/s/files/1/0762/5755/8776/files/ravasquarewebsitecopy_jpg.jpg?v=1782834871">
+    </a>
+
+    <a href="/apps/gbb/easybundle/essentials-bundle" class="mobile-category-card">
+      <div>
+        <h3>Build Your Own Bundle</h3>
+        <span>SHOP NOW</span>
+      </div>
+      <img src="https://cdn.shopify.com/s/files/1/0762/5755/8776/files/TobaccoVanilleTomFord.webp?v=1782819853" alt="Build Your Bundle">
+    </a>
+
+  </div>
+</div>
+
+<style>
+.mobile-category-blocks {
+  padding: 8px 0 14px;
+}
+
+.mobile-category-title {
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+  margin: 0 0 12px;
+  color: #111;
+}
+
+.mobile-category-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+
+.mobile-category-card {
+  height: 100px;
+  min-height: 100px;
+  background: #f5f5f5;
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 54px;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  overflow: hidden;
+  transition: .2s ease;
+}
+
+.mobile-category-card > div {
+  min-width: 0;
+  max-width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+}
+
+.mobile-category-card h3 {
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0;
+  color: #111;
+  white-space: normal;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.new-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 2px 7px;
+  border-radius: 14px;
+  background: #F0F0BC;
+  color: #000;
+  font-size: 8px;
+  font-weight: 800;
+  line-height: 1.4;
+}
+
+.mobile-category-card > div > span {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 5px 11px;
+  border-radius: 14px;
+  background: #000;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.mobile-category-card img {
+  width: 54px;
+  height: 54px;
+  object-fit: cover;
+  border-radius: 14px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 390px) {
+  .mobile-category-card {
+    height: 96px;
+    min-height: 96px;
+    grid-template-columns: minmax(0, 1fr) 50px;
+    padding: 11px 12px;
+  }
+
+  .mobile-category-card h3 {
+    font-size: 11.5px;
+  }
+
+  .mobile-category-card img {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (min-width: 990px) {
+  .mobile-category-blocks {
+    display: none;
+  }
+}
+</style>

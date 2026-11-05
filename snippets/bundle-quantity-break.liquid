@@ -1,0 +1,412 @@
+{%- comment -%}
+  Bundle Quantity Break / Mix & Match snippet
+  -----------------------------------------------------------------
+  This is registered as a real block type ("bundle_quantity_break")
+  inside snippets/product-info.liquid, exactly like "buy_buttons" or
+  "volume_pricing". Merchants drag it into position (e.g. above Buy
+  buttons) from the Theme Editor — no code edits needed per product.
+
+  Called from product-info.liquid's block loop as:
+    {%- when 'bundle_quantity_break' -%}
+      {%- render 'bundle-quantity-break', product: product, block: block, product_form_id: product_form_id -%}
+
+  Configuration lives on block.settings.* (see the block schema to
+  merge into product-info's section schema, in the comment at the
+  bottom of this file) so each instance of the block can have its
+  own tiers / collections.
+
+  IMPORTANT: do NOT add {{ block.shopify_attributes }} anywhere in
+  this file — product-info.liquid's block loop wrapper already
+  applies it to the containing <div>. Adding it again here would
+  duplicate it.
+
+  No app dependency. No Shopify Function required for this version —
+  see the README block at the bottom for how pricing is applied.
+{%- endcomment -%}
+
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign base_price = current_variant.price
+  assign base_compare_at = current_variant.compare_at_price | default: current_variant.price
+
+  assign tier_count = block.settings.bundle_tier_count | default: 4
+  assign tier_2_discount = block.settings.bundle_tier_2_discount | default: 12
+  assign tier_3_discount = block.settings.bundle_tier_3_discount | default: 18
+  assign tier_4_discount = block.settings.bundle_tier_4_discount | default: 25
+  assign heading_text = block.settings.bundle_heading | default: 'Add Any Product From Our Store & Save Up'
+
+  comment
+    Collection list for the modal tabs is hardcoded here rather than
+    read from block.settings.bundle_collections. This guarantees the
+    correct six tabs always show, in this exact order, regardless of
+    whatever is currently saved in the Theme Editor field (which
+    proved unreliable to depend on). To change the tabs later, edit
+    the string below directly rather than the Theme Editor setting.
+  endcomment
+
+  assign collections_string = 'all-perfumes|Perfume, tanning-oils|Tanning Oil, roll-on|Roll On, hair-mist|Hair Mist, body-splash|Body Splash, home-sprays|Home Spray'
+  assign collection_list = collections_string | split: ','
+-%}
+
+{%- if product != blank and current_variant != nil -%}
+
+<bundle-quantity-break
+  class="bundle-qty-break"
+  data-product-id="{{ product.id }}"
+  data-product-handle="{{ product.handle }}"
+  data-form-id="{{ product_form_id }}"
+  data-default-variant-id="{{ current_variant.id }}"
+  data-base-price="{{ base_price }}"
+  data-base-compare-at="{{ base_compare_at }}"
+  data-currency="{{ cart.currency.iso_code }}"
+  data-tier-discounts="0,{{ tier_2_discount }},{{ tier_3_discount }},{{ tier_4_discount }}"
+>
+
+  {%- comment -%} ============ TIER SELECTOR ============ {%- endcomment -%}
+  <div class="bundle-qty-break__header">
+    <span class="bundle-qty-break__heading-line"></span>
+    <h3 class="bundle-qty-break__heading">{{ heading_text }}</h3>
+    <span class="bundle-qty-break__heading-line"></span>
+  </div>
+
+  {%- liquid
+    assign max_discount = tier_2_discount
+    if tier_3_discount > max_discount
+      assign max_discount = tier_3_discount
+    endif
+    if tier_4_discount > max_discount
+      assign max_discount = tier_4_discount
+    endif
+  -%}
+  <p class="bundle-qty-break__subheading">
+    {%- assign subheading_default = 'Mix & match with any of our products and save up to ' | append: max_discount | append: '%. Tap "Choose" to pick your items.' -%}
+    {%- render 't-or-default', key: 'products.bundle.subheading', fallback: subheading_default -%}
+  </p>
+
+  <div class="bundle-qty-break__tiers" role="radiogroup" aria-label="{%- render 't-or-default', key: 'products.bundle.choose_quantity', fallback: 'Choose quantity' -%}">
+
+    {%- comment -%} Tier 1: just the base product, standard price, always present {%- endcomment -%}
+    <label class="bundle-qty-break__tier is-selected" data-tier="1">
+      <input type="radio" name="bundle-tier-{{ block.id }}" value="1" checked class="bundle-qty-break__tier-radio">
+      <span class="bundle-qty-break__tier-radio-dot" aria-hidden="true"></span>
+      <span class="bundle-qty-break__tier-body">
+        <span class="bundle-qty-break__tier-title">
+          {%- render 't-or-default', key: 'products.bundle.buy_one', fallback: 'Buy 1' -%}
+        </span>
+        <span class="bundle-qty-break__tier-sub">
+          {%- render 't-or-default', key: 'products.bundle.standard_price', fallback: 'Standard price' -%}
+        </span>
+      </span>
+      <span class="bundle-qty-break__tier-price">
+        <span class="bundle-qty-break__price-now" data-price-now>{{ base_price | money }}</span>
+        {%- if base_compare_at > base_price -%}
+          <span class="bundle-qty-break__price-compare" data-price-compare>{{ base_compare_at | money }}</span>
+        {%- endif -%}
+      </span>
+    </label>
+
+    {%- comment -%} Tiers 2..N: require N-1 additional products chosen from the modal {%- endcomment -%}
+    {%- for i in (2..tier_count) -%}
+      {%- liquid
+        case i
+          when 2
+            assign discount = tier_2_discount
+            assign badge_text = 'products.bundle.badge_good_deal' | t
+            assign badge_text_check = badge_text | downcase
+            if badge_text_check contains 'translation missing'
+              assign badge_text = 'Very Good Deal!'
+            endif
+            assign badge_class = 'is-good'
+          when 3
+            assign discount = tier_3_discount
+            assign badge_text = 'products.bundle.badge_popular' | t
+            assign badge_text_check = badge_text | downcase
+            if badge_text_check contains 'translation missing'
+              assign badge_text = 'Most Popular'
+            endif
+            assign badge_class = 'is-popular'
+          when 4
+            assign discount = tier_4_discount
+            assign badge_text = 'products.bundle.badge_crazy' | t
+            assign badge_text_check = badge_text | downcase
+            if badge_text_check contains 'translation missing'
+              assign badge_text = 'Crazy Offer 🔥'
+            endif
+            assign badge_class = 'is-crazy'
+          else
+            assign discount = 0
+            assign badge_text = ''
+            assign badge_class = ''
+        endcase
+
+        assign full_price = base_compare_at | times: i
+        assign discounted_price = base_price | times: i | times: discount | divided_by: 100.0
+        assign discounted_price = base_price | times: i | minus: discounted_price | round
+      -%}
+
+      {%- liquid
+        assign buy_n_label = 'products.bundle.buy_n_products' | t: count: i
+        assign buy_n_label_check = buy_n_label | downcase
+        if buy_n_label_check contains 'translation missing'
+          assign buy_n_label = 'Buy ' | append: i | append: ' Products'
+        endif
+
+        assign save_label = ''
+        if discount > 0
+          assign save_label = 'products.bundle.save_percent' | t: percent: discount
+          assign save_label_check = save_label | downcase
+          if save_label_check contains 'translation missing'
+            assign save_label = 'Save ' | append: discount | append: '%'
+          endif
+        endif
+      -%}
+
+      <label class="bundle-qty-break__tier" data-tier="{{ i }}">
+        <input type="radio" name="bundle-tier-{{ block.id }}" value="{{ i }}" class="bundle-qty-break__tier-radio">
+        <span class="bundle-qty-break__tier-radio-dot" aria-hidden="true"></span>
+
+        <span class="bundle-qty-break__tier-main">
+          <span class="bundle-qty-break__tier-row">
+            <span class="bundle-qty-break__tier-body">
+              <span class="bundle-qty-break__tier-title">
+                {{ buy_n_label }}
+                {%- if discount > 0 -%}
+                  <span class="bundle-qty-break__save-badge">{{ save_label }}</span>
+                {%- endif -%}
+              </span>
+            </span>
+            <span class="bundle-qty-break__tier-price">
+              <span class="bundle-qty-break__price-now" data-price-now>{{ discounted_price | money }}</span>
+              <span class="bundle-qty-break__price-compare" data-price-compare>{{ full_price | money }}</span>
+            </span>
+          </span>
+
+          {%- comment -%} Slots for the i-1 additional products this tier needs {%- endcomment -%}
+          <div class="bundle-qty-break__slots" data-slots-for-tier="{{ i }}" hidden>
+            {%- for s in (1..i) -%}
+              {%- assign slot_index = s | minus: 1 -%}
+              <div class="bundle-qty-break__slot" data-slot-index="{{ slot_index }}">
+                {%- if slot_index == 0 -%}
+                  {%- comment -%} First slot is always the current product, locked {%- endcomment -%}
+                  <span class="bundle-qty-break__slot-thumb">
+                    {%- if product.featured_image -%}
+                      <img src="{{ product.featured_image | image_url: width: 80 }}" loading="lazy" width="40" height="40" alt="{{ product.featured_image.alt | escape }}">
+                    {%- endif -%}
+                  </span>
+                  <span class="bundle-qty-break__slot-name">{{ product.title }}</span>
+                  <span class="bundle-qty-break__slot-locked">{%- render 't-or-default', key: 'products.bundle.this_product', fallback: 'This product' -%}</span>
+                {%- else -%}
+                  <span class="bundle-qty-break__slot-thumb" data-slot-thumb></span>
+                  <span class="bundle-qty-break__slot-name" data-slot-name>{%- render 't-or-default', key: 'products.bundle.add_product', fallback: '+' -%}</span>
+                  <button type="button" class="bundle-qty-break__slot-choose" data-open-modal data-slot-index="{{ slot_index }}" data-tier="{{ i }}">
+                    {%- render 't-or-default', key: 'products.bundle.choose', fallback: 'Choose' -%}
+                  </button>
+                {%- endif -%}
+              </div>
+            {%- endfor -%}
+          </div>
+        </span>
+
+        {%- if badge_text != '' -%}
+          <span class="bundle-qty-break__corner-badge {{ badge_class }}">{{ badge_text }}</span>
+        {%- endif -%}
+      </label>
+    {%- endfor -%}
+  </div>
+
+  {%- comment -%}
+    ============ ADD TO CART ============
+    There is intentionally NO add-to-cart button here. This widget
+    hooks into the page's existing native Add to Cart button (the
+    one rendered by the "buy_buttons" block / buy-buttons.liquid)
+    so there's only ever one button on the page. See the JS file's
+    bindNativeAddToCart() for how that interception works.
+  {%- endcomment -%}
+  <p class="bundle-qty-break__hint" data-incomplete-hint hidden>
+    {%- render 't-or-default', key: 'products.bundle.complete_selection', fallback: 'Choose your bundle products above to continue.' -%}
+  </p>
+
+  {%- comment -%} ============ MODAL ============ {%- endcomment -%}
+  <div class="bundle-qty-break__modal" data-modal data-choose-label="{%- render 't-or-default', key: 'products.bundle.choose', fallback: 'Choose' -%}" hidden>
+    <div class="bundle-qty-break__modal-overlay"></div>
+    <div class="bundle-qty-break__modal-panel" role="dialog" aria-modal="true" aria-labelledby="bundle-modal-title-{{ block.id }}">
+      <div class="bundle-qty-break__modal-header">
+        <h4 id="bundle-modal-title-{{ block.id }}">{%- render 't-or-default', key: 'products.bundle.choose_product', fallback: 'Choose a product' -%}</h4>
+        <button type="button" class="bundle-qty-break__modal-close" data-modal-close aria-label="{%- render 't-or-default', key: 'general.accessibility.close', fallback: 'Close' -%}">
+          &times;
+        </button>
+      </div>
+
+      <div class="bundle-qty-break__modal-search">
+        <input type="search" placeholder="{%- render 't-or-default', key: 'general.search.search', fallback: 'Search' -%}" data-modal-search>
+      </div>
+
+      <p class="bundle-qty-break__swipe-hint">
+        {%- render 't-or-default', key: 'products.bundle.swipe_hint', fallback: 'Swipe to see more categories' -%}
+      </p>
+
+      {%- comment -%}
+        ---- Collection tabs ----
+        Tabs only. Product rows are fetched client-side per tab via
+        /collections/{handle}/products.json with cursor-based paging
+        (see bundle-quantity-break.js), so collections of any size —
+        250, 1000, whatever — load fully via infinite scroll instead
+        of being capped by Liquid's 50-item default object limit.
+      {%- endcomment -%}
+      <div class="bundle-qty-break__tabs" role="tablist" data-modal-tabs>
+        {%- assign tab_index = 0 -%}
+        {%- for entry in collection_list -%}
+          {%- liquid
+            assign entry = entry | strip
+            assign entry_parts = entry | split: '|'
+            assign handle = entry_parts | first | strip
+            assign custom_label = ''
+            if entry_parts.size > 1
+              assign custom_label = entry_parts | last | strip
+            endif
+            assign coll = collections[handle]
+          -%}
+          {%- if coll == blank -%}
+            {%- comment -%}
+              Surface a console warning in dev rather than silently
+              dropping the tab, so a bad handle is easy to catch.
+            {%- endcomment -%}
+            <script>console.warn('[bundle-quantity-break] Collection handle not found: "{{ handle | escape }}". Check it matches the URL handle exactly, not the display title.');</script>
+            {%- continue -%}
+          {%- endif -%}
+
+          {%- assign tab_label = coll.title -%}
+          {%- if custom_label != '' -%}{%- assign tab_label = custom_label -%}{%- endif -%}
+
+          {%- assign show_new_badge = false -%}
+          {%- if handle == 'roll-on' or handle == 'hair-mist' or handle == 'body-splash' -%}
+            {%- assign show_new_badge = true -%}
+          {%- endif -%}
+
+          <button
+            type="button"
+            class="bundle-qty-break__tab{% if tab_index == 0 %} is-active{% endif %}"
+            role="tab"
+            aria-selected="{% if tab_index == 0 %}true{% else %}false{% endif %}"
+            data-tab-target="tab-{{ block.id }}-{{ tab_index }}"
+            data-collection-handle="{{ handle }}"
+          >
+            {{ tab_label }}
+            {%- if show_new_badge -%}
+              <span class="bundle-qty-break__tab-new-badge">{%- render 't-or-default', key: 'products.bundle.new_badge', fallback: 'NEW' -%}</span>
+            {%- endif -%}
+          </button>
+          {%- assign tab_index = tab_index | plus: 1 -%}
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} ---- Panels: start empty, JS fetches + fills on activation ---- {%- endcomment -%}
+      <div class="bundle-qty-break__modal-body" data-modal-body>
+        {%- assign tab_index = 0 -%}
+        {%- for entry in collection_list -%}
+          {%- liquid
+            assign entry = entry | strip
+            assign entry_parts = entry | split: '|'
+            assign handle = entry_parts | first | strip
+            assign coll = collections[handle]
+          -%}
+          {%- if coll == blank -%}
+            {%- continue -%}
+          {%- endif -%}
+
+          <div
+            class="bundle-qty-break__tab-panel{% if tab_index == 0 %} is-active{% endif %}"
+            id="tab-{{ block.id }}-{{ tab_index }}"
+            role="tabpanel"
+            data-collection-handle="{{ handle }}"
+            data-loaded="false"
+          >
+            <div class="bundle-qty-break__product-list" data-product-list></div>
+            <div class="bundle-qty-break__scroll-sentinel" data-scroll-sentinel></div>
+            <p class="bundle-qty-break__loading" data-loading-indicator hidden>
+              {%- render 't-or-default', key: 'general.search.loading', fallback: 'Loading more…' -%}
+            </p>
+          </div>
+          {%- assign tab_index = tab_index | plus: 1 -%}
+        {%- endfor -%}
+
+        <p class="bundle-qty-break__no-results" data-no-results hidden>
+          {%- render 't-or-default', key: 'general.search.no_results', fallback: 'No products found.' -%}
+        </p>
+      </div>
+    </div>
+  </div>
+</bundle-quantity-break>
+
+<script src="{{ 'bundle-quantity-break.js' | asset_url }}" defer="defer"></script>
+{{ 'bundle-quantity-break.css' | asset_url | stylesheet_tag }}
+
+{%- endif -%}
+
+{%- comment -%}
+  =====================================================================
+  BLOCK SCHEMA — add this object into the "blocks" array of the
+  section(s) that use product-info.liquid (main-product.liquid,
+  and featured-product.liquid if you use that section too). It must
+  sit alongside the existing "buy_buttons", "volume_pricing", etc.
+  block definitions, not replace them.
+
+  After adding this, also add the matching `when 'bundle_quantity_break'`
+  case to snippets/product-info.liquid's block loop — see README.md
+  for the exact patch.
+  =====================================================================
+
+  {
+    "type": "bundle_quantity_break",
+    "name": "Bundle quantity break",
+    "limit": 1,
+    "settings": [
+      {
+        "type": "text",
+        "id": "bundle_heading",
+        "label": "Heading",
+        "default": "Add Any Product From Our Store & Save Up"
+      },
+      {
+        "type": "range",
+        "id": "bundle_tier_count",
+        "label": "Number of tiers",
+        "min": 2,
+        "max": 4,
+        "step": 1,
+        "default": 4
+      },
+      {
+        "type": "range",
+        "id": "bundle_tier_2_discount",
+        "label": "Tier 2 discount %",
+        "min": 0,
+        "max": 90,
+        "default": 12
+      },
+      {
+        "type": "range",
+        "id": "bundle_tier_3_discount",
+        "label": "Tier 3 discount %",
+        "min": 0,
+        "max": 90,
+        "default": 18
+      },
+      {
+        "type": "range",
+        "id": "bundle_tier_4_discount",
+        "label": "Tier 4 discount %",
+        "min": 0,
+        "max": 90,
+        "default": 25
+      },
+      {
+        "type": "text",
+        "id": "bundle_collections",
+        "label": "Collection handles for modal tabs (comma-separated)",
+        "info": "e.g. all-perfumes|Perfume, tanning-oils|Tanning Oil. Add |Custom Label after a handle to override the tab text; omit it to just use the collection's own title, e.g. best-sellers, for-him.",
+        "default": "all-perfumes|Perfume, tanning-oils|Tanning Oil, roll-on|Roll On, hair-mist|Hair Mist, body-splash|Body Splash, home-sprays|Home Spray"
+      }
+    ]
+  }
+{%- endcomment -%}

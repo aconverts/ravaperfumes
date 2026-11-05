@@ -1,0 +1,645 @@
+{% comment %}
+
+  SECTION: Circle Nav Strip
+
+  - Fixed-size circles that do not resize based on the source image
+
+  - Small centered label/title underneath
+
+  - Click = link to a collection or custom URL
+
+  - Mobile: horizontal scroll for more
+
+  - Desktop: centers and wraps if many added
+
+  - Includes a separate Close Friends block with a solid light-green ring
+
+{% endcomment %}
+
+ 
+
+<section id="cn-{{ section.id }}" class="cn">
+
+  <div class="cn-inner">
+
+ 
+
+    {% if section.settings.title != blank %}
+
+      <h2 class="cn-title">{{ section.settings.title }}</h2>
+
+    {% endif %}
+
+ 
+
+    <div class="cn-scroll" data-cn-scroll>
+
+      <div class="cn-track">
+
+        {% for block in section.blocks %}
+
+          <div class="cn-item-wrap" {{ block.shopify_attributes }}>
+
+            <a
+
+              href="{% if block.settings.collection != blank %}{{ block.settings.collection.url }}{% elsif block.settings.link != blank %}{{ block.settings.link }}{% else %}#{% endif %}"
+
+              class="cn-item"
+
+            >
+
+ 
+
+              {% if block.type == 'close_friends' %}
+
+                <span
+
+                  class="cn-ring cn-ring--close-friends"
+
+                  style="background: {{ block.settings.close_friends_color }};"
+
+                >
+
+                  <span class="cn-ring-inner">
+
+                    {% if block.settings.image != blank %}
+
+                      {{
+
+                        block.settings.image
+
+                        | image_url: width: 200, height: 200, crop: 'center'
+
+                        | image_tag: loading: 'lazy', alt: block.settings.label
+
+                      }}
+
+                    {% else %}
+
+                      <span class="cn-thumb-placeholder"></span>
+
+                    {% endif %}
+
+                  </span>
+
+                </span>
+
+              {% else %}
+
+                <span
+
+                  class="cn-ring"
+
+                  style="background: linear-gradient(45deg, {{ block.settings.ring_color_1 }}, {{ block.settings.ring_color_2 }});"
+
+                >
+
+                  <span class="cn-ring-inner">
+
+                    {% if block.settings.image != blank %}
+
+                      {{
+
+                        block.settings.image
+
+                        | image_url: width: 200, height: 200, crop: 'center'
+
+                        | image_tag: loading: 'lazy', alt: block.settings.label
+
+                      }}
+
+                    {% else %}
+
+                      <span class="cn-thumb-placeholder"></span>
+
+                    {% endif %}
+
+                  </span>
+
+                </span>
+
+              {% endif %}
+
+ 
+
+              {% if block.settings.label != blank %}
+
+                <span class="cn-label">{{ block.settings.label }}</span>
+
+              {% endif %}
+
+            </a>
+
+          </div>
+
+        {% endfor %}
+
+      </div>
+
+    </div>
+
+ 
+
+  </div>
+
+</section>
+
+ 
+
+<style>
+
+  #cn-{{ section.id }}.cn{
+
+    width: 100%;
+
+    padding: clamp(16px, 2.5vw, 28px) 0;
+
+    background: {{ section.settings.bg_color }};
+
+  }
+
+ 
+
+  #cn-{{ section.id }} .cn-inner{
+
+    max-width: 1400px;
+
+    margin: 0 auto;
+
+    padding: 0 clamp(12px, 4vw, 40px);
+
+  }
+
+ 
+
+  #cn-{{ section.id }} .cn-title{
+
+    font-family: var(--font-heading-family), serif;
+
+    font-weight: 400;
+
+    font-size: clamp(16px, 1.8vw, 22px);
+
+    letter-spacing: 0.02em;
+
+    text-transform: uppercase;
+
+    color: {{ section.settings.title_color }};
+
+    margin: 0 0 14px 0;
+
+    text-align: center;
+
+  }
+
+ 
+
+  /* ===== Scroll row ===== */
+
+  #cn-{{ section.id }} .cn-scroll{
+
+    overflow-x: auto;
+
+    -ms-overflow-style: none;
+
+    scrollbar-width: none;
+
+  }
+
+ 
+
+  #cn-{{ section.id }} .cn-scroll::-webkit-scrollbar{
+
+    display: none;
+
+  }
+
+ 
+
+  #cn-{{ section.id }} .cn-track{
+
+    display: flex;
+
+    gap: 10px;
+
+    justify-content: flex-start;
+
+    align-items: flex-start;
+
+    width: max-content;
+
+    min-width: 100%;
+
+  }
+
+ 
+
+  @media (min-width: 990px){
+
+    #cn-{{ section.id }} .cn-track{
+
+      width: 100%;
+
+      justify-content: center;
+
+      flex-wrap: wrap;
+
+      gap: 16px;
+
+    }
+
+  }
+
+ 
+
+  /* ===== Item ===== */
+
+  #cn-{{ section.id }} .cn-item-wrap{
+
+    flex: 0 0 64px;
+
+    width: 64px;
+
+    min-width: 64px;
+
+    max-width: 64px;
+
+    text-align: center;
+
+  }
+
+ 
+
+  @media (min-width: 480px) and (max-width: 989px){
+
+    #cn-{{ section.id }} .cn-item-wrap{
+
+      flex-basis: 72px;
+
+      width: 72px;
+
+      min-width: 72px;
+
+      max-width: 72px;
+
+    }
+
+  }
+
+ 
+
+  @media (min-width: 990px){
+
+    #cn-{{ section.id }} .cn-item-wrap{
+
+      flex-basis: 88px;
+
+      width: 88px;
+
+      min-width: 88px;
+
+      max-width: 88px;
+
+    }
+
+  }
+
+ 
+
+  #cn-{{ section.id }} .cn-item{
+
+    width: 100%;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: flex-start;
+
+    gap: 5px;
+
+    text-decoration: none;
+
+    text-align: center;
+
+  }
+
+ 
+
+  /* Fixed-size circle: image dimensions can never enlarge it */
+
+  #cn-{{ section.id }} .cn-ring{
+
+    flex: 0 0 64px;
+
+    width: 64px;
+
+    height: 64px;
+
+    min-width: 64px;
+
+    min-height: 64px;
+
+    max-width: 64px;
+
+    max-height: 64px;
+
+    border-radius: 50%;
+
+    padding: 2.5px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    box-sizing: border-box;
+
+    overflow: hidden;
+
+  }
+
+ 
+
+  /* Close Friends = solid Instagram-style light green ring */
+
+  #cn-{{ section.id }} .cn-ring--close-friends{
+
+    padding: 3px;
+
+  }
+
+ 
+
+  @media (min-width: 480px) and (max-width: 989px){
+
+    #cn-{{ section.id }} .cn-ring{
+
+      flex-basis: 72px;
+
+      width: 72px;
+
+      height: 72px;
+
+      min-width: 72px;
+
+      min-height: 72px;
+
+      max-width: 72px;
+
+      max-height: 72px;
+
+    }
+
+  }
+
+ 
+
+  @media (min-width: 990px){
+
+    #cn-{{ section.id }} .cn-ring{
+
+      flex-basis: 88px;
+
+      width: 88px;
+
+      height: 88px;
+
+      min-width: 88px;
+
+      min-height: 88px;
+
+      max-width: 88px;
+
+      max-height: 88px;
+
+    }
+
+  }
+
+ 
+
+  #cn-{{ section.id }} .cn-ring-inner{
+
+    width: 100%;
+
+    height: 100%;
+
+    min-width: 0;
+
+    min-height: 0;
+
+    border-radius: 50%;
+
+    padding: 2.5px;
+
+    background: {{ section.settings.bg_color }};
+
+    display: block;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+
+  }
+
+ 
+
+  #cn-{{ section.id }} .cn-ring-inner img{
+
+    width: 100% !important;
+
+    height: 100% !important;
+
+    min-width: 100% !important;
+
+    min-height: 100% !important;
+
+    max-width: 100% !important;
+
+    max-height: 100% !important;
+
+    object-fit: cover;
+
+    object-position: center;
+
+    display: block;
+
+    border-radius: 50%;
+
+  }
+
+ 
+
+  #cn-{{ section.id }} .cn-thumb-placeholder{
+
+    display: block;
+
+    width: 100%;
+
+    height: 100%;
+
+    border-radius: 50%;
+
+    background: #eee;
+
+  }
+
+ 
+
+  #cn-{{ section.id }} .cn-label{
+
+    width: 100%;
+
+    max-width: 100%;
+
+    display: block;
+
+    font-family: var(--font-body-family), sans-serif;
+
+    font-size: 9.5px;
+
+    font-weight: 600;
+
+    line-height: 1.2;
+
+    letter-spacing: 0.02em;
+
+    text-transform: uppercase;
+
+    color: {{ section.settings.label_color }};
+
+    text-align: center;
+
+    white-space: normal;
+
+    overflow-wrap: break-word;
+
+    margin: 0 auto;
+
+  }
+
+ 
+
+  @media (min-width: 990px){
+
+    #cn-{{ section.id }} .cn-label{
+
+      font-size: 10px;
+
+    }
+
+  }
+
+</style>
+
+ 
+
+{% schema %}
+
+{
+
+  "name": "Circle Nav Strip",
+
+  "tag": "section",
+
+  "class": "section-circle-nav-strip",
+
+  "settings": [
+
+    { "type": "header", "content": "Content" },
+
+    { "type": "text", "id": "title", "label": "Title (optional)" },
+
+    { "type": "color", "id": "title_color", "label": "Title color", "default": "#000000" },
+
+    { "type": "color", "id": "label_color", "label": "Label text color", "default": "#000000" },
+
+    { "type": "color", "id": "bg_color", "label": "Background color", "default": "#ffffff" }
+
+  ],
+
+  "blocks": [
+
+    {
+
+      "type": "circle",
+
+      "name": "Circle",
+
+      "settings": [
+
+        { "type": "image_picker", "id": "image", "label": "Circle image" },
+
+        { "type": "text", "id": "label", "label": "Label", "default": "Shop" },
+
+        { "type": "collection", "id": "collection", "label": "Collection (preferred)" },
+
+        { "type": "url", "id": "link", "label": "Or custom link (used only if no collection selected)" },
+
+        { "type": "color", "id": "ring_color_1", "label": "Ring gradient - color 1", "default": "#F58529" },
+
+        { "type": "color", "id": "ring_color_2", "label": "Ring gradient - color 2", "default": "#DD2A7B" }
+
+      ]
+
+    },
+
+    {
+
+      "type": "close_friends",
+
+      "name": "Close Friends",
+
+      "settings": [
+
+        { "type": "image_picker", "id": "image", "label": "Circle image" },
+
+        { "type": "text", "id": "label", "label": "Label", "default": "Close Friends" },
+
+        { "type": "collection", "id": "collection", "label": "Collection (preferred)" },
+
+        { "type": "url", "id": "link", "label": "Or custom link (used only if no collection selected)" },
+
+        { "type": "color", "id": "close_friends_color", "label": "Close Friends green", "default": "#4CD964" }
+
+      ]
+
+    }
+
+  ],
+
+  "max_blocks": 20,
+
+  "presets": [
+
+    {
+
+      "name": "Circle Nav Strip",
+
+      "blocks": [
+
+        { "type": "circle" },
+
+        { "type": "circle" },
+
+        { "type": "circle" },
+
+        { "type": "circle" },
+
+        { "type": "circle" },
+
+        { "type": "close_friends" }
+
+      ]
+
+    }
+
+  ]
+
+}
+
+{% endschema %}
