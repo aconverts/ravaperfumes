@@ -9202,3 +9202,32 @@ cart-drawer line-item-quantity .quantity-selector {
 
 cart-drawer line-item-quantity .quantity-selector__button svg { width: 9px; height: 9px; }
 cart-drawer line-item-quantity .quantity-selector__input { font-size: 12px; }
+/* RAVA: "Recreation of ..." line (snippets/rava-inspired-by.liquid) */
+.rava-inspired {
+  margin: 0;
+  color: rgb(var(--text-color) / .7);
+  font-family: var(--text-font-family);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.rava-inspired__label {
+  color: rgb(var(--text-color));
+  font-weight: 600;
+}
+
+.rava-inspired--card {
+  font-size: 12px;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.rava-inspired--product {
+  margin-block-end: 6px;
+  font-size: 14px;
+  line-height: 1.4;
+}
