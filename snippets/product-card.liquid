@@ -168,6 +168,9 @@
               >
                 {{- product.title -}}
               </a>
+
+              {%- comment -%} RAVA: "Recreation of ..." line from custom.inspired_by {%- endcomment -%}
+              {%- render 'rava-inspired-by', product: product, context: 'card' -%}
             {%- endif -%}
 
             {%- if show_prices -%}
