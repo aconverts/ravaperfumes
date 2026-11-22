@@ -130,11 +130,6 @@
               {%- assign product_title = 'general.on_boarding.product_title' | t -%}
             {%- endif -%}
 
-            {%- comment -%} RAVA: "Recreation of ..." line from custom.inspired_by, above the title {%- endcomment -%}
-            {%- if product != blank -%}
-              {%- render 'rava-inspired-by', product: product, context: 'product' -%}
-            {%- endif -%}
-
             {%- if request.page_type == 'product' and context == 'main_product' -%}
               <h1 class="product-title {{ block.settings.heading_tag }}">
                 {{- product_title -}}
@@ -143,6 +138,11 @@
               <h2 class="product-title {{ block.settings.heading_tag }}">
                 <a href="{{ product.url }}">{{ product_title }}</a>
               </h2>
+            {%- endif -%}
+
+            {%- comment -%} RAVA: "Recreation of ..." chip from custom.inspired_by, under the title {%- endcomment -%}
+            {%- if product != blank -%}
+              {%- render 'rava-inspired-by', product: product, context: 'product' -%}
             {%- endif -%}
 
           {%- when 'sku' -%}
