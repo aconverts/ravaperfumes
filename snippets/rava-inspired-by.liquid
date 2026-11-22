@@ -1,0 +1,24 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  RAVA: "RECREATION OF" LINE
+  ----------------------------------------------------------------------------------------------------------------------
+
+  Shows which original scent a product recreates, from the product metafield custom.inspired_by.
+  Renders nothing when the metafield is empty (RAVA originals, products with no house assigned).
+
+  ********************************************
+  Supported variables
+  ********************************************
+
+  * product: the product to read the metafield from
+  * context: 'card' (product card, under the title) or 'product' (product page / quick buy, above the title)
+{%- endcomment -%}
+
+{%- assign rava_inspired_by = product.metafields.custom.inspired_by.value | strip -%}
+
+{%- if rava_inspired_by != blank -%}
+  <p class="rava-inspired rava-inspired--{{ context | default: 'card' }}">
+    <span class="rava-inspired__label">Recreation of</span>
+    {{ rava_inspired_by | escape }}
+  </p>
+{%- endif -%}
