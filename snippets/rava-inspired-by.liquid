@@ -11,14 +11,24 @@
   ********************************************
 
   * product: the product to read the metafield from
-  * context: 'card' (product card, under the title) or 'product' (product page / quick buy, above the title)
+  * context: 'card' (product card, plain line under the title) or 'product' (product page / quick buy, chip with
+             an icon under the title)
 {%- endcomment -%}
 
 {%- assign rava_inspired_by = product.metafields.custom.inspired_by.value | strip -%}
 
 {%- if rava_inspired_by != blank -%}
-  <p class="rava-inspired rava-inspired--{{ context | default: 'card' }}">
-    <span class="rava-inspired__label">Recreation of</span>
-    {{ rava_inspired_by | escape }}
-  </p>
+  {%- if context == 'product' -%}
+    <p class="rava-inspired rava-inspired--product">
+      <svg class="rava-inspired__icon" aria-hidden="true" focusable="false" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 2.75h4v3h-4z"></path>
+        <path d="M9 5.75h6v2.5H9z"></path>
+        <rect x="5.5" y="8.25" width="13" height="13" rx="2.5"></rect>
+        <path d="M9 13.5h6"></path>
+      </svg>
+      <span><span class="rava-inspired__label">Recreation of</span> {{ rava_inspired_by | escape }}</span>
+    </p>
+  {%- else -%}
+    <p class="rava-inspired rava-inspired--card">Recreation of {{ rava_inspired_by | escape }}</p>
+  {%- endif -%}
 {%- endif -%}
