@@ -1,0 +1,8 @@
+{%- layout none -%}
+{%- comment -%}
+  RAVA: tiny JSON lookup used by snippets/rava-recreation-property.liquid when a product is added to the cart from
+  somewhere that does not carry the value (app upsells, products loaded by JS).
+  URL: /products/<handle>?view=rava-inspired
+{%- endcomment -%}
+{%- assign rava_recreation_value = product.metafields.custom.inspired_by.value | strip -%}
+{"value":{{ rava_recreation_value | json }},"variants":[{{ product.variants | map: 'id' | join: ',' }}]}
