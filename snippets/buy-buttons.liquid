@@ -40,6 +40,7 @@
         name="id"
         value="{{ product.selected_or_first_available_variant.id }}"
       >
+      {%- render 'rava-recreation-input', product: product -%}
 
       {% liquid
         assign button_disabled = false
@@ -125,6 +126,19 @@
         </buy-buttons>
       </div>
     {%- endform -%}
+
+    {%- comment -%} RAVA: "Recreation of" values for the matching scents, used when they are added with "Add all to cart" {%- endcomment -%}
+    {%- liquid
+      assign rava_sibling_keys = 'matching_perfume,matching_roll_on,matching_hair_mist,matching_body_splash,matching_oil,matching_spray' | split: ','
+      for rava_key in rava_sibling_keys
+        assign rava_sibling = product.metafields.custom[rava_key].value
+        if rava_sibling != blank and rava_sibling.id != product.id
+          echo '<template '
+          render 'rava-recreation-attrs', product: rava_sibling
+          echo '></template>'
+        endif
+      endfor
+    -%}
   </product-form>
 {%- else -%}
   <buy-buttons class="buy-buttons" template="{{ product.template_suffix | escape }}" form="{{ form_id }}">
