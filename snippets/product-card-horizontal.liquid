@@ -13,7 +13,7 @@
   * show_quick_buy: show or not the quick buy (which open a modal if the product contains more than 1 choice)
 {%- endcomment -%}
 
-<div class="horizontal-product-card">
+<div class="horizontal-product-card" {% render 'rava-recreation-attrs', product: product %}>
   {%- if product.featured_media -%}
     <a href="{{ product.url }}" class="horizontal-product-card__figure" data-instant>
       {{-
@@ -52,6 +52,7 @@
         <product-form>
           {%- form 'product', product -%}
             <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+            {%- render 'rava-recreation-input', product: product -%}
             <input type="hidden" name="quantity" value="1">
             <input type="hidden" name="on_success" value="force_open_drawer">
 
