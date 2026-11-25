@@ -1,0 +1,190 @@
+{%- comment -%}
+  ----------------------------------------------------------------------------------------------------------------------
+  RAVA: "RECREATION OF" ON EVERY ORDER LINE (for staff)
+  ----------------------------------------------------------------------------------------------------------------------
+
+  Adds the hidden line item property "_Recreation of" (product metafield custom.inspired_by) to every item added to
+  the cart, whatever adds it: theme forms, quick add, gift picker, checkout gift guard, bundle widget, viral videos,
+  "Add all" siblings, UpCart. The underscore hides it from customers; staff see it under the product on the order.
+
+  MUST be rendered in <head> BEFORE any other script, because the RAVA scripts keep a copy of window.fetch when
+  they load. Rendered from layout/theme.liquid.
+
+  Where the value comes from, in order (first hit wins):
+    1. the request already has it (theme product forms render it, see snippets/rava-recreation-input.liquid)
+    2. memory / sessionStorage cache
+    3. the page: any element with data-rava-vids containing the variant id (snippets/rava-recreation-attrs.liquid)
+    4. /products/<handle>?view=rava-inspired (handle learnt from products.json responses, or from /variants/<id>)
+  If nothing answers within 1.5s, the item is added without it. The add itself never fails because of this script.
+{%- endcomment -%}
+<script>
+  (function () {
+    'use strict';
+    if (window.RavaRecreation) return;
+
+    var KEY = '_Recreation of';
+    var FORM_KEY = 'properties[' + KEY + ']';
+    var STORE = 'ravaRecreation:v1';
+    var TIMEOUT_MS = 1500;
+    var ROOT = {{ routes.root_url | json }};
+    if (ROOT.charAt(ROOT.length - 1) !== '/') ROOT += '/';
+
+    var nativeFetch = window.fetch.bind(window);
+    var cache = {};
+    var handles = {};
+    var pending = {};
+
+    try { cache = JSON.parse(sessionStorage.getItem(STORE) || '{}') || {}; } catch (e) { cache = {}; }
+
+    function save() {
+      try { sessionStorage.setItem(STORE, JSON.stringify(cache)); } catch (e) {}
+    }
+
+    function isCartAdd(url) {
+      return /\/cart\/add(\.js|\.json)?(\?|#|$)/.test(String(url || ''));
+    }
+
+    function timeout(promise, ms) {
+      return new Promise(function (resolve, reject) {
+        var timer = setTimeout(function () { reject(new Error('timeout')); }, ms);
+        promise.then(function (v) { clearTimeout(timer); resolve(v); }, function (e) { clearTimeout(timer); reject(e); });
+      });
+    }
+
+    function fromPage(id) {
+      var node = document.querySelector('[data-rava-vids~="' + id + '"]');
+      return node ? (node.getAttribute('data-rava-insp') || '') : null;
+    }
+
+    function loadHandle(handle) {
+      return nativeFetch(ROOT + 'products/' + encodeURIComponent(handle) + '?view=rava-inspired', { credentials: 'same-origin' })
+        .then(function (res) { if (!res.ok) throw new Error(res.status); return res.text(); })
+        .then(function (text) {
+          var data = JSON.parse(text);
+          (data.variants || []).forEach(function (v) { cache[String(v)] = data.value || ''; });
+          save();
+        });
+    }
+
+    function lookup(id) {
+      if (handles[id]) return loadHandle(handles[id]);
+      // /variants/<id> redirects to the product page: read the handle from the final URL
+      return nativeFetch(ROOT + 'variants/' + id, { method: 'HEAD', credentials: 'same-origin' })
+        .then(function (res) {
+          var match = String(res.url || '').match(/\/products\/([^\/?#]+)/);
+          if (!match) throw new Error('no handle');
+          return loadHandle(decodeURIComponent(match[1]));
+        });
+    }
+
+    // Resolves to the value ('' when the product has none or when it cannot be found)
+    function resolve(variantId) {
+      var id = String(parseInt(variantId, 10));
+      if (!id || id === 'NaN') return Promise.resolve('');
+      if (Object.prototype.hasOwnProperty.call(cache, id)) return Promise.resolve(cache[id]);
+
+      var onPage = fromPage(id);
+      if (onPage !== null) {
+        cache[id] = onPage;
+        save();
+        return Promise.resolve(onPage);
+      }
+
+      if (!pending[id]) {
+        pending[id] = timeout(lookup(id), TIMEOUT_MS)
+          .then(function () { return cache[id] || ''; })
+          .catch(function () { return ''; })
+          .then(function (value) { delete pending[id]; return value; });
+      }
+      return pending[id];
+    }
+
+    function learn(data) {
+      var products = (data && data.products) || (data && data.variants ? [data] : []);
+      products.forEach(function (p) {
+        (p.variants || []).forEach(function (v) { if (p.handle) handles[String(v.id)] = p.handle; });
+      });
+    }
+
+    /* ---------- add the property to a request body ---------- */
+
+    function patchItem(item) {
+      if (!item || item.id == null) return Promise.resolve();
+      if (item.properties && item.properties[KEY]) return Promise.resolve();
+      return resolve(item.id).then(function (value) {
+        if (!value) return;
+        item.properties = Object.assign({}, item.properties || {});
+        item.properties[KEY] = value;
+      });
+    }
+
+    function patchParams(params) {
+      // FormData or URLSearchParams with a single "id"
+      if (!params.has('id') || params.has(FORM_KEY)) return Promise.resolve(params);
+      return resolve(params.get('id')).then(function (value) {
+        if (value) params.append(FORM_KEY, value);
+        return params;
+      });
+    }
+
+    function patchBody(body) {
+      if (typeof FormData !== 'undefined' && body instanceof FormData) return patchParams(body);
+      if (typeof URLSearchParams !== 'undefined' && body instanceof URLSearchParams) return patchParams(body);
+      if (typeof body !== 'string') return Promise.resolve(body);
+
+      var json = null;
+      try { json = JSON.parse(body); } catch (e) {}
+
+      if (json && typeof json === 'object') {
+        var items = Array.isArray(json.items) ? json.items : [json];
+        return Promise.all(items.map(patchItem)).then(function () { return JSON.stringify(json); });
+      }
+
+      var params = new URLSearchParams(body);
+      return patchParams(params).then(function (p) { return p.toString(); });
+    }
+
+    /* ---------- fetch ---------- */
+
+    window.fetch = function (input, init) {
+      var url = typeof input === 'string' ? input : (input && input.url) || String(input || '');
+      var method = String((init && init.method) || (input && input.method) || 'GET').toUpperCase();
+      var args = arguments;
+
+      if (method === 'POST' && isCartAdd(url) && init && init.body != null) {
+        return patchBody(init.body)
+          .then(function (body) { return nativeFetch(input, Object.assign({}, init, { body: body })); },
+                function () { return nativeFetch.apply(window, args); });
+      }
+
+      var request = nativeFetch.apply(window, args);
+      if (/products\.json|\/products\/[^\/?#]+\.js(\?|$)/.test(url)) {
+        request.then(function (res) {
+          if (res && res.ok) res.clone().json().then(learn).catch(function () {});
+        }).catch(function () {});
+      }
+      return request;
+    };
+
+    /* ---------- XMLHttpRequest (apps that do not use fetch) ---------- */
+
+    var xhrOpen = XMLHttpRequest.prototype.open;
+    var xhrSend = XMLHttpRequest.prototype.send;
+
+    XMLHttpRequest.prototype.open = function (method, url) {
+      this._ravaAdd = String(method || '').toUpperCase() === 'POST' && isCartAdd(url);
+      return xhrOpen.apply(this, arguments);
+    };
+
+    XMLHttpRequest.prototype.send = function (body) {
+      if (!this._ravaAdd || body == null) return xhrSend.apply(this, arguments);
+      var xhr = this;
+      patchBody(body).then(
+        function (patched) { xhrSend.call(xhr, patched); },
+        function () { xhrSend.call(xhr, body); }
+      );
+    };
+
+    window.RavaRecreation = { resolve: resolve, key: KEY };
+  })();
+</script>
