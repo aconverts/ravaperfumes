@@ -1,0 +1,11 @@
+{%- comment -%}
+  RAVA: hidden line item property with the original scent, for staff on the order page.
+  The leading underscore hides it from the customer in the cart, at checkout and in emails; Shopify still shows it
+  in the admin order. Put inside a product form.
+
+  * product: the product the form adds
+{%- endcomment -%}
+{%- assign rava_recreation_value = product.metafields.custom.inspired_by.value | strip -%}
+{%- if rava_recreation_value != blank -%}
+  <input type="hidden" name="properties[_Recreation of]" value="{{ rava_recreation_value | escape }}">
+{%- endif -%}
