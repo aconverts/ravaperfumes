@@ -12,7 +12,7 @@
     endif
     assign short = gift.title | remove: ' Roll On 50ml' | remove: ' Hair Mist 100ml' | remove: ' Roll On' | remove: ' Hair Mist'
   -%}
-  <button type="button" class="rgp-tile" data-rgp-add="{{ gv.id }}" data-type="{{ gift.type | escape }}" title="{{ gift.title | escape }}">
+  <button type="button" class="rgp-tile" data-rgp-add="{{ gv.id }}" {% render 'rava-recreation-attrs', product: gift %} data-type="{{ gift.type | escape }}" title="{{ gift.title | escape }}">
     <span class="rgp-tile__media">
       {%- if gift.featured_image -%}
         {{- gift.featured_image | image_url: width: 200 | image_tag: loading: 'lazy', alt: gift.title, sizes: '100px' -}}
