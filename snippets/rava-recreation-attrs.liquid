@@ -1,0 +1,10 @@
+{%- comment -%}
+  RAVA: data attributes that tell assets/rava-recreation-property (snippets/rava-recreation-property.liquid) which
+  "Recreation of" value belongs to a product's variants. Output inside an HTML tag, e.g.
+  <product-card {% render 'rava-recreation-attrs', product: product %}>
+
+  An empty value is written on purpose: it tells the script "this product has none", so it never looks it up.
+
+  * product: the product
+{%- endcomment -%}
+{%- if product != blank -%} data-rava-vids="{{ product.variants | map: 'id' | join: ' ' }}" data-rava-insp="{{ product.metafields.custom.inspired_by.value | strip | escape }}"{%- endif -%}
