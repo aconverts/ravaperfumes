@@ -46,7 +46,7 @@ Supported variables
 {%- capture badges -%}
   {%- comment -%} RAVA: EXCLUSIVE badge on niche perfume cards {%- endcomment -%}
   {%- if context == 'card' and product.tags contains 'niche-perfumes' -%}
-    <span class="badge badge--exclusive">EXCLUSIVE</span>
+    <span class="badge badge--exclusive">NICHE</span>
   {%- endif -%}
   {%- for badge_type in badge_types -%}
     {%- assign stripped_badge_type = badge_type | strip -%}
