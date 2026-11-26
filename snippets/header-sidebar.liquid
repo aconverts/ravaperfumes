@@ -102,6 +102,8 @@
                     or link_title_downcase == 'body splash'
                   -%}
                     <span class="header-sidebar__new-badge">NEW</span>
+                  {%- elsif link_title_downcase == 'perfumes' -%}
+                    <span class="header-sidebar__new-badge header-sidebar__new-badge--exclusive">BESTSELLERS</span>
                   {%- elsif link_title_downcase == 'niche perfumes' -%}
                     <span class="header-sidebar__new-badge header-sidebar__new-badge--exclusive">EXCLUSIVE</span>
                   {%- endif -%}
@@ -119,6 +121,8 @@
                     or link_title_downcase == 'body splash'
                   -%}
                     <span class="header-sidebar__new-badge">NEW</span>
+                  {%- elsif link_title_downcase == 'perfumes' -%}
+                    <span class="header-sidebar__new-badge header-sidebar__new-badge--exclusive">BESTSELLERS</span>
                   {%- elsif link_title_downcase == 'niche perfumes' -%}
                     <span class="header-sidebar__new-badge header-sidebar__new-badge--exclusive">EXCLUSIVE</span>
                   {%- endif -%}

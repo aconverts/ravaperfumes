@@ -1,0 +1,27 @@
+<style>
+  #shopify-section-{{ section.id }} .rava-heading { padding-top: {{ section.settings.padding_top }}px; padding-bottom: {{ section.settings.padding_bottom }}px; text-align: center; }
+  #shopify-section-{{ section.id }} .rava-heading__inner { max-width: 560px; margin-inline: auto; }
+  #shopify-section-{{ section.id }} .rava-heading__title { margin: 0; }
+  #shopify-section-{{ section.id }} .rava-heading__text { margin: 6px 0 0; font-size: 14px; line-height: 1.5; opacity: .8; }
+</style>
+<div class="rava-heading">
+  <div class="container">
+    <div class="rava-heading__inner">
+      {%- if section.settings.title != blank -%}<h2 class="h4 rava-heading__title">{{ section.settings.title }}</h2>{%- endif -%}
+      {%- if section.settings.text != blank -%}<p class="rava-heading__text">{{ section.settings.text }}</p>{%- endif -%}
+    </div>
+  </div>
+</div>
+{% schema %}
+{
+  "name": "RAVA heading",
+  "class": "shopify-section--rava-heading",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "What Are Niche Perfumes?" },
+    { "type": "text", "id": "text", "label": "Text", "default": "Perfumes from houses that make only fragrance, like Kayali, Xerjoff and Creed: rarer, bolder scents, recreated by RAVA." },
+    { "type": "range", "id": "padding_top", "label": "Top spacing", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom spacing", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 0 }
+  ],
+  "presets": [{ "name": "RAVA heading" }]
+}
+{% endschema %}

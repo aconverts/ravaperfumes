@@ -9257,3 +9257,14 @@ cart-drawer line-item-quantity .quantity-selector__input { font-size: 12px; }
   background: #000;
   color: #fff;
 }
+
+/* RAVA: EXCLUSIVE badge next to the title on niche perfume product pages */
+.rava-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  column-gap: .5rem;
+  row-gap: .25rem;
+}
+.rava-title-row .product-title { margin: 0; }
+.rava-title-badge { flex-shrink: 0; }
