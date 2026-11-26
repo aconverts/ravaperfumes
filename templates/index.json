@@ -408,10 +408,32 @@
             "link_url": "",
             "link_text": "View all"
           }
+        },
+        "collection_7nnBew": {
+          "type": "collection",
+          "settings": {
+            "collection": "niche-perfumes-for-him",
+            "products_count": 8,
+            "title": "",
+            "link_url": "",
+            "link_text": "View all"
+          }
+        },
+        "collection_3xpWM4": {
+          "type": "collection",
+          "settings": {
+            "collection": "niche-perfumes-for-her",
+            "products_count": 8,
+            "title": "",
+            "link_url": "",
+            "link_text": "View all"
+          }
         }
       },
       "block_order": [
-        "collection_8mHTKG"
+        "collection_8mHTKG",
+        "collection_7nnBew",
+        "collection_3xpWM4"
       ],
       "name": "t:sections.featured_collections.presets.featured_collections.name",
       "settings": {
@@ -425,7 +447,7 @@
         "vertical_spacing_factor": 1,
         "tab_style": "large",
         "subheading": "",
-        "hide_collection_title": true
+        "hide_collection_title": false
       }
     },
     "rava_ugc_videos_Xc6BtJ": {
