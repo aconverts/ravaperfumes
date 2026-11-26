@@ -386,6 +386,48 @@
         "hide_collection_title": false
       }
     },
+    "rava_section_heading_XWpgPY": {
+      "type": "rava-section-heading",
+      "name": "RAVA heading",
+      "settings": {
+        "title": "What Are Niche Perfumes?",
+        "text": "Perfumes from houses that make only fragrance, like Kayali, Xerjoff and Creed: rarer, bolder scents, recreated by RAVA.",
+        "padding_top": 40,
+        "padding_bottom": 0
+      }
+    },
+    "featured_collections_KpyTWi": {
+      "type": "featured-collections",
+      "blocks": {
+        "collection_8mHTKG": {
+          "type": "collection",
+          "settings": {
+            "collection": "niche-perfumes",
+            "products_count": 12,
+            "title": "",
+            "link_url": "",
+            "link_text": "View all"
+          }
+        }
+      },
+      "block_order": [
+        "collection_8mHTKG"
+      ],
+      "name": "t:sections.featured_collections.presets.featured_collections.name",
+      "settings": {
+        "color_scheme": "",
+        "separate_section_with_border": false,
+        "hide_product_information": false,
+        "stack_products": false,
+        "products_per_row_mobile": "2",
+        "products_per_row_desktop": 4,
+        "horizontal_spacing_factor": 1,
+        "vertical_spacing_factor": 1,
+        "tab_style": "large",
+        "subheading": "",
+        "hide_collection_title": true
+      }
+    },
     "rava_ugc_videos_Xc6BtJ": {
       "type": "rava-ugc-videos",
       "blocks": {
@@ -1324,6 +1366,8 @@
     "rava_offer_timer_X4nakU",
     "featured_collections_k4WX7n",
     "featured_collections_JXQffK",
+    "rava_section_heading_XWpgPY",
+    "featured_collections_KpyTWi",
     "rava_ugc_videos_Xc6BtJ",
     "slideshow_nKwfRy",
     "rava_product_lines_qLLNqA",

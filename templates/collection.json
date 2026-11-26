@@ -286,6 +286,20 @@
         "content": ""
       }
     },
+    "rava_niche_info": {
+      "type": "rava-niche-info",
+      "settings": {
+        "product_tag": "niche-perfumes",
+        "collection_handles": "niche-perfumes, niche-perfumes-for-him, niche-perfumes-for-her",
+        "hide_sections": "slideshow_cVpTMD",
+        "image": "shopify://shop_images/791ba68d-6e2d-45fe-90d3-05239f1d8ce8.webp",
+        "background": "#f3f3c8",
+        "title": "What is a niche perfume?",
+        "text": "A scent from a house that makes only perfume, like Kayali, Xerjoff or Creed: rarer, bolder and made to stand out.",
+        "button_label": "Shop niche perfumes",
+        "button_link": "shopify://collections/niche-perfumes"
+      }
+    },
     "main": {
       "type": "main-collection",
       "blocks": {
@@ -357,20 +371,6 @@
         "quick_filters_brand_prefix": "Brand:",
         "quick_filters_pinned_brands": "Dior, Giorgio Armani, Yves Saint Laurent, Kayali, Hugo Boss, Paco Rabanne, Carolina Herrera, Givenchy, Versace, Gucci, Valentino, Parfums de Marly, Tom Ford, Creed",
         "quick_filters": "For him|men\nFresh|family-fresh-citrus\nSweet|family-gourmand\nWarm & spicy|family-warm-spicy\nWoody|family-woody-earthy\nFloral|family-floral\nOud|oud\nDate night|occasion-date-night\nNight out|occasion-night-out\nOffice|occasion-work-office\nEveryday|occasion-daily-signature\nSummer|occasion-vacations-summer\nBest sellers|Best Seller\nNew in|New\nDiscontinued|Discontinued"
-      }
-    },
-    "rava_niche_info": {
-      "type": "rava-niche-info",
-      "settings": {
-        "product_tag": "niche-perfumes",
-        "collection_handles": "niche-perfumes, niche-perfumes-for-him, niche-perfumes-for-her",
-        "hide_sections": "slideshow_cVpTMD",
-        "image": "shopify://shop_images/DelinaExclusifParfumsdeMarly.jpg",
-        "background": "#F3F3C8",
-        "title": "What is a niche perfume?",
-        "text": "A scent from a house that makes only perfume, like Kayali, Xerjoff or Creed: rarer, bolder and made to stand out.",
-        "button_label": "Shop niche perfumes",
-        "button_link": "shopify://collections/niche-perfumes"
       }
     }
   },
