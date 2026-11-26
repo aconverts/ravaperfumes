@@ -9250,3 +9250,10 @@ cart-drawer line-item-quantity .quantity-selector__input { font-size: 12px; }
 .rava-inspired__label {
   font-weight: 700;
 }
+/* ============================= */
+/* RAVA "EXCLUSIVE" badge: niche perfume cards (snippets/product-badges.liquid) */
+/* ============================= */
+.badge--exclusive {
+  background: #000;
+  color: #fff;
+}

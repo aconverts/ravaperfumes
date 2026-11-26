@@ -43,6 +43,11 @@
     border-radius: 4px;
     white-space: nowrap;
   }
+
+  .header-sidebar__new-badge--exclusive {
+    background: #000;
+    color: #fff;
+  }
 </style>
 
 <template id="header-sidebar-template">
@@ -97,6 +102,8 @@
                     or link_title_downcase == 'body splash'
                   -%}
                     <span class="header-sidebar__new-badge">NEW</span>
+                  {%- elsif link_title_downcase == 'niche perfumes' -%}
+                    <span class="header-sidebar__new-badge header-sidebar__new-badge--exclusive">EXCLUSIVE</span>
                   {%- endif -%}
                 </span>
 
@@ -112,6 +119,8 @@
                     or link_title_downcase == 'body splash'
                   -%}
                     <span class="header-sidebar__new-badge">NEW</span>
+                  {%- elsif link_title_downcase == 'niche perfumes' -%}
+                    <span class="header-sidebar__new-badge header-sidebar__new-badge--exclusive">EXCLUSIVE</span>
                   {%- endif -%}
                 </span>
               </a>

@@ -1,0 +1,178 @@
+{%- comment -%}
+  RAVA: "What is a niche perfume?" info section.
+  Renders only on products tagged with the "product_tag" setting, or on collections listed in "collection_handles".
+{%- endcomment -%}
+{%- liquid
+  assign rava_show = false
+  assign rava_tag = section.settings.product_tag | strip
+  if template.name == 'product' and rava_tag != blank and product.tags contains rava_tag
+    assign rava_show = true
+  endif
+  if template.name == 'collection' and collection
+    assign rava_handles = section.settings.collection_handles | split: ','
+    for h in rava_handles
+      assign h2 = h | strip
+      if h2 == collection.handle
+        assign rava_show = true
+        break
+      endif
+    endfor
+  endif
+  assign rava_btn_url = section.settings.button_link | default: ''
+  assign rava_hide_btn = false
+  if rava_btn_url != blank and request.path == rava_btn_url
+    assign rava_hide_btn = true
+  endif
+-%}
+
+{%- if rava_show -%}
+<style>
+  #shopify-section-{{ section.id }} .rava-niche {
+    padding-block: 24px;
+  }
+  #shopify-section-{{ section.id }} .rava-niche__card {
+    display: grid;
+    grid-template-columns: 96px 1fr;
+    grid-template-areas: "img head" "body body";
+    gap: 14px 16px;
+    align-items: center;
+    background: {{ section.settings.background }};
+    color: #000;
+    border-radius: 14px;
+    padding: 16px;
+    max-width: 960px;
+    margin-inline: auto;
+  }
+  #shopify-section-{{ section.id }} .rava-niche__img {
+    grid-area: img;
+    border-radius: 10px;
+    overflow: hidden;
+    aspect-ratio: 1;
+    background: #fff;
+  }
+  #shopify-section-{{ section.id }} .rava-niche__img img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  #shopify-section-{{ section.id }} .rava-niche__head { grid-area: head; }
+  #shopify-section-{{ section.id }} .rava-niche__body { grid-area: body; }
+  #shopify-section-{{ section.id }} .rava-niche__tag {
+    display: inline-flex;
+    margin-bottom: 6px;
+  }
+  #shopify-section-{{ section.id }} .rava-niche__title {
+    margin: 0;
+    font-size: 17px;
+    line-height: 1.25;
+  }
+  #shopify-section-{{ section.id }} .rava-niche__text {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  #shopify-section-{{ section.id }} .rava-niche__text p { margin: 0; }
+  #shopify-section-{{ section.id }} .rava-niche__points {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+  #shopify-section-{{ section.id }} .rava-niche__points li {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+  #shopify-section-{{ section.id }} .rava-niche__points li::before {
+    content: "";
+    flex: 0 0 6px;
+    height: 6px;
+    margin-top: 6px;
+    border-radius: 50%;
+    background: #000;
+  }
+  #shopify-section-{{ section.id }} .rava-niche__btn {
+    margin-top: 14px;
+  }
+  @media screen and (min-width: 700px) {
+    #shopify-section-{{ section.id }} .rava-niche { padding-block: 40px; }
+    #shopify-section-{{ section.id }} .rava-niche__card {
+      grid-template-columns: 220px 1fr;
+      grid-template-areas: "img head" "img body";
+      align-items: start;
+      gap: 8px 32px;
+      padding: 24px;
+    }
+    #shopify-section-{{ section.id }} .rava-niche__head { align-self: end; }
+    #shopify-section-{{ section.id }} .rava-niche__title { font-size: 22px; }
+  }
+</style>
+
+<div class="rava-niche">
+  <div class="container">
+    <div class="rava-niche__card">
+      <div class="rava-niche__img">
+        {%- if section.settings.image != blank -%}
+          {{- section.settings.image | image_url: width: 600 | image_tag: loading: 'lazy', sizes: '(min-width: 700px) 220px, 96px', widths: '200,300,440,600', alt: section.settings.image.alt | default: section.settings.title -}}
+        {%- endif -%}
+      </div>
+
+      <div class="rava-niche__head">
+        {%- if section.settings.badge_text != blank -%}
+          <span class="badge badge--exclusive rava-niche__tag">{{ section.settings.badge_text }}</span>
+        {%- endif -%}
+        {%- if section.settings.title != blank -%}
+          <h2 class="h6 rava-niche__title">{{ section.settings.title }}</h2>
+        {%- endif -%}
+      </div>
+
+      <div class="rava-niche__body">
+        {%- if section.settings.text != blank -%}
+          <div class="rava-niche__text">{{ section.settings.text }}</div>
+        {%- endif -%}
+
+        {%- if section.settings.point_1 != blank or section.settings.point_2 != blank or section.settings.point_3 != blank -%}
+          <ul class="rava-niche__points">
+            {%- if section.settings.point_1 != blank -%}<li>{{ section.settings.point_1 }}</li>{%- endif -%}
+            {%- if section.settings.point_2 != blank -%}<li>{{ section.settings.point_2 }}</li>{%- endif -%}
+            {%- if section.settings.point_3 != blank -%}<li>{{ section.settings.point_3 }}</li>{%- endif -%}
+          </ul>
+        {%- endif -%}
+
+        {%- if section.settings.button_label != blank and rava_btn_url != blank and rava_hide_btn == false -%}
+          <div class="rava-niche__btn">
+            <a href="{{ rava_btn_url }}" class="button button--sm">{{ section.settings.button_label }}</a>
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "RAVA niche info",
+  "class": "shopify-section--rava-niche-info",
+  "settings": [
+    { "type": "paragraph", "content": "Shows only on products with the tag below, and on the collections listed below." },
+    { "type": "text", "id": "product_tag", "label": "Show on products tagged", "default": "niche-perfumes" },
+    { "type": "text", "id": "collection_handles", "label": "Show on collections (handles, comma separated)", "default": "niche-perfumes, niche-perfumes-for-him, niche-perfumes-for-her" },
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "color", "id": "background", "label": "Background", "default": "#F3F3C8" },
+    { "type": "text", "id": "badge_text", "label": "Badge", "default": "EXCLUSIVE" },
+    { "type": "text", "id": "title", "label": "Heading", "default": "What is a niche perfume?" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Niche houses like Kayali, Xerjoff, Creed and Amouage make perfume and nothing else. Their scents are rarer and bolder, and a bottle often costs hundreds of dollars. RAVA recreates them so you can wear them every day.</p>" },
+    { "type": "text", "id": "point_1", "label": "Point 1", "default": "From perfume-only houses, not fashion brands" },
+    { "type": "text", "id": "point_2", "label": "Point 2", "default": "Standout scents you won't smell on everyone" },
+    { "type": "text", "id": "point_3", "label": "Point 3", "default": "Recreated by RAVA at a fraction of the price" },
+    { "type": "text", "id": "button_label", "label": "Button label", "default": "Shop niche perfumes" },
+    { "type": "url", "id": "button_link", "label": "Button link", "info": "Hidden when the visitor is already on this page." }
+  ],
+  "presets": [{ "name": "RAVA niche info" }]
+}
+{% endschema %}

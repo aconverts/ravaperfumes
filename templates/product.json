@@ -897,10 +897,28 @@
         "remove_vertical_spacing": false,
         "remove_horizontal_spacing": false
       }
+    },
+    "rava_niche_info": {
+      "type": "rava-niche-info",
+      "settings": {
+        "product_tag": "niche-perfumes",
+        "collection_handles": "niche-perfumes, niche-perfumes-for-him, niche-perfumes-for-her",
+        "image": "shopify://shop_images/DelinaExclusifParfumsdeMarly.jpg",
+        "background": "#F3F3C8",
+        "badge_text": "EXCLUSIVE",
+        "title": "What is a niche perfume?",
+        "text": "<p>Niche houses like Kayali, Xerjoff, Creed and Amouage make perfume and nothing else. Their scents are rarer and bolder, and a bottle often costs hundreds of dollars. RAVA recreates them so you can wear them every day.</p>",
+        "point_1": "From perfume-only houses, not fashion brands",
+        "point_2": "Standout scents you won't smell on everyone",
+        "point_3": "Recreated by RAVA at a fraction of the price",
+        "button_label": "Shop niche perfumes",
+        "button_link": "shopify://collections/niche-perfumes"
+      }
     }
   },
   "order": [
     "main",
+    "rava_niche_info",
     "slideshow_arnYTF",
     "rava_ugc_videos_G8R8Lr",
     "rich_text_4GrEB9",

@@ -358,6 +358,23 @@
         "quick_filters_pinned_brands": "Dior, Giorgio Armani, Yves Saint Laurent, Kayali, Hugo Boss, Paco Rabanne, Carolina Herrera, Givenchy, Versace, Gucci, Valentino, Parfums de Marly, Tom Ford, Creed",
         "quick_filters": "For him|men\nFresh|family-fresh-citrus\nSweet|family-gourmand\nWarm & spicy|family-warm-spicy\nWoody|family-woody-earthy\nFloral|family-floral\nOud|oud\nDate night|occasion-date-night\nNight out|occasion-night-out\nOffice|occasion-work-office\nEveryday|occasion-daily-signature\nSummer|occasion-vacations-summer\nBest sellers|Best Seller\nNew in|New\nDiscontinued|Discontinued"
       }
+    },
+    "rava_niche_info": {
+      "type": "rava-niche-info",
+      "settings": {
+        "product_tag": "niche-perfumes",
+        "collection_handles": "niche-perfumes, niche-perfumes-for-him, niche-perfumes-for-her",
+        "image": "shopify://shop_images/DelinaExclusifParfumsdeMarly.jpg",
+        "background": "#F3F3C8",
+        "badge_text": "EXCLUSIVE",
+        "title": "What is a niche perfume?",
+        "text": "<p>Niche houses like Kayali, Xerjoff, Creed and Amouage make perfume and nothing else. Their scents are rarer and bolder, and a bottle often costs hundreds of dollars. RAVA recreates them so you can wear them every day.</p>",
+        "point_1": "From perfume-only houses, not fashion brands",
+        "point_2": "Standout scents you won't smell on everyone",
+        "point_3": "Recreated by RAVA at a fraction of the price",
+        "button_label": "Shop niche perfumes",
+        "button_link": "shopify://collections/niche-perfumes"
+      }
     }
   },
   "order": [
@@ -369,6 +386,7 @@
     "rava_offer_timer_3WJFk8",
     "custom_liquid_jkPpFK",
     "multi_column_XLnrTW",
+    "rava_niche_info",
     "main"
   ]
 }
